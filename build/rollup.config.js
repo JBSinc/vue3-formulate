@@ -12,14 +12,11 @@ export default {
       exports: 'default',
       globals: {
         'is-plain-object': 'isPlainObject',
-        'nanoid/non-secure': 'nanoid',
-        'is-url': 'isUrl',
         '@braid/vue-formulate-i18n': 'VueFormulateI18n'
       },
       sourcemap: false
     }
   ],
-  external: ['nanoid/non-secure'],
   plugins: [
     commonjs(),
     autoExternal(),

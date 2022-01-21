@@ -1,4 +1,3 @@
-import nanoid from 'nanoid/non-secure'
 import FileUpload from '../FileUpload'
 
 /**
@@ -30,16 +29,16 @@ export function equals (objA, objB, deep = false) {
     // Compare scalar values
     return objA === objB
   }
-  var aKeys = Object.keys(objA)
-  var bKeys = Object.keys(objB)
-  var len = aKeys.length
+  const aKeys = Object.keys(objA)
+  const bKeys = Object.keys(objB)
+  const len = aKeys.length
 
   if (bKeys.length !== len) {
     return false
   }
 
-  for (var i = 0; i < len; i++) {
-    var key = aKeys[i]
+  for (let i = 0; i < len; i++) {
+    const key = aKeys[i]
     if ((!deep && objA[key] !== objB[key]) || (deep && !equals(objA[key], objB[key], deep))) {
       return false
     }
@@ -305,7 +304,7 @@ export function has (ctx, prop) {
  */
 export function setId (o, id) {
   if (!has(o, '__id') || id) {
-    return Object.defineProperty(o, '__id', Object.assign(Object.create(null), { value: id || nanoid(9) }))
+    return Object.defineProperty(o, '__id', Object.assign(Object.create(null), { value: id || token(9) }))
   }
   return o
 }
@@ -378,4 +377,50 @@ export function createDebouncer () {
     }
     timeout = setTimeout(() => fn.call(this, ...args), delay)
   }
+}
+
+/**
+ * Creates a unique id of a given length.
+ * @param {number} length
+ * @returns
+ */
+export function token (length = 13) {
+  return Math.random().toString(36).substring(2, length + 2)
+}
+
+const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
+
+const localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
+const nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/
+
+/**
+ * Loosely validate a URL `string`.
+ *
+ * Credit: https://github.com/segmentio/is-url
+ *
+ * @param {String} string
+ * @return {Boolean}
+ */
+
+export function isUrl (string) {
+  if (typeof string !== 'string') {
+    return false
+  }
+
+  const match = string.match(protocolAndDomainRE)
+  if (!match) {
+    return false
+  }
+
+  const everythingAfterProtocol = match[1]
+  if (!everythingAfterProtocol) {
+    return false
+  }
+
+  if (localhostDomainRE.test(everythingAfterProtocol) ||
+      nonLocalhostDomainRE.test(everythingAfterProtocol)) {
+    return true
+  }
+
+  return false
 }

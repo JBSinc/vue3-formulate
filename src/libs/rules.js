@@ -1,6 +1,5 @@
-import isUrl from 'is-url'
 import FileUpload from '../FileUpload'
-import { equals, regexForFormat, isEmpty } from './utils'
+import { equals, regexForFormat, isEmpty, isUrl } from './utils'
 
 /**
  * Library of rules

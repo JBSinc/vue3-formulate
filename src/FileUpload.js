@@ -1,5 +1,4 @@
-import nanoid from 'nanoid/non-secure'
-import { setId } from './libs/utils'
+import { setId, token } from './libs/utils'
 
 /**
  * The file upload class holds and represents a file’s upload state durring
@@ -62,7 +61,7 @@ class FileUpload {
   addFileList (fileList) {
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i]
-      const uuid = nanoid()
+      const uuid = token()
       const removeFile = function () {
         this.removeFile(uuid)
       }

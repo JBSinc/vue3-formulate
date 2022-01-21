@@ -41,8 +41,7 @@
 </template>
 
 <script>
-import { has } from '../src/libs/utils'
-import nanoid from 'nanoid/non-secure'
+import { has, token } from '../src/libs/utils'
 import SpecimenText from './specimens/SpecimenText'
 import SpecimenTextarea from './specimens/SpecimenTextarea'
 import SpecimenGroup from './specimens/SpecimenGroup'
@@ -81,7 +80,7 @@ export default {
   methods: {
     showTest (data) {
       if (data.component) {
-        this.testKey = nanoid(5)
+        this.testKey = token(5)
         this.test = data
         if (has(data, 'value')) {
           this.provingGroundValue = data.value
