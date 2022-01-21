@@ -61,7 +61,7 @@
     "babel-jest": "^25.5.1",
     "cross-env": "^7.0.3",
     "cssnano": "^4.1.10",
-    "cypress": "^6.0.1",
+    "cypress": "^6.9.1",
     "cypress-file-upload": "^4.1.1",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",

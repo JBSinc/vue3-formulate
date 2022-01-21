@@ -390,8 +390,8 @@ export function token (length = 13) {
 
 const protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/
 
-const localhostDomainRE = /^localhost[\:?\d]*(?:[^\:?\d]\S*)?$/
-const nonLocalhostDomainRE = /^[^\s\.]+\.\S{2,}$/
+const localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/
+const nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/
 
 /**
  * Loosely validate a URL `string`.
