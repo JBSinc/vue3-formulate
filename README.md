@@ -11,6 +11,9 @@
   <a href="https://vueformulate.com">Documentation Website</a>
 </p>
 
+
+#### 🚀 Looking for Vue 3 support? Checkout [FormKit](https://www.formkit.com) — the best way to build forms with Vue 3.
+
 ## What is Vue Formulate?
 
 Vue Formulate is the easiest way to build forms with Vue. Please read the [comprehensive documentation](https://vueformulate.com) for live code examples and guidance on using Vue Formulate in your own projects.
