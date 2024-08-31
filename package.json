@@ -1,7 +1,7 @@
 {
   "name": "@jbs/vue3-formulate",
   "version": "2.5.3",
-  "description": "The easiest way to build forms in Vue.",
+  "description": "A form of Vue Formulate for Vue 3 support and vite",
   "main": "dist/formulate.cjs.js",
   "module": "dist/formulate.es.js",
   "unpkg": "dist/formulate.iife.js",
