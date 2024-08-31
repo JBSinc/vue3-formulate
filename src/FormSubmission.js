@@ -1,4 +1,4 @@
-import { cloneDeep } from './libs/utils'
+import { cloneDeep } from './libs/utils2'
 import FileUpload from './FileUpload'
 
 export default class FormSubmission {

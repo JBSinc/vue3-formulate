@@ -1,1 +1,5649 @@
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e(require("is-plain-object"),require("@braid/vue-formulate-i18n")):"function"==typeof define&&define.amd?define(["is-plain-object","@braid/vue-formulate-i18n"],e):(t=t||self).Formulate=e(t.isPlainObject,t.VueFormulateI18n)}(this,(function(t,e){"use strict";t=t&&Object.prototype.hasOwnProperty.call(t,"default")?t.default:t;var r=function(t,e){return{classification:t,component:"FormulateInput"+(e||t[0].toUpperCase()+t.substr(1))}},o=Object.assign({},["text","email","number","color","date","hidden","month","password","search","tel","time","url","week","datetime-local"].reduce((function(t,e){var o;return Object.assign({},t,((o={})[e]=r("text"),o))}),{}),{range:r("slider"),textarea:r("textarea","TextArea"),checkbox:r("box"),radio:r("box"),submit:r("button"),button:r("button"),select:r("select"),file:r("file"),image:r("file"),group:r("group")});function i(t,e){var r={};for(var o in t)r[o]=e(o,t[o]);return r}function n(t,e,r){if(void 0===r&&(r=!1),t===e)return!0;if(!t||!e)return!1;if("object"!=typeof t&&"object"!=typeof e)return t===e;var o=Object.keys(t),i=Object.keys(e),s=o.length;if(i.length!==s)return!1;for(var a=0;a<s;a++){var l=o[a];if(!r&&t[l]!==e[l]||r&&!n(t[l],e[l],r))return!1}return!0}function s(t){return"string"==typeof t?t.replace(/([_-][a-z0-9])/gi,(function(e){return 0===t.indexOf(e)||/[_-]/.test(t[t.indexOf(e)-1])?e:e.toUpperCase().replace(/[_-]/,"")})):t}function a(t){return"string"==typeof t?t[0].toUpperCase()+t.substr(1):t}function l(t){return t?"string"==typeof t?[t]:Array.isArray(t)?t:"object"==typeof t?Object.values(t):[]:[]}function u(t,e){return"string"==typeof t?u(t.split("|"),e):Array.isArray(t)?t.map((function(t){return function(t,e){if("function"==typeof t)return[t,[]];if(Array.isArray(t)&&t.length){var r=c((t=t.map((function(t){return t}))).shift()),o=r[0],i=r[1];if("string"==typeof o&&e.hasOwnProperty(o))return[e[o],t,o,i];if("function"==typeof o)return[o,t,o,i]}if("string"==typeof t&&t){var n=t.split(":"),s=c(n.shift()),a=s[0],l=s[1];if(e.hasOwnProperty(a))return[e[a],n.length?n.join(":").split(","):[],a,l];throw new Error("Unknown validation rule "+t)}return!1}(t,e)})).filter((function(t){return!!t})):[]}function c(t){return/^[\^]/.test(t.charAt(0))?[s(t.substr(1)),t.charAt(0)]:[s(t),null]}function d(t){switch(typeof t){case"symbol":case"number":case"string":case"boolean":case"undefined":return!0;default:return null===t}}function p(t,e){return Object.prototype.hasOwnProperty.call(t,e)}function h(t,e){return!p(t,"__id")||e?Object.defineProperty(t,"__id",Object.assign(Object.create(null),{value:e||v(9)})):t}function f(t){return"number"!=typeof t&&(void 0===t||""===t||null===t||!1===t||Array.isArray(t)&&!t.some((function(t){return!f(t)}))||t&&!Array.isArray(t)&&"object"==typeof t&&f(Object.values(t)))}function m(t,e){return Object.keys(t).reduce((function(r,o){var i=s(o);return e.includes(i)&&(r[i]=t[o]),r}),{})}function v(t){return void 0===t&&(t=13),Math.random().toString(36).substring(2,t+2)}var x=/^(?:\w+:)?\/\/(\S+)$/,y=/^localhost[:?\d]*(?:[^:?\d]\S*)?$/,g=/^[^\s.]+\.\S{2,}$/;var b=function(t,e,r){void 0===r&&(r={}),this.input=t,this.fileList=t.files,this.files=[],this.options=Object.assign({},{mimes:{}},r),this.results=!1,this.context=e,this.dataTransferCheck(),e&&e.uploadUrl&&(this.options.uploadUrl=e.uploadUrl),this.uploadPromise=null,Array.isArray(this.fileList)?this.rehydrateFileList(this.fileList):this.addFileList(this.fileList)};b.prototype.rehydrateFileList=function(t){var e=this,r=t.reduce((function(t,r){var o=r[e.options?e.options.fileUrlKey:"url"],i=!(!o||-1===o.lastIndexOf("."))&&o.substr(o.lastIndexOf(".")+1),n=e.options.mimes[i]||!1;return t.push(Object.assign({},r,o?{name:r.name||o.substr(o.lastIndexOf("/")+1||0),type:r.type?r.type:n,previewData:o}:{})),t}),[]);this.addFileList(r),this.results=this.mapUUID(t)},b.prototype.addFileList=function(t){for(var e=this,r=function(r){var o=t[r],i=v();e.files.push({progress:!1,error:!1,complete:!1,justFinished:!1,name:o.name||"file-upload",file:o,uuid:i,path:!1,removeFile:function(){this.removeFile(i)}.bind(e),previewData:o.previewData||!1})},o=0;o<t.length;o++)r(o)},b.prototype.hasUploader=function(){return!!this.context.uploader},b.prototype.uploaderIsAxios=function(){return!(!this.hasUploader()||"function"!=typeof this.context.uploader.request||"function"!=typeof this.context.uploader.get||"function"!=typeof this.context.uploader.delete||"function"!=typeof this.context.uploader.post)},b.prototype.getUploader=function(){for(var t,e=[],r=arguments.length;r--;)e[r]=arguments[r];if(this.uploaderIsAxios()){var o=new FormData;if(o.append(this.context.name||"file",e[0]),!1===this.context.uploadUrl)throw new Error("No uploadURL specified: https://vueformulate.com/guide/inputs/file/#props");return this.context.uploader.post(this.context.uploadUrl,o,{headers:{"Content-Type":"multipart/form-data"},onUploadProgress:function(t){e[1](Math.round(100*t.loaded/t.total))}}).then((function(t){return t.data})).catch((function(t){return e[2](t)}))}return(t=this.context).uploader.apply(t,e)},b.prototype.upload=function(){var t=this;return this.uploadPromise=this.uploadPromise?this.uploadPromise.then((function(){return t.__performUpload()})):this.__performUpload(),this.uploadPromise},b.prototype.__performUpload=function(){var t=this;return new Promise((function(e,r){if(!t.hasUploader())return r(new Error("No uploader has been defined"));Promise.all(t.files.map((function(e){return e.error=!1,e.complete=!!e.path,e.path?Promise.resolve(e.path):t.getUploader(e.file,(function(r){e.progress=r,t.context.rootEmit("file-upload-progress",r),r>=100&&(e.complete||(e.justFinished=!0,setTimeout((function(){e.justFinished=!1}),t.options.uploadJustCompleteDuration)),e.complete=!0,t.context.rootEmit("file-upload-complete",e))}),(function(o){e.progress=0,e.error=o,e.complete=!0,t.context.rootEmit("file-upload-error",o),r(o)}),t.options)}))).then((function(r){t.results=t.mapUUID(r),e(r)})).catch((function(t){throw new Error(t)}))}))},b.prototype.removeFile=function(t){var e=this.files.length;if(this.files=this.files.filter((function(e){return e&&e.uuid!==t})),Array.isArray(this.results)&&(this.results=this.results.filter((function(e){return e&&e.__id!==t}))),this.context.performValidation(),window&&this.fileList instanceof FileList&&this.supportsDataTransfers){var r=new DataTransfer;this.files.forEach((function(t){return r.items.add(t.file)})),this.fileList=r.files,this.input.files=this.fileList}else this.fileList=this.fileList.filter((function(e){return e&&e.__id!==t}));e>this.files.length&&this.context.rootEmit("file-removed",this.files)},b.prototype.mergeFileList=function(t){if(this.addFileList(t.files),this.supportsDataTransfers){var e=new DataTransfer;this.files.forEach((function(t){t.file instanceof File&&e.items.add(t.file)})),this.fileList=e.files,this.input.files=this.fileList,t.files=(new DataTransfer).files}this.context.performValidation(),this.loadPreviews(),"delayed"!==this.context.uploadBehavior&&this.upload()},b.prototype.loadPreviews=function(){this.files.map((function(t){if(!t.previewData&&window&&window.FileReader&&/^image\//.test(t.file.type)){var e=new FileReader;e.onload=function(e){return Object.assign(t,{previewData:e.target.result})},e.readAsDataURL(t.file)}}))},b.prototype.dataTransferCheck=function(){try{new DataTransfer,this.supportsDataTransfers=!0}catch(t){this.supportsDataTransfers=!1}},b.prototype.getFiles=function(){return this.files},b.prototype.mapUUID=function(t){var e=this;return t.map((function(t,r){return e.files[r].path=void 0!==t&&t,t&&h(t,e.files[r].uuid)}))},b.prototype.toString=function(){var t=this.files.length?this.files.length+" files":"empty";return this.results?JSON.stringify(this.results,null,"  "):"FileUpload("+t+")"};var E,_={accepted:function(t){var e=t.value;return Promise.resolve(["yes","on","1",1,!0,"true"].includes(e))},after:function(t,e){var r=t.value;void 0===e&&(e=!1);var o=Date.parse(e||new Date),i=Date.parse(r);return Promise.resolve(!isNaN(i)&&i>o)},alpha:function(t,e){var r=t.value;void 0===e&&(e="default");var o={default:/^[a-zA-ZÀ-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,latin:/^[a-zA-Z]+$/},i=o.hasOwnProperty(e)?e:"default";return Promise.resolve(o[i].test(r))},alphanumeric:function(t,e){var r=t.value;void 0===e&&(e="default");var o={default:/^[a-zA-Z0-9À-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,latin:/^[a-zA-Z0-9]+$/},i=o.hasOwnProperty(e)?e:"default";return Promise.resolve(o[i].test(r))},before:function(t,e){var r=t.value;void 0===e&&(e=!1);var o=Date.parse(e||new Date),i=Date.parse(r);return Promise.resolve(!isNaN(i)&&i<o)},between:function(t,e,r,o){var i=t.value;return void 0===e&&(e=0),void 0===r&&(r=10),Promise.resolve(null!==e&&null!==r&&!isNaN(e)&&!isNaN(r)&&(!isNaN(i)&&"length"!==o||"value"===o?(i=Number(i),e=Number(e),r=Number(r),i>e&&i<r):("string"==typeof i||"length"===o)&&(i=isNaN(i)?i:i.toString()).length>e&&i.length<r))},confirm:function(t,e){var r,o,i=t.value,n=t.getGroupValues,s=t.name;return Promise.resolve((r=n(),(o=e)||(o=/_confirm$/.test(s)?s.substr(0,s.length-8):s+"_confirm"),r[o]===i))},date:function(t,e){var r=t.value;return void 0===e&&(e=!1),Promise.resolve(e&&"string"==typeof e?function(t){var e="^"+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"$",r={MM:"(0[1-9]|1[012])",M:"([1-9]|1[012])",DD:"([012][0-9]|3[01])",D:"([012]?[0-9]|3[01])",YYYY:"\\d{4}",YY:"\\d{2}"};return new RegExp(Object.keys(r).reduce((function(t,e){return t.replace(e,r[e])}),e))}(e).test(r):!isNaN(Date.parse(r)))},email:function(t){var e=t.value;return Promise.resolve(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(e))},endsWith:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve("string"==typeof e&&r.length?void 0!==r.find((function(t){return e.endsWith(t)})):"string"==typeof e&&0===r.length)},in:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve(void 0!==r.find((function(t){return"object"==typeof t?n(t,e):t===e})))},matches:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve(!!r.find((function(t){return"string"==typeof t&&"/"===t.substr(0,1)&&"/"===t.substr(-1)&&(t=new RegExp(t.substr(1,t.length-2))),t instanceof RegExp?t.test(e):t===e})))},mime:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve(function(){if(e instanceof b)for(var t=e.getFiles(),o=0;o<t.length;o++){var i=t[o].file;if(!r.includes(i.type))return!1}return!0}())},min:function(t,e,r){var o=t.value;return void 0===e&&(e=1),Promise.resolve(Array.isArray(o)?(e=isNaN(e)?e:Number(e),o.length>=e):!isNaN(o)&&"length"!==r||"value"===r?(o=isNaN(o)?o:Number(o))>=e:("string"==typeof o||"length"===r)&&(o=isNaN(o)?o:o.toString()).length>=e)},max:function(t,e,r){var o=t.value;return void 0===e&&(e=10),Promise.resolve(Array.isArray(o)?(e=isNaN(e)?e:Number(e),o.length<=e):!isNaN(o)&&"length"!==r||"value"===r?(o=isNaN(o)?o:Number(o))<=e:("string"==typeof o||"length"===r)&&(o=isNaN(o)?o:o.toString()).length<=e)},not:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve(void 0===r.find((function(t){return"object"==typeof t?n(t,e):t===e})))},number:function(t){var e=t.value;return Promise.resolve(!isNaN(e))},required:function(t,e){var r=t.value;return void 0===e&&(e="pre"),Promise.resolve(Array.isArray(r)?!!r.length:r instanceof b?r.getFiles().length>0:"string"==typeof r?"trim"===e?!!r.trim():!!r:"object"!=typeof r||!!r&&!!Object.keys(r).length)},startsWith:function(t){for(var e=t.value,r=[],o=arguments.length-1;o-- >0;)r[o]=arguments[o+1];return Promise.resolve("string"==typeof e&&r.length?void 0!==r.find((function(t){return e.startsWith(t)})):"string"==typeof e&&0===r.length)},url:function(t){var e=t.value;return Promise.resolve(function(t){if("string"!=typeof t)return!1;var e=t.match(x);if(!e)return!1;var r=e[1];return!!r&&!(!y.test(r)&&!g.test(r))}(e))},bail:function(){return Promise.resolve(!0)},optional:function(t){var e=t.value;return Promise.resolve(!f(e))}},F="image/",w={csv:"text/csv",gif:F+"gif",jpg:F+"jpeg",jpeg:F+"jpeg",png:F+"png",pdf:"application/pdf",svg:F+"svg+xml"},O=["outer","wrapper","label","element","input","help","errors","error","decorator","rangeValue","uploadArea","uploadAreaMask","files","file","fileName","fileAdd","fileAddInput","fileRemove","fileProgress","fileUploadError","fileImagePreview","fileImagePreviewImage","fileProgressInner","grouping","groupRepeatable","groupRepeatableRemove","groupAddMore","form","formErrors","formError"],P={hasErrors:function(t){return t.hasErrors},hasValue:function(t){return t.hasValue},isValid:function(t){return t.isValid}},V=function(t,e,r){var o=[];switch(e){case"label":o.push(t+"--"+r.labelPosition);break;case"element":var i="group"===r.classification?"group":r.type;o.push(t+"--"+i),"group"===i&&o.push("formulate-input-group");break;case"help":o.push(t+"--"+r.helpPosition);break;case"form":r.name&&o.push(t+"--"+r.name)}return o},A=(E=[""].concat(Object.keys(P).map((function(t){return a(t)}))),O.reduce((function(t,e){return t.concat(E.reduce((function(t,r){return t.push(""+e+r+"Class"),t}),[]))}),[]));function S(t,e,r){switch(typeof e){case"string":return e;case"function":return e(r,l(t));case"object":if(Array.isArray(e))return l(t).concat(e);default:return t}}function j(t){return O.reduce((function(e,r){var o;return Object.assign(e,((o={})[r]=function(t,e){var r=t.replace(/[A-Z]/g,(function(t){return"-"+t.toLowerCase()})),o="formulate"+(["form","file"].includes(r.substr(0,4))?"":"-input")+(["decorator","range-value"].includes(r)?"-element":"")+("outer"!==r?"-"+r:"");return"input"===r?[]:[o].concat(V(o,t,e))}(r,t),o))}),{})}function $(t,e,r,o){return new Promise((function(r,i){var n=(o.fauxUploaderDuration||1500)*(.5+Math.random()),s=performance.now(),a=function(){return setTimeout((function(){var o=performance.now()-s,i=Math.min(100,Math.round(o/n*100));if(e(i),i>=100)return r({url:"http://via.placeholder.com/350x150.png",name:t.name});a()}),20)};a()}))}function C(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}var k={inheritAttrs:!1,functional:!0,render:function(t,e){for(var r=e.props,o=e.data,i=e.parent,n=e.children,s=i,a=(r.name,r.forceWrap),l=r.context,u=C(r,["name","forceWrap","context"]);s&&"FormulateInput"!==s.$options.name;)s=s.$parent;if(!s)return null;if(s.$scopedSlots&&s.$scopedSlots[r.name])return s.$scopedSlots[r.name](Object.assign({},l,u));if(Array.isArray(n)&&(n.length>1||a&&n.length>0)){var c=o.attrs,d=(c.name,c.context,C(c,["name","context"]));return t("div",Object.assign({},o,{attrs:d}),n)}return Array.isArray(n)&&1===n.length?n[0]:null}};function I(t,e,r){if(void 0===e&&(e=0),void 0===r&&(r={}),t&&"object"==typeof t&&!Array.isArray(t)){var o=t.children;void 0===o&&(o=null);var i=t.component;void 0===i&&(i="FormulateInput");var n=t.depth;void 0===n&&(n=1);var s=t.key;void 0===s&&(s=null);var a=function(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}(t,["children","component","depth","key"]),l=a.class||{};delete a.class;var u={},c=Object.keys(a).reduce((function(t,e){var r;return/^@/.test(e)?Object.assign(t,((r={})[e.substr(1)]=a[e],r)):t}),{});Object.keys(c).forEach((function(t){delete a["@"+t],u[t]=function(t,e,r){return function(){for(var o,i,n=[],s=arguments.length;s--;)n[s]=arguments[s];return"function"==typeof e?e.call.apply(e,[this].concat(n)):"string"==typeof e&&p(r,e)?(o=r[e]).call.apply(o,[this].concat(n)):p(r,t)?(i=r[t]).call.apply(i,[this].concat(n)):void 0}}(t,c[t],r)}));var d="FormulateInput"===i?a.type||"text":i,h=a.name||d||"el";s||(s=a.id?a.id:"FormulateInput"!==i&&"string"==typeof o?d+"-"+function(t,e){void 0===e&&(e=0);for(var r=3735928559^e,o=1103547991^e,i=0,n=void 0;i<t.length;i++)n=t.charCodeAt(i),r=Math.imul(r^n,2654435761),o=Math.imul(o^n,1597334677);return r=Math.imul(r^r>>>16,2246822507)^Math.imul(o^o>>>13,3266489909),4294967296*(2097151&(o=Math.imul(o^o>>>16,2246822507)^Math.imul(r^r>>>13,3266489909)))+(r>>>0)}(o):d+"-"+h+"-"+n+(a.name?"":"-"+e));var f=Array.isArray(o)?o.map((function(t){return Object.assign(t,{depth:n+1})})):o;return Object.assign({key:s,depth:n,attrs:a,component:i,class:l,on:u},f?{children:f}:{})}return null}var R={functional:!0,render:function(t,e){var r=e.props,o=e.listeners;return function t(e,r,o){return Array.isArray(r)?r.map((function(r,i){var n=I(r,i,o);return e(n.component,{attrs:n.attrs,class:n.class,key:n.key,on:n.on},n.children?t(e,n.children,o):null)})):r}(t,r.schema,o)}};function D(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}var L=function(t){this.registry=new Map,this.errors={},this.ctx=t};function N(t){return new L(t).dataProps()}function M(t){return{hasInitialValue:function(){return this.formulateValue&&"object"==typeof this.formulateValue||this.values&&"object"==typeof this.values||this.isGrouping&&"object"==typeof this.context.model[this.index]},isVmodeled:function(){return!!(this.$options.propsData.hasOwnProperty("formulateValue")&&this._events&&Array.isArray(this._events.input)&&this._events.input.length)},initialValues:function(){return p(this.$options.propsData,"formulateValue")&&"object"==typeof this.formulateValue?Object.assign({},this.formulateValue):p(this.$options.propsData,"values")&&"object"==typeof this.values?Object.assign({},this.values):this.isGrouping&&"object"==typeof this.context.model[this.index]?this.context.model[this.index]:{}},mergedGroupErrors:function(){var t=this,e=/^([^.\d+].*?)\.(\d+\..+)$/;return Object.keys(this.mergedFieldErrors).filter((function(t){return e.test(t)})).reduce((function(r,o){var i,n=o.match(e),s=n[1],a=n[2];return r[s]||(r[s]={}),Object.assign(r[s],((i={})[a]=t.mergedFieldErrors[o],i)),r}),{})}}}function B(t){void 0===t&&(t=[]);var e={applyInitialValues:function(){this.hasInitialValue&&(this.proxy=Object.assign({},this.initialValues))},setFieldValue:function(t,e){var r;if(void 0===e){var o=this.proxy,i=(o[t],D(o,[String(t)]));this.proxy=i}else Object.assign(this.proxy,((r={})[t]=e,r));this.$emit("input",Object.assign({},this.proxy))},valueDeps:function(t){var e=this;return Object.keys(this.proxy).reduce((function(r,o){return Object.defineProperty(r,o,{enumerable:!0,get:function(){var r=e.registry.get(o);return e.deps.set(t,e.deps.get(t)||new Set),r&&(e.deps.set(r,e.deps.get(r)||new Set),e.deps.get(r).add(t.name)),e.deps.get(t).add(o),e.proxy[o]}})}),Object.create(null))},validateDeps:function(t){var e=this;this.deps.has(t)&&this.deps.get(t).forEach((function(t){return e.registry.has(t)&&e.registry.get(t).performValidation()}))},hasValidationErrors:function(){return Promise.all(this.registry.reduce((function(t,e,r){return t.push(e.performValidation()&&e.getValidationErrors()),t}),[])).then((function(t){return t.some((function(t){return t.hasErrors}))}))},showErrors:function(){this.childrenShouldShowErrors=!0,this.registry.map((function(t){t.formShouldShowErrors=!0}))},hideErrors:function(){this.childrenShouldShowErrors=!1,this.registry.map((function(t){t.formShouldShowErrors=!1,t.behavioralErrorVisibility=!1}))},setValues:function(t){var e=this;Array.from(new Set(Object.keys(t||{}).concat(Object.keys(this.proxy)))).forEach((function(r){var o=e.registry.has(r)&&e.registry.get(r),i=t?t[r]:void 0;o&&!n(o.proxy,i,!0)&&(o.context.model=i),n(i,e.proxy[r],!0)||e.setFieldValue(r,i)}))},updateValidation:function(t){p(this.registry.errors,t.name)&&(this.registry.errors[t.name]=t.hasErrors),this.$emit("validation",t)},addErrorObserver:function(t){this.errorObservers.find((function(e){return t.callback===e.callback}))||(this.errorObservers.push(t),"form"===t.type?t.callback(this.mergedFormErrors):"group"===t.type&&p(this.mergedGroupErrors,t.field)?t.callback(this.mergedGroupErrors[t.field]):p(this.mergedFieldErrors,t.field)&&t.callback(this.mergedFieldErrors[t.field]))},removeErrorObserver:function(t){this.errorObservers=this.errorObservers.filter((function(e){return e.callback!==t}))}};return Object.keys(e).reduce((function(r,o){var i;return t.includes(o)?r:Object.assign({},r,((i={})[o]=e[o],i))}),{})}function U(t,e){void 0===e&&(e=[]);var r={formulateSetter:t.setFieldValue,formulateRegister:t.register,formulateDeregister:t.deregister,formulateFieldValidation:t.updateValidation,getFormValues:t.valueDeps,getGroupValues:t.valueDeps,validateDependents:t.validateDeps,observeErrors:t.addErrorObserver,removeErrorObserver:t.removeErrorObserver};return Object.keys(r).filter((function(t){return!e.includes(t)})).reduce((function(t,e){var o;return Object.assign(t,((o={})[e]=r[e],o))}),{})}L.prototype.add=function(t,e){var r;return this.registry.set(t,e),this.errors=Object.assign({},this.errors,((r={})[t]=e.getErrorObject().hasErrors,r)),this},L.prototype.remove=function(t){this.ctx.deps.delete(this.registry.get(t)),this.ctx.deps.forEach((function(e){return e.delete(t)}));var e=this.ctx.keepModelData;!e&&this.registry.has(t)&&"inherit"!==this.registry.get(t).keepModelData&&(e=this.registry.get(t).keepModelData),this.ctx.preventCleanup&&(e=!0),this.registry.delete(t);var r=this.errors,o=(r[t],D(r,[String(t)]));if(this.errors=o,!e){var i=this.ctx.proxy,n=(i[t],D(i,[String(t)]));this.ctx.uuid&&h(n,this.ctx.uuid),this.ctx.proxy=n,this.ctx.$emit("input",this.ctx.proxy)}return this},L.prototype.has=function(t){return this.registry.has(t)},L.prototype.get=function(t){return this.registry.get(t)},L.prototype.map=function(t){var e={};return this.registry.forEach((function(r,o){var i;return Object.assign(e,((i={})[o]=t(r,o),i))})),e},L.prototype.keys=function(){return Array.from(this.registry.keys())},L.prototype.register=function(t,e){var r=this;if(p(e.$options.propsData,"ignored"))return!1;if(this.registry.has(t))return this.ctx.$nextTick((function(){return!r.registry.has(t)&&r.register(t,e)})),!1;this.add(t,e);var o=p(e.$options.propsData,"formulateValue"),i=p(e.$options.propsData,"value"),s=this.ctx.debounce||this.ctx.debounceDelay||this.ctx.context&&this.ctx.context.debounceDelay;s&&!p(e.$options.propsData,"debounce")&&(e.debounceDelay=s),o||!this.ctx.hasInitialValue||f(this.ctx.initialValues[t])?!o&&!i||n(e.proxy,this.ctx.initialValues[t],!0)||this.ctx.setFieldValue(t,e.proxy):e.context.model=this.ctx.initialValues[t],this.childrenShouldShowErrors&&(e.formShouldShowErrors=!0)},L.prototype.reduce=function(t,e){return this.registry.forEach((function(r,o){e=t(e,r,o)})),e},L.prototype.dataProps=function(){var t=this;return{proxy:{},registry:this,register:this.register.bind(this),deregister:function(e){return t.remove(e)},childrenShouldShowErrors:!1,errorObservers:[],deps:new Map,preventCleanup:!1}};var G=function(t){this.form=t};function T(t,e,r,o,i,n,s,a,l,u){"boolean"!=typeof s&&(l=a,a=s,s=!1);var c,d="function"==typeof r?r.options:r;if(t&&t.render&&(d.render=t.render,d.staticRenderFns=t.staticRenderFns,d._compiled=!0,i&&(d.functional=!0)),o&&(d._scopeId=o),n?(c=function(t){(t=t||this.$vnode&&this.$vnode.ssrContext||this.parent&&this.parent.$vnode&&this.parent.$vnode.ssrContext)||"undefined"==typeof __VUE_SSR_CONTEXT__||(t=__VUE_SSR_CONTEXT__),e&&e.call(this,l(t)),t&&t._registeredComponents&&t._registeredComponents.add(n)},d._ssrRegister=c):e&&(c=s?function(t){e.call(this,u(t,this.$root.$options.shadowRoot))}:function(t){e.call(this,a(t))}),c)if(d.functional){var p=d.render;d.render=function(t,e){return c.call(e),p(t,e)}}else{var h=d.beforeCreate;d.beforeCreate=h?[].concat(h,c):[c]}return r}G.prototype.hasValidationErrors=function(){return this.form.hasValidationErrors()},G.prototype.values=function(){var t=this;return new Promise((function(e,r){var o=[],i=function t(e){if("object"!=typeof e)return e;var r=Array.isArray(e)?[]:{};for(var o in e)e[o]instanceof b||d(e[o])?r[o]=e[o]:r[o]=t(e[o]);return r}(t.form.proxy),n=function(e){"object"==typeof t.form.proxy[e]&&t.form.proxy[e]instanceof b&&o.push(t.form.proxy[e].upload().then((function(t){var r;return Object.assign(i,((r={})[e]=t,r))})))};for(var s in i)n(s);Promise.all(o).then((function(){return e(i)})).catch((function(t){return r(t)}))}))};var q={name:"FormulateForm",inheritAttrs:!1,provide:function(){return Object.assign({},U(this,["getGroupValues"]),{observeContext:this.addContextObserver,removeContextObserver:this.removeContextObserver})},model:{prop:"formulateValue",event:"input"},props:{name:{type:[String,Boolean],default:!1},formulateValue:{type:Object,default:function(){return{}}},values:{type:[Object,Boolean],default:!1},errors:{type:[Object,Boolean],default:!1},formErrors:{type:Array,default:function(){return[]}},schema:{type:[Array,Boolean],default:!1},keepModelData:{type:[Boolean,String],default:!1},invalidMessage:{type:[Boolean,Function,String],default:!1},debounce:{type:[Boolean,Number],default:!1}},data:function(){return Object.assign({},N(this),{formShouldShowErrors:!1,contextObservers:[],namedErrors:[],namedFieldErrors:{},isLoading:!1,hasFailedSubmit:!1})},computed:Object.assign({},M(),{schemaListeners:function(){var t=this.$listeners;t.submit;return function(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}(t,["submit"])},pseudoProps:function(){return m(this.$attrs,A.filter((function(t){return/^form/.test(t)})))},attributes:function(){var t=this,e=Object.keys(this.$attrs).filter((function(e){return!p(t.pseudoProps,s(e))})).reduce((function(e,r){var o;return Object.assign({},e,((o={})[r]=t.$attrs[r],o))}),{});return"string"==typeof this.name&&Object.assign(e,{name:this.name}),e},hasErrors:function(){return Object.values(this.registry.errors).some((function(t){return t}))},isValid:function(){return!this.hasErrors},formContext:function(){return{errors:this.mergedFormErrors,pseudoProps:this.pseudoProps,hasErrors:this.hasErrors,value:this.proxy,hasValue:!f(this.proxy),isValid:this.isValid,isLoading:this.isLoading,classes:this.classes}},classes:function(){return this.$formulate.classes(Object.assign({},this.$props,this.pseudoProps,{value:this.proxy,errors:this.mergedFormErrors,hasErrors:this.hasErrors,hasValue:!f(this.proxy),isValid:this.isValid,isLoading:this.isLoading,type:"form",classification:"form",attrs:this.$attrs}))},invalidErrors:function(){if(this.hasFailedSubmit&&this.hasErrors)switch(typeof this.invalidMessage){case"string":return[this.invalidMessage];case"object":return Array.isArray(this.invalidMessage)?this.invalidMessage:[];case"function":var t=this.invalidMessage(this.failingFields);return Array.isArray(t)?t:[t]}return[]},mergedFormErrors:function(){return this.formErrors.concat(this.namedErrors).concat(this.invalidErrors)},mergedFieldErrors:function(){var t={};if(this.errors)for(var e in this.errors)t[e]=l(this.errors[e]);for(var r in this.namedFieldErrors)t[r]=l(this.namedFieldErrors[r]);return t},hasFormErrorObservers:function(){return!!this.errorObservers.filter((function(t){return"form"===t.type})).length},failingFields:function(){var t=this;return Object.keys(this.registry.errors).reduce((function(e,r){var o;return Object.assign({},e,t.registry.errors[r]?((o={})[r]=t.registry.get(r),o):{})}),{})}}),watch:Object.assign({},{mergedFieldErrors:{handler:function(t){this.errorObservers.filter((function(t){return"input"===t.type})).forEach((function(e){return e.callback(t[e.field]||[])}))},immediate:!0},mergedGroupErrors:{handler:function(t){this.errorObservers.filter((function(t){return"group"===t.type})).forEach((function(e){return e.callback(t[e.field]||{})}))},immediate:!0}},{formulateValue:{handler:function(t){this.isVmodeled&&t&&"object"==typeof t&&this.setValues(t)},deep:!0},mergedFormErrors:function(t){this.errorObservers.filter((function(t){return"form"===t.type})).forEach((function(e){return e.callback(t)}))}}),created:function(){this.$formulate.register(this),this.applyInitialValues(),this.$emit("created",this)},destroyed:function(){this.$formulate.deregister(this)},methods:Object.assign({},B(),{applyErrors:function(t){var e=t.formErrors,r=t.inputErrors;this.namedErrors=e,this.namedFieldErrors=r},addContextObserver:function(t){this.contextObservers.find((function(e){return e===t}))||(this.contextObservers.push(t),t(this.formContext))},removeContextObserver:function(t){this.contextObservers.filter((function(e){return e!==t}))},registerErrorComponent:function(t){this.errorComponents.includes(t)||this.errorComponents.push(t)},formSubmitted:function(){var t=this;if(!this.isLoading){this.isLoading=!0,this.showErrors();var e=new G(this),r=this.$listeners["submit-raw"]||this.$listeners.submitRaw,o="function"==typeof r?r(e):Promise.resolve(e);return(o instanceof Promise?o:Promise.resolve(o)).then((function(t){var r=t instanceof G?t:e;return r.hasValidationErrors().then((function(t){return[r,t]}))})).then((function(e){var r=e[0];return e[1]||"function"!=typeof t.$listeners.submit?t.onFailedValidation():r.values().then((function(e){t.hasFailedSubmit=!1;var r=t.$listeners.submit(e);return(r instanceof Promise?r:Promise.resolve()).then((function(){return e}))}))})).finally((function(){t.isLoading=!1}))}},onFailedValidation:function(){return this.hasFailedSubmit=!0,this.$emit("failed-validation",Object.assign({},this.failingFields)),this.$formulate.failedValidation(this)}})},H=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("form",t._b({class:t.classes.form,on:{submit:function(e){return e.preventDefault(),t.formSubmitted(e)}}},"form",t.attributes,!1),[t.schema?r("FormulateSchema",t._g({attrs:{schema:t.schema}},t.schemaListeners)):t._e(),t._v(" "),t.hasFormErrorObservers?t._e():r("FormulateErrors",{attrs:{context:t.formContext}}),t._v(" "),t._t("default",null,null,t.formContext)],2)};H._withStripped=!0;var W=T({render:H,staticRenderFns:[]},void 0,q,void 0,!1,void 0,!1,void 0,void 0,void 0);var Y={context:function(){return J.call(this,Object.assign({},{addLabel:this.logicalAddLabel,removeLabel:this.logicalRemoveLabel,attributes:this.elementAttributes,blurHandler:Z.bind(this),classification:this.classification,component:this.component,debounceDelay:this.debounceDelay,disableErrors:this.disableErrors,errors:this.explicitErrors,formShouldShowErrors:this.formShouldShowErrors,getValidationErrors:this.getValidationErrors.bind(this),groupErrors:this.mergedGroupErrors,hasGivenName:this.hasGivenName,hasValue:this.hasValue,hasLabel:this.label&&"button"!==this.classification,hasValidationErrors:this.hasValidationErrors.bind(this),help:this.help,helpPosition:this.logicalHelpPosition,id:this.id||this.defaultId,ignored:p(this.$options.propsData,"ignored"),isValid:this.isValid,imageBehavior:this.imageBehavior,label:this.label,labelPosition:this.logicalLabelPosition,limit:this.limit===1/0?this.limit:parseInt(this.limit,10),name:this.nameOrFallback,minimum:parseInt(this.minimum,10),performValidation:this.performValidation.bind(this),pseudoProps:this.pseudoProps,preventWindowDrops:this.preventWindowDrops,removePosition:this.mergedRemovePosition,repeatable:this.repeatable,rootEmit:this.$emit.bind(this),rules:this.ruleDetails,setErrors:this.setErrors.bind(this),showValidationErrors:this.showValidationErrors,slotComponents:this.slotComponents,slotProps:this.slotProps,type:this.type,uploadBehavior:this.uploadBehavior,uploadUrl:this.mergedUploadUrl,uploader:this.uploader||this.$formulate.getUploader(),validationErrors:this.validationErrors,value:this.value,visibleValidationErrors:this.visibleValidationErrors,isSubField:this.isSubField,classes:this.classes},this.typeContext))},nameOrFallback:function(){if(!0===this.name&&"button"!==this.classification){var t=this.id||this.elementAttributes.id.replace(/[^0-9]/g,"");return this.type+"_"+t}if(!1===this.name||"button"===this.classification&&!0===this.name)return!1;return this.name},hasGivenName:function(){return"boolean"!=typeof this.name},typeContext:function(){var t=this;switch(this.classification){case"select":return{options:z.call(this,this.options),optionGroups:!!this.optionGroups&&i(this.optionGroups,(function(e,r){return z.call(t,r)})),placeholder:this.$attrs.placeholder||!1};case"slider":return{showValue:!!this.showValue};default:return this.options?{options:z.call(this,this.options)}:{}}},elementAttributes:function(){var t=Object.assign({},this.filteredAttributes);this.id?t.id=this.id:t.id=this.defaultId;this.hasGivenName&&(t.name=this.name);this.help&&!p(t,"aria-describedby")&&(t["aria-describedby"]=t.id+"-help");!this.classes.input||Array.isArray(this.classes.input)&&!this.classes.input.length||(t.class=this.classes.input);return t},logicalLabelPosition:function(){if(this.labelPosition)return this.labelPosition;switch(this.classification){case"box":return"after";default:return"before"}},logicalHelpPosition:function(){if(this.helpPosition)return this.helpPosition;switch(this.classification){case"group":return"before";default:return"after"}},mergedRemovePosition:function(){return"group"===this.type&&(this.removePosition||"before")},mergedUploadUrl:function(){return this.uploadUrl||this.$formulate.getUploadUrl()},mergedGroupErrors:function(){var t=this,e=Object.keys(this.groupErrors).concat(Object.keys(this.localGroupErrors)),r=/^(\d+)\.(.*)$/;return Array.from(new Set(e)).filter((function(t){return r.test(t)})).reduce((function(e,o){var i,n=o.match(r),s=n[1],a=n[2];p(e,s)||(e[s]={});var u=Array.from(new Set(l(t.groupErrors[o]).concat(l(t.localGroupErrors[o]))));return e[s]=Object.assign(e[s],((i={})[a]=u,i)),e}),{})},hasValue:function(){var t=this,e=this.proxy;if("box"===this.classification&&this.isGrouped||"select"===this.classification&&p(this.filteredAttributes,"multiple"))return Array.isArray(e)?e.some((function(e){return e===t.value})):this.value===e;return!f(e)},visibleValidationErrors:function(){return this.showValidationErrors&&this.validationErrors.length?this.validationErrors:[]},slotComponents:function(){var t=this.$formulate.slotComponent.bind(this.$formulate);return{addMore:t(this.type,"addMore"),buttonContent:t(this.type,"buttonContent"),errors:t(this.type,"errors"),file:t(this.type,"file"),help:t(this.type,"help"),label:t(this.type,"label"),prefix:t(this.type,"prefix"),remove:t(this.type,"remove"),repeatable:t(this.type,"repeatable"),suffix:t(this.type,"suffix"),uploadAreaMask:t(this.type,"uploadAreaMask")}},logicalAddLabel:function(){if("file"===this.classification)return!0===this.addLabel?"+ Add "+a(this.type):this.addLabel;if("boolean"==typeof this.addLabel){var t=this.label||this.name;return"+ "+("string"==typeof t?t+" ":"")+" Add"}return this.addLabel},logicalRemoveLabel:function(){if("boolean"==typeof this.removeLabel)return"Remove";return this.removeLabel},classes:function(){return this.$formulate.classes(Object.assign({},this.$props,this.pseudoProps,{attrs:this.filteredAttributes,classification:this.classification,hasErrors:this.hasVisibleErrors,hasValue:this.hasValue,helpPosition:this.logicalHelpPosition,isValid:this.isValid,labelPosition:this.logicalLabelPosition,type:this.type,value:this.proxy}))},showValidationErrors:function(){if(this.showErrors||this.formShouldShowErrors)return!0;if("file"===this.classification&&"live"===this.uploadBehavior&&X.call(this))return!0;return this.behavioralErrorVisibility},slotProps:function(){var t=this.$formulate.slotProps.bind(this.$formulate);return{label:t(this.type,"label",this.typeProps),help:t(this.type,"help",this.typeProps),errors:t(this.type,"errors",this.typeProps),repeatable:t(this.type,"repeatable",this.typeProps),addMore:t(this.type,"addMore",this.typeProps),remove:t(this.type,"remove",this.typeProps),component:t(this.type,"component",this.typeProps)}},pseudoProps:function(){return m(this.localAttributes,A)},isValid:function(){return!this.hasErrors},ruleDetails:function(){return this.parsedValidation.map((function(t){var e=t[1];return{ruleName:t[2],args:e}}))},isVmodeled:function(){return!!(this.$options.propsData.hasOwnProperty("formulateValue")&&this._events&&Array.isArray(this._events.input)&&this._events.input.length)},mergedValidationName:function(){var t=this,e=this.$formulate.options.validationNameStrategy||["validationName","name","label","type"];if(Array.isArray(e)){return this[e.find((function(e){return"string"==typeof t[e]}))]}if("function"==typeof e)return e.call(this,this);return this.type},explicitErrors:function(){return l(this.errors).concat(this.localErrors).concat(l(this.error))},allErrors:function(){return this.explicitErrors.concat(l(this.validationErrors))},hasVisibleErrors:function(){return Array.isArray(this.validationErrors)&&this.validationErrors.length&&this.showValidationErrors||!!this.explicitErrors.length},hasErrors:function(){return!!this.allErrors.length},filteredAttributes:function(){var t=this,e=Object.keys(this.pseudoProps).concat(Object.keys(this.typeProps));return Object.keys(this.localAttributes).reduce((function(r,o){return e.includes(s(o))||(r[o]=t.localAttributes[o]),r}),{})},typeProps:function(){return m(this.localAttributes,this.$formulate.typeProps(this.type))},listeners:function(){var t=this.$listeners;t.input;return function(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}(t,["input"])}};function z(t){return t?(Array.isArray(t)?t:Object.keys(t).map((function(e){return{label:t[e],value:e}}))).map(K.bind(this)):[]}function K(t){return"number"==typeof t&&(t=String(t)),"string"==typeof t?{label:t,value:t,id:this.elementAttributes.id+"_"+t}:("number"==typeof t.value&&(t.value=String(t.value)),Object.assign({value:"",label:"",id:this.elementAttributes.id+"_"+(t.value||t.label)},t))}function Z(){var t=this;"blur"!==this.errorBehavior&&"value"!==this.errorBehavior||(this.behavioralErrorVisibility=!0),this.$nextTick((function(){return t.$emit("blur-context",t.context)}))}function J(t){var e=this;return Object.defineProperty(t,"model",{get:X.bind(this),set:function(t){if(!e.mntd||!e.debounceDelay)return Q.call(e,t);e.dSet(Q,[t],e.debounceDelay)},enumerable:!0})}function X(){var t=this.isVmodeled?"formulateValue":"proxy";return"checkbox"===this.type&&!Array.isArray(this[t])&&this.options?[]:this[t]||0===this[t]?this[t]:""}function Q(t){var e=!1;n(t,this.proxy,"group"===this.type)||(this.proxy=t,e=!0),!this.context.ignored&&this.context.name&&"function"==typeof this.formulateSetter&&this.formulateSetter(this.context.name,t),e&&this.$emit("input",t)}var tt={name:"FormulateInput",inheritAttrs:!1,provide:function(){return{formulateRegisterRule:this.registerRule,formulateRemoveRule:this.removeRule}},inject:{formulateSetter:{default:void 0},formulateFieldValidation:{default:function(){return function(){return{}}}},formulateRegister:{default:void 0},formulateDeregister:{default:void 0},getFormValues:{default:function(){return function(){return{}}}},getGroupValues:{default:void 0},validateDependents:{default:function(){return function(){}}},observeErrors:{default:void 0},removeErrorObserver:{default:void 0},isSubField:{default:function(){return function(){return!1}}}},model:{prop:"formulateValue",event:"input"},props:{type:{type:String,default:"text"},name:{type:[String,Boolean],default:!0},formulateValue:{default:""},value:{default:!1},options:{type:[Object,Array,Boolean],default:!1},optionGroups:{type:[Object,Boolean],default:!1},id:{type:[String,Boolean,Number],default:!1},label:{type:[String,Boolean],default:!1},labelPosition:{type:[String,Boolean],default:!1},limit:{type:[String,Number],default:1/0,validator:function(t){return 1/0}},minimum:{type:[String,Number],default:0,validator:function(t){return parseInt(t,10)==t}},help:{type:[String,Boolean],default:!1},helpPosition:{type:[String,Boolean],default:!1},isGrouped:{type:Boolean,default:!1},errors:{type:[String,Array,Boolean],default:!1},removePosition:{type:[String,Boolean],default:!1},repeatable:{type:Boolean,default:!1},validation:{type:[String,Boolean,Array],default:!1},validationName:{type:[String,Boolean],default:!1},error:{type:[String,Boolean],default:!1},errorBehavior:{type:String,default:"blur",validator:function(t){return["blur","live","submit","value"].includes(t)}},showErrors:{type:Boolean,default:!1},groupErrors:{type:Object,default:function(){return{}},validator:function(t){var e=/^\d+\./;return!Object.keys(t).some((function(t){return!e.test(t)}))}},imageBehavior:{type:String,default:"preview"},uploadUrl:{type:[String,Boolean],default:!1},uploader:{type:[Function,Object,Boolean],default:!1},uploadBehavior:{type:String,default:"live"},preventWindowDrops:{type:Boolean,default:!0},showValue:{type:[String,Boolean],default:!1},validationMessages:{type:Object,default:function(){return{}}},validationRules:{type:Object,default:function(){return{}}},checked:{type:[String,Boolean],default:!1},disableErrors:{type:Boolean,default:!1},addLabel:{type:[Boolean,String],default:!0},removeLabel:{type:[Boolean,String],default:!1},keepModelData:{type:[Boolean,String],default:"inherit"},ignored:{type:[Boolean,String],default:!1},debounce:{type:[Boolean,Number],default:!1},preventDeregister:{type:Boolean,default:!1}},data:function(){return{defaultId:this.$formulate.nextId(this),localAttributes:{},localErrors:[],localGroupErrors:{},proxy:this.getInitialValue(),behavioralErrorVisibility:"live"===this.errorBehavior,formShouldShowErrors:!1,validationErrors:[],pendingValidation:Promise.resolve(),ruleRegistry:[],messageRegistry:{},touched:!1,debounceDelay:this.debounce,dSet:function(e,r,o){var i=this;t&&clearTimeout(t),t=setTimeout((function(){return e.call.apply(e,[i].concat(r))}),o)},mntd:!1};var t},computed:Object.assign({},Y,{classification:function(){var t=this.$formulate.classify(this.type);return"box"===t&&this.options?"group":t},component:function(){return"group"===this.classification?"FormulateInputGroup":this.$formulate.component(this.type)},parsedValidationRules:function(){var t=this,e={};return Object.keys(this.validationRules).forEach((function(r){e[s(r)]=t.validationRules[r]})),e},parsedValidation:function(){return u(this.validation,this.$formulate.rules(this.parsedValidationRules))},messages:function(){var t=this,e={};return Object.keys(this.validationMessages).forEach((function(r){e[s(r)]=t.validationMessages[r]})),Object.keys(this.messageRegistry).forEach((function(r){e[s(r)]=t.messageRegistry[r]})),e}}),watch:{$attrs:{handler:function(t){this.updateLocalAttributes(t)},deep:!0},proxy:{handler:function(t,e){this.performValidation(),this.isVmodeled||n(t,e,"group"===this.type)||(this.context.model=t),this.validateDependents(this),!this.touched&&t&&(this.touched=!0)},deep:!0},formulateValue:{handler:function(t,e){this.isVmodeled&&!n(t,e,"group"===this.type)&&(this.context.model=t)},deep:!0},showValidationErrors:{handler:function(t){this.$emit("error-visibility",t)},immediate:!0},validation:{handler:function(){this.performValidation()},deep:!0},touched:function(t){"value"===this.errorBehavior&&t&&(this.behavioralErrorVisibility=t)},debounce:function(t){this.debounceDelay=t}},created:function(){this.applyInitialValue(),this.formulateRegister&&"function"==typeof this.formulateRegister&&this.formulateRegister(this.nameOrFallback,this),this.applyDefaultValue(),this.disableErrors||"function"!=typeof this.observeErrors||(this.observeErrors({callback:this.setErrors,type:"input",field:this.nameOrFallback}),"group"===this.type&&this.observeErrors({callback:this.setGroupErrors,type:"group",field:this.nameOrFallback})),this.updateLocalAttributes(this.$attrs),this.performValidation(),this.hasValue&&(this.touched=!0)},mounted:function(){this.mntd=!0},beforeDestroy:function(){this.disableErrors||"function"!=typeof this.removeErrorObserver||(this.removeErrorObserver(this.setErrors),"group"===this.type&&this.removeErrorObserver(this.setGroupErrors)),"function"!=typeof this.formulateDeregister||this.preventDeregister||this.formulateDeregister(this.nameOrFallback)},methods:{getInitialValue:function(){var t=this.$formulate.classify(this.type);return"box"===(t="box"===t&&this.options?"group":t)&&this.checked?this.value||!0:p(this.$options.propsData,"value")&&"box"!==t?this.value:p(this.$options.propsData,"formulateValue")?this.formulateValue:"group"===t?Object.defineProperty("group"===this.type?[{}]:[],"__init",{value:!0}):""},applyInitialValue:function(){n(this.context.model,this.proxy)||"box"===this.classification&&!p(this.$options.propsData,"options")||(this.context.model=this.proxy,this.$emit("input",this.proxy))},applyDefaultValue:function(){"select"===this.type&&!this.context.placeholder&&f(this.proxy)&&!this.isVmodeled&&!1===this.value&&this.context.options.length&&(p(this.$attrs,"multiple")?this.context.model=[]:this.context.model=this.context.options[0].value)},updateLocalAttributes:function(t){n(t,this.localAttributes)||(this.localAttributes=t)},performValidation:function(){var t=this,e=u(this.validation,this.$formulate.rules(this.parsedValidationRules));return e=this.ruleRegistry.length?this.ruleRegistry.concat(e):e,this.pendingValidation=this.runRules(e).then((function(e){return t.didValidate(e)})),this.pendingValidation},runRules:function(t){var e=this,r=function(t){var r=t[0],o=t[1],i=t[2],n=(t[3],r.apply(void 0,[{value:e.context.model,getFormValues:function(){for(var t,r=[],o=arguments.length;o--;)r[o]=arguments[o];return(t=e).getFormValues.apply(t,[e].concat(r))},getGroupValues:function(){for(var t,r=[],o=arguments.length;o--;)r[o]=arguments[o];return(t=e)["get"+(e.getGroupValues?"Group":"Form")+"Values"].apply(t,[e].concat(r))},name:e.context.name}].concat(o)));return(n=n instanceof Promise?n:Promise.resolve(n)).then((function(t){return!t&&e.getMessage(i,o)}))};return new Promise((function(e){var o=function(t,i){void 0===i&&(i=[]);var n=t.shift();Array.isArray(n)&&n.length?Promise.all(n.map(r)).then((function(t){return t.filter((function(t){return!!t}))})).then((function(r){return(r=Array.isArray(r)?r:[]).length&&n.bail||!t.length?e(i.concat(r).filter((function(t){return!f(t)}))):o(t,i.concat(r))})):e([])};o(function(t){var e=[],r=t.findIndex((function(t){return"bail"===t[2].toLowerCase()})),o=t.findIndex((function(t){return"optional"===t[2].toLowerCase()}));if(o>=0){var i=t.splice(o,1);e.push(Object.defineProperty(i,"bail",{value:!0}))}if(r>=0){var n=t.splice(0,r+1).slice(0,-1);n.length&&e.push(n),t.map((function(t){return e.push(Object.defineProperty([t],"bail",{value:!0}))}))}else e.push(t);return e.reduce((function(t,e){var r=function(t,e){if(void 0===e&&(e=!1),t.length<2)return Object.defineProperty([t],"bail",{value:e});var o=[],i=t.findIndex((function(t){return"^"===t[3]}));if(i>=0){var n=t.splice(0,i);n.length&&o.push.apply(o,r(n,e)),o.push(Object.defineProperty([t.shift()],"bail",{value:!0})),t.length&&o.push.apply(o,r(t,e))}else o.push(t);return o};return t.concat(r(e))}),[])}(t))}))},didValidate:function(t){var e=!n(t,this.validationErrors);if(this.validationErrors=t,e){var r=this.getErrorObject();this.$emit("validation",r),this.formulateFieldValidation&&"function"==typeof this.formulateFieldValidation&&this.formulateFieldValidation(r)}},getMessage:function(t,e){var r=this;return this.getMessageFunc(t)({args:e,name:this.mergedValidationName,value:this.context.model,vm:this,formValues:this.getFormValues(this),getFormValues:function(){for(var t,e=[],o=arguments.length;o--;)e[o]=arguments[o];return(t=r).getFormValues.apply(t,[r].concat(e))},getGroupValues:function(){for(var t,e=[],o=arguments.length;o--;)e[o]=arguments[o];return(t=r)["get"+(r.getGroupValues?"Group":"Form")+"Values"].apply(t,[r].concat(e))}})},getMessageFunc:function(t){var e=this;if("optional"===(t=s(t)))return function(){return[]};if(this.messages&&void 0!==this.messages[t])switch(typeof this.messages[t]){case"function":return this.messages[t];case"string":case"boolean":return function(){return e.messages[t]}}return function(r){return e.$formulate.validationMessage(t,r,e)}},hasValidationErrors:function(){var t=this;return new Promise((function(e){t.$nextTick((function(){t.pendingValidation.then((function(){return e(!!t.validationErrors.length)}))}))}))},getValidationErrors:function(){var t=this;return new Promise((function(e){t.$nextTick((function(){return t.pendingValidation.then((function(){return e(t.getErrorObject())}))}))}))},getErrorObject:function(){return{name:this.context.nameOrFallback||this.context.name,errors:this.validationErrors.filter((function(t){return"string"==typeof t})),hasErrors:!!this.validationErrors.length}},setErrors:function(t){this.localErrors=l(t)},setGroupErrors:function(t){this.localGroupErrors=t},registerRule:function(t,e,r,o){void 0===o&&(o=null),this.ruleRegistry.some((function(t){return t[2]===r}))||(this.ruleRegistry.push([t,e,r]),null!==o&&(this.messageRegistry[r]=o))},removeRule:function(t){var e=this.ruleRegistry.findIndex((function(e){return e[2]===t}));e>=0&&(this.ruleRegistry.splice(e,1),delete this.messageRegistry[t])}}},et=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.outer,attrs:{"data-classification":t.classification,"data-has-errors":t.hasErrors,"data-is-showing-errors":t.hasVisibleErrors,"data-has-value":t.hasValue,"data-type":t.type}},[r("div",{class:t.context.classes.wrapper},["before"===t.context.labelPosition?t._t("label",[t.context.hasLabel?r(t.context.slotComponents.label,t._b({tag:"component",attrs:{context:t.context}},"component",t.context.slotProps.label,!1)):t._e()],null,t.context):t._e(),t._v(" "),"before"===t.context.helpPosition?t._t("help",[t.context.help?r(t.context.slotComponents.help,t._b({tag:"component",attrs:{context:t.context}},"component",t.context.slotProps.help,!1)):t._e()],null,t.context):t._e(),t._v(" "),t._t("element",[r(t.context.component,t._g(t._b({tag:"component",attrs:{context:t.context}},"component",t.context.slotProps.component,!1),t.listeners),[t._t("default",null,null,t.context)],2)],null,t.context),t._v(" "),"after"===t.context.labelPosition?t._t("label",[t.context.hasLabel?r(t.context.slotComponents.label,t._b({tag:"component",attrs:{context:t.context}},"component",t.context.slotProps.label,!1)):t._e()],null,t.context):t._e()],2),t._v(" "),"after"===t.context.helpPosition?t._t("help",[t.context.help?r(t.context.slotComponents.help,t._b({tag:"component",attrs:{context:t.context}},"component",t.context.slotProps.help,!1)):t._e()],null,t.context):t._e(),t._v(" "),t._t("errors",[t.context.disableErrors?t._e():r(t.context.slotComponents.errors,t._b({tag:"component",attrs:{type:"FormulateErrors"===t.context.slotComponents.errors&&"input",context:t.context}},"component",t.context.slotProps.errors,!1))],null,t.context)],2)};et._withStripped=!0;var rt=T({render:et,staticRenderFns:[]},void 0,tt,void 0,!1,void 0,!1,void 0,void 0,void 0),ot={inject:{observeErrors:{default:!1},removeErrorObserver:{default:!1},observeContext:{default:!1},removeContextObserver:{default:!1}},props:{context:{type:Object,default:function(){return{}}},type:{type:String,default:"form"}},data:function(){return{boundSetErrors:this.setErrors.bind(this),boundSetFormContext:this.setFormContext.bind(this),localErrors:[],formContext:{classes:{formErrors:"formulate-form-errors",formError:"formulate-form-error"}}}},computed:{visibleValidationErrors:function(){return Array.isArray(this.context.visibleValidationErrors)?this.context.visibleValidationErrors:[]},errors:function(){return Array.isArray(this.context.errors)?this.context.errors:[]},mergedErrors:function(){return this.errors.concat(this.localErrors)},visibleErrors:function(){return Array.from(new Set(this.mergedErrors.concat(this.visibleValidationErrors))).filter((function(t){return"string"==typeof t}))},outerClass:function(){return"input"===this.type&&this.context.classes?this.context.classes.errors:this.formContext.classes.formErrors},itemClass:function(){return"input"===this.type&&this.context.classes?this.context.classes.error:this.formContext.classes.formError},role:function(){return"form"===this.type?"alert":"status"},ariaLive:function(){return"form"===this.type?"assertive":"polite"},slotComponent:function(){return this.$formulate.slotComponent(null,"errorList")}},created:function(){"form"===this.type&&"function"==typeof this.observeErrors&&(Array.isArray(this.context.errors)||this.observeErrors({callback:this.boundSetErrors,type:"form"}),this.observeContext(this.boundSetFormContext))},destroyed:function(){"form"===this.type&&"function"==typeof this.removeErrorObserver&&(Array.isArray(this.context.errors)||this.removeErrorObserver(this.boundSetErrors),this.removeContextObserver(this.boundSetFormContext))},methods:{setErrors:function(t){this.localErrors=l(t)},setFormContext:function(t){this.formContext=t}}},it=function(){var t=this.$createElement;return(this._self._c||t)(this.slotComponent,{tag:"component",attrs:{"visible-errors":this.visibleErrors,"item-class":this.itemClass,"outer-class":this.outerClass,role:this.role,"aria-live":this.ariaLive,type:this.type}})};it._withStripped=!0;var nt=T({render:it,staticRenderFns:[]},void 0,ot,void 0,!1,void 0,!1,void 0,void 0,void 0),st={props:{context:{type:Object,required:!0}}},at=function(){var t=this.$createElement,e=this._self._c||t;return this.context.help?e("div",{class:this.context.classes.help,attrs:{id:this.context.id+"-help"},domProps:{textContent:this._s(this.context.help)}}):this._e()};at._withStripped=!0;var lt=T({render:at,staticRenderFns:[]},void 0,st,void 0,!1,void 0,!1,void 0,void 0,void 0),ut={props:{file:{type:Object,required:!0},imagePreview:{type:Boolean,default:!1},context:{type:Object,required:!0}}},ct=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.file},[t.imagePreview&&t.file.previewData?r("div",{class:t.context.classes.fileImagePreview},[r("img",{class:t.context.classes.fileImagePreviewImage,attrs:{src:t.file.previewData}})]):t._e(),t._v(" "),r("div",{class:t.context.classes.fileName,attrs:{title:t.file.name},domProps:{textContent:t._s(t.file.name)}}),t._v(" "),!1!==t.file.progress?r("div",{class:t.context.classes.fileProgress,attrs:{"data-just-finished":t.file.justFinished,"data-is-finished":!t.file.justFinished&&t.file.complete}},[r("div",{class:t.context.classes.fileProgressInner,style:{width:t.file.progress+"%"}})]):t._e(),t._v(" "),t.file.complete&&!t.file.justFinished||!1===t.file.progress?r("div",{class:t.context.classes.fileRemove,on:{click:t.file.removeFile}}):t._e()])};ct._withStripped=!0;var dt=T({render:ct,staticRenderFns:[]},void 0,ut,void 0,!1,void 0,!1,void 0,void 0,void 0),pt={name:"FormulateGrouping",props:{context:{type:Object,required:!0}},provide:function(){return{isSubField:function(){return!0},registerProvider:this.registerProvider,deregisterProvider:this.deregisterProvider}},data:function(){return{providers:[],keys:[]}},inject:["formulateRegisterRule","formulateRemoveRule"],computed:{items:function(){var t=this;return Array.isArray(this.context.model)?this.context.repeatable||0!==this.context.model.length?this.context.model.length<this.context.minimum?new Array(this.context.minimum||1).fill("").map((function(e,r){return t.setId(t.context.model[r]||{},r)})):this.context.model.map((function(e,r){return t.setId(e,r)})):[this.setId({},0)]:new Array(this.context.minimum||1).fill("").map((function(e,r){return t.setId({},r)}))},formShouldShowErrors:function(){return this.context.formShouldShowErrors},groupErrors:function(){var t=this;return this.items.map((function(e,r){return p(t.context.groupErrors,r)?t.context.groupErrors[r]:{}}))}},watch:{providers:function(){this.formShouldShowErrors&&this.showErrors()},formShouldShowErrors:function(t){t&&this.showErrors()},items:{handler:function(t,e){n(t,e,!0)||(this.keys=t.map((function(t){return t.__id})))},immediate:!0}},created:function(){this.formulateRegisterRule(this.validateGroup.bind(this),[],"formulateGrouping",!0)},destroyed:function(){this.formulateRemoveRule("formulateGrouping")},methods:{validateGroup:function(){return Promise.all(this.providers.reduce((function(t,e){return e&&"function"==typeof e.hasValidationErrors&&t.push(e.hasValidationErrors()),t}),[])).then((function(t){return!t.some((function(t){return!!t}))}))},showErrors:function(){this.providers.forEach((function(t){return t&&"function"==typeof t.showErrors&&t.showErrors()}))},setItem:function(t,e){var r=this;Array.isArray(this.context.model)&&this.context.model.length>=this.context.minimum&&!this.context.model.__init?this.context.model.splice(t,1,this.setId(e,t)):this.context.model=this.items.map((function(o,i){return i===t?r.setId(e,t):o}))},removeItem:function(t){var e=this;Array.isArray(this.context.model)&&this.context.model.length>this.context.minimum?(this.context.model=this.context.model.filter((function(e,r){return r!==t&&e})),this.context.rootEmit("repeatableRemoved",this.context.model)):!Array.isArray(this.context.model)&&this.items.length>this.context.minimum&&(this.context.model=new Array(this.items.length-1).fill("").map((function(t,r){return e.setId({},r)})),this.context.rootEmit("repeatableRemoved",this.context.model))},registerProvider:function(t){this.providers.some((function(e){return e===t}))||this.providers.push(t)},deregisterProvider:function(t){this.providers=this.providers.filter((function(e){return e!==t}))},setId:function(t,e){return t.__id?t:h(t,this.keys[e])}}},ht=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("FormulateSlot",{class:t.context.classes.grouping,attrs:{name:"grouping",context:t.context,"force-wrap":t.context.repeatable}},t._l(t.items,(function(e,o){return r("FormulateRepeatableProvider",{key:e.__id,attrs:{index:o,context:t.context,uuid:e.__id,errors:t.groupErrors[o]},on:{remove:t.removeItem,input:function(e){return t.setItem(o,e)}}},[t._t("default")],2)})),1)};ht._withStripped=!0;var ft=T({render:ht,staticRenderFns:[]},void 0,pt,void 0,!1,void 0,!1,void 0,void 0,void 0),mt={props:{context:{type:Object,required:!0}}},vt=function(){var t=this.$createElement;return(this._self._c||t)("label",{class:this.context.classes.label,attrs:{id:this.context.id+"_label",for:this.context.id},domProps:{textContent:this._s(this.context.label)}})};vt._withStripped=!0;var xt=T({render:vt,staticRenderFns:[]},void 0,mt,void 0,!1,void 0,!1,void 0,void 0,void 0),yt={props:{context:{type:Object,required:!0},addMore:{type:Function,required:!0}}},gt=function(){var t=this.$createElement,e=this._self._c||t;return e("div",{class:this.context.classes.groupAddMore},[e("FormulateInput",{attrs:{type:"button",label:this.context.addLabel,"data-minor":"","data-ghost":""},on:{click:this.addMore}})],1)};gt._withStripped=!0;var bt=T({render:gt,staticRenderFns:[]},void 0,yt,void 0,!1,void 0,!1,void 0,void 0,void 0),Et={props:{context:{type:Object,required:!0}},computed:{type:function(){return this.context.type},attributes:function(){return this.context.attributes||{}},hasValue:function(){return this.context.hasValue}}},_t={name:"FormulateInputBox",mixins:[Et],computed:{usesDecorator:function(){return this.$formulate.options.useInputDecorators}}},Ft=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),"radio"===t.type?r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"radio"},domProps:{value:t.context.value,checked:t._q(t.context.model,t.context.value)},on:{blur:t.context.blurHandler,change:function(e){return t.$set(t.context,"model",t.context.value)}}},"input",t.attributes,!1),t.$listeners)):r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"checkbox"},domProps:{value:t.context.value,checked:Array.isArray(t.context.model)?t._i(t.context.model,t.context.value)>-1:t.context.model},on:{blur:t.context.blurHandler,change:function(e){var r=t.context.model,o=e.target,i=!!o.checked;if(Array.isArray(r)){var n=t.context.value,s=t._i(r,n);o.checked?s<0&&t.$set(t.context,"model",r.concat([n])):s>-1&&t.$set(t.context,"model",r.slice(0,s).concat(r.slice(s+1)))}else t.$set(t.context,"model",i)}}},"input",t.attributes,!1),t.$listeners)),t._v(" "),t.usesDecorator?r("label",{tag:"component",class:t.context.classes.decorator,attrs:{for:t.attributes.id}}):t._e(),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};Ft._withStripped=!0;var wt=T({render:Ft,staticRenderFns:[]},void 0,_t,void 0,!1,void 0,!1,void 0,void 0,void 0),Ot={props:{visibleErrors:{type:Array,required:!0},itemClass:{type:[String,Array,Object,Boolean],default:!1},outerClass:{type:[String,Array,Object,Boolean],default:!1},role:{type:[String],default:"status"},ariaLive:{type:[String,Boolean],default:"polite"},type:{type:String,required:!0}}},Pt=function(){var t=this,e=t.$createElement,r=t._self._c||e;return t.visibleErrors.length?r("ul",{class:t.outerClass},t._l(t.visibleErrors,(function(e){return r("li",{key:e,class:t.itemClass,attrs:{role:t.role,"aria-live":t.ariaLive},domProps:{textContent:t._s(e)}})})),0):t._e()};Pt._withStripped=!0;var Vt=T({render:Pt,staticRenderFns:[]},void 0,Ot,void 0,!1,void 0,!1,void 0,void 0,void 0),At={name:"FormulateInputText",mixins:[Et]},St=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),"checkbox"===t.type?r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"checkbox"},domProps:{checked:Array.isArray(t.context.model)?t._i(t.context.model,null)>-1:t.context.model},on:{blur:t.context.blurHandler,change:function(e){var r=t.context.model,o=e.target,i=!!o.checked;if(Array.isArray(r)){var n=t._i(r,null);o.checked?n<0&&t.$set(t.context,"model",r.concat([null])):n>-1&&t.$set(t.context,"model",r.slice(0,n).concat(r.slice(n+1)))}else t.$set(t.context,"model",i)}}},"input",t.attributes,!1),t.$listeners)):"radio"===t.type?r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"radio"},domProps:{checked:t._q(t.context.model,null)},on:{blur:t.context.blurHandler,change:function(e){return t.$set(t.context,"model",null)}}},"input",t.attributes,!1),t.$listeners)):r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:t.type},domProps:{value:t.context.model},on:{blur:t.context.blurHandler,input:function(e){e.target.composing||t.$set(t.context,"model",e.target.value)}}},"input",t.attributes,!1),t.$listeners)),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};St._withStripped=!0;var jt=T({render:St,staticRenderFns:[]},void 0,At,void 0,!1,void 0,!1,void 0,void 0,void 0),$t={name:"FormulateFiles",props:{files:{type:b,required:!0},imagePreview:{type:Boolean,default:!1},context:{type:Object,required:!0}},computed:{fileUploads:function(){return this.files.files||[]},isMultiple:function(){return p(this.context.attributes,"multiple")}},watch:{files:function(){this.imagePreview&&this.files.loadPreviews()}},mounted:function(){this.imagePreview&&this.files.loadPreviews()},methods:{appendFiles:function(){var t=this.$refs.addFiles;t.files.length&&this.files.mergeFileList(t)}}},Ct=function(){var t=this,e=t.$createElement,r=t._self._c||e;return t.fileUploads.length?r("ul",{class:t.context.classes.files},[t._l(t.fileUploads,(function(e){return r("li",{key:e.uuid,attrs:{"data-has-error":!!e.error,"data-has-preview":!(!t.imagePreview||!e.previewData)}},[r("FormulateSlot",{attrs:{name:"file",context:t.context,file:e,"image-preview":t.imagePreview}},[r(t.context.slotComponents.file,{tag:"component",attrs:{context:t.context,file:e,"image-preview":t.imagePreview}})],1),t._v(" "),e.error?r("div",{class:t.context.classes.fileUploadError,domProps:{textContent:t._s(e.error)}}):t._e()],1)})),t._v(" "),t.isMultiple&&t.context.addLabel?r("div",{class:t.context.classes.fileAdd,attrs:{role:"button"}},[t._v("\n    "+t._s(t.context.addLabel)+"\n    "),r("input",{ref:"addFiles",class:t.context.classes.fileAddInput,attrs:{type:"file",multiple:""},on:{change:t.appendFiles}})]):t._e()],2):t._e()};Ct._withStripped=!0;var kt={name:"FormulateInputFile",components:{FormulateFiles:T({render:Ct,staticRenderFns:[]},void 0,$t,void 0,!1,void 0,!1,void 0,void 0,void 0)},mixins:[Et],data:function(){return{isOver:!1}},computed:{hasFiles:function(){return!!(this.context.model instanceof b&&this.context.model.files.length)}},created:function(){Array.isArray(this.context.model)&&"string"==typeof this.context.model[0][this.$formulate.getFileUrlKey()]&&(this.context.model=this.$formulate.createUpload({files:this.context.model},this.context))},mounted:function(){window&&this.context.preventWindowDrops&&(window.addEventListener("dragover",this.preventDefault),window.addEventListener("drop",this.preventDefault))},destroyed:function(){window&&this.context.preventWindowDrops&&(window.removeEventListener("dragover",this.preventDefault),window.removeEventListener("drop",this.preventDefault))},methods:{preventDefault:function(t){"INPUT"!==t.target.tagName&&"file"!==t.target.getAttribute("type")&&(t=t||event).preventDefault()},handleFile:function(){var t=this;this.isOver=!1;var e=this.$refs.file;e.files.length&&(this.context.model=this.$formulate.createUpload(e,this.context),this.$nextTick((function(){return t.attemptImmediateUpload()})))},attemptImmediateUpload:function(){var t=this;"live"===this.context.uploadBehavior&&this.context.model instanceof b&&this.context.hasValidationErrors().then((function(e){e||t.context.model.upload()}))},handleDragOver:function(t){t.preventDefault(),this.isOver=!0},handleDragLeave:function(t){t.preventDefault(),this.isOver=!1}}},It=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type,"data-has-files":t.hasFiles}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),r("div",{class:t.context.classes.uploadArea,attrs:{"data-has-files":t.hasFiles}},[r("input",t._g(t._b({ref:"file",attrs:{"data-is-drag-hover":t.isOver,type:"file"},on:{blur:t.context.blurHandler,change:t.handleFile,dragover:t.handleDragOver,dragleave:t.handleDragLeave}},"input",t.attributes,!1),t.$listeners)),t._v(" "),r("FormulateSlot",{attrs:{name:"uploadAreaMask",context:t.context,"has-files":t.hasFiles}},[r(t.context.slotComponents.uploadAreaMask,{directives:[{name:"show",rawName:"v-show",value:!t.hasFiles,expression:"!hasFiles"}],tag:"component",class:t.context.classes.uploadAreaMask,attrs:{"has-files":"div"!==t.context.slotComponents.uploadAreaMask&&t.hasFiles,"data-has-files":"div"===t.context.slotComponents.uploadAreaMask&&t.hasFiles}})],1),t._v(" "),t.hasFiles?r("FormulateFiles",{attrs:{files:t.context.model,"image-preview":"image"===t.context.type&&"preview"===t.context.imageBehavior,context:t.context}}):t._e()],1),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};It._withStripped=!0;var Rt=T({render:It,staticRenderFns:[]},void 0,kt,void 0,!1,void 0,!1,void 0,void 0,void 0),Dt={props:{context:{type:Object,required:!0},removeItem:{type:Function,required:!0},index:{type:Number,required:!0}}},Lt=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.groupRepeatable},["after"===t.context.removePosition?t._t("default"):t._e(),t._v(" "),r("FormulateSlot",{attrs:{name:"remove",context:t.context,index:t.index,"remove-item":t.removeItem}},[r(t.context.slotComponents.remove,t._b({tag:"component",attrs:{context:t.context,index:t.index,"remove-item":t.removeItem}},"component",t.context.slotProps.remove,!1))],1),t._v(" "),"before"===t.context.removePosition?t._t("default"):t._e()],2)};Lt._withStripped=!0;var Nt=T({render:Lt,staticRenderFns:[]},void 0,Dt,void 0,!1,void 0,!1,void 0,void 0,void 0);function Mt(t,e){var r={};for(var o in t)Object.prototype.hasOwnProperty.call(t,o)&&-1===e.indexOf(o)&&(r[o]=t[o]);return r}var Bt={name:"FormulateInputGroup",props:{context:{type:Object,required:!0}},computed:{options:function(){return this.context.options||[]},subType:function(){return"group"===this.context.type?"grouping":"inputs"},optionsWithContext:function(){var t=this,e=this.context,r=e.attributes,o=(r.id,Mt(r,["id"])),i=(e.blurHandler,e.classification,e.component,e.getValidationErrors,e.hasLabel,e.hasValidationErrors,e.isSubField,e.isValid,e.labelPosition,e.options,e.performValidation,e.setErrors,e.slotComponents,e.slotProps,e.validationErrors,e.visibleValidationErrors,e.classes,e.showValidationErrors,e.rootEmit,e.help,e.pseudoProps,e.rules,e.model,Mt(e,["attributes","blurHandler","classification","component","getValidationErrors","hasLabel","hasValidationErrors","isSubField","isValid","labelPosition","options","performValidation","setErrors","slotComponents","slotProps","validationErrors","visibleValidationErrors","classes","showValidationErrors","rootEmit","help","pseudoProps","rules","model"]));return this.options.map((function(e){return t.groupItemContext(i,e,o)}))},totalItems:function(){return Array.isArray(this.context.model)&&this.context.model.length>this.context.minimum?this.context.model.length:this.context.minimum||1},canAddMore:function(){return this.context.repeatable&&this.totalItems<this.context.limit},labelledBy:function(){return this.context.label&&this.context.id+"_label"}},methods:{addItem:function(){if(Array.isArray(this.context.model))for(var t=this.context.minimum-this.context.model.length+1,e=Math.max(t,1),r=0;r<e;r++)this.context.model.push(h({}));else this.context.model=new Array(this.totalItems+1).fill("").map((function(){return h({})}));this.context.rootEmit("repeatableAdded",this.context.model)},groupItemContext:function(t,e,r){return Object.assign({},t,e,r,{isGrouped:!0},t.hasGivenName?{}:{name:!0})}}},Ut=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-is-repeatable":t.context.repeatable,role:"group","aria-labelledby":t.labelledBy}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),"grouping"!==t.subType?t._l(t.optionsWithContext,(function(e){return r("FormulateInput",t._b({key:e.id,staticClass:"formulate-input-group-item",attrs:{"disable-errors":!0,"prevent-deregister":!0},on:{blur:t.context.blurHandler},model:{value:t.context.model,callback:function(e){t.$set(t.context,"model",e)},expression:"context.model"}},"FormulateInput",e,!1))})):[r("FormulateGrouping",{attrs:{context:t.context}},[t._t("default")],2),t._v(" "),t.canAddMore?r("FormulateSlot",{attrs:{name:"addmore",context:t.context,"add-more":t.addItem}},[r(t.context.slotComponents.addMore,t._b({tag:"component",attrs:{context:t.context,"add-more":t.addItem},on:{add:t.addItem}},"component",t.context.slotProps.addMore,!1))],1):t._e()],t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],2)};Ut._withStripped=!0;var Gt=T({render:Ut,staticRenderFns:[]},void 0,Bt,void 0,!1,void 0,!1,void 0,void 0,void 0),Tt={name:"FormulateInputButton",mixins:[Et]},qt=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),r("button",t._g(t._b({attrs:{type:t.type}},"button",t.attributes,!1),t.$listeners),[t._t("default",[r(t.context.slotComponents.buttonContent,{tag:"component",attrs:{context:t.context}})],{context:t.context})],2),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};qt._withStripped=!0;var Ht=T({render:qt,staticRenderFns:[]},void 0,Tt,void 0,!1,void 0,!1,void 0,void 0,void 0),Wt={name:"FormulateInputSelect",mixins:[Et],computed:{options:function(){return this.context.options||{}},optionGroups:function(){return this.context.optionGroups||!1},placeholderSelected:function(){return!(this.hasValue||!this.context.attributes||!this.context.attributes.placeholder)}}},Yt=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type,"data-multiple":t.attributes&&void 0!==t.attributes.multiple}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),r("select",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{"data-placeholder-selected":t.placeholderSelected},on:{blur:t.context.blurHandler,change:function(e){var r=Array.prototype.filter.call(e.target.options,(function(t){return t.selected})).map((function(t){return"_value"in t?t._value:t.value}));t.$set(t.context,"model",e.target.multiple?r:r[0])}}},"select",t.attributes,!1),t.$listeners),[t.context.placeholder?r("option",{attrs:{value:"",hidden:"hidden",disabled:""},domProps:{selected:!t.hasValue}},[t._v("\n      "+t._s(t.context.placeholder)+"\n    ")]):t._e(),t._v(" "),t.optionGroups?t._l(t.optionGroups,(function(e,o){return r("optgroup",{key:o,attrs:{label:o}},t._l(e,(function(e){return r("option",t._b({key:e.id,attrs:{disabled:!!e.disabled},domProps:{value:e.value,textContent:t._s(e.label)}},"option",e.attributes||e.attrs||{},!1))})),0)})):t._l(t.options,(function(e){return r("option",t._b({key:e.id,attrs:{disabled:!!e.disabled},domProps:{value:e.value,textContent:t._s(e.label)}},"option",e.attributes||e.attrs||{},!1))}))],2),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};Yt._withStripped=!0;var zt=T({render:Yt,staticRenderFns:[]},void 0,Wt,void 0,!1,void 0,!1,void 0,void 0,void 0),Kt={name:"FormulateInputSlider",mixins:[Et]},Zt=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":t.context.type}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),"checkbox"===t.type?r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"checkbox"},domProps:{checked:Array.isArray(t.context.model)?t._i(t.context.model,null)>-1:t.context.model},on:{blur:t.context.blurHandler,change:function(e){var r=t.context.model,o=e.target,i=!!o.checked;if(Array.isArray(r)){var n=t._i(r,null);o.checked?n<0&&t.$set(t.context,"model",r.concat([null])):n>-1&&t.$set(t.context,"model",r.slice(0,n).concat(r.slice(n+1)))}else t.$set(t.context,"model",i)}}},"input",t.attributes,!1),t.$listeners)):"radio"===t.type?r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:"radio"},domProps:{checked:t._q(t.context.model,null)},on:{blur:t.context.blurHandler,change:function(e){return t.$set(t.context,"model",null)}}},"input",t.attributes,!1),t.$listeners)):r("input",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],attrs:{type:t.type},domProps:{value:t.context.model},on:{blur:t.context.blurHandler,input:function(e){e.target.composing||t.$set(t.context,"model",e.target.value)}}},"input",t.attributes,!1),t.$listeners)),t._v(" "),t.context.showValue?r("div",{class:t.context.classes.rangeValue,domProps:{textContent:t._s(t.context.model)}}):t._e(),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};Zt._withStripped=!0;var Jt=T({render:Zt,staticRenderFns:[]},void 0,Kt,void 0,!1,void 0,!1,void 0,void 0,void 0),Xt={props:{context:{type:Object,required:!0}}},Qt=function(){var t=this.$createElement;return(this._self._c||t)("span",{class:"formulate-input-element--"+this.context.type+"--label",domProps:{textContent:this._s(this.context.value||this.context.label||this.context.name||"Submit")}})};Qt._withStripped=!0;var te=T({render:Qt,staticRenderFns:[]},void 0,Xt,void 0,!1,void 0,!1,void 0,void 0,void 0),ee={name:"FormulateInputTextArea",mixins:[Et]},re=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("div",{class:t.context.classes.element,attrs:{"data-type":"textarea"}},[r("FormulateSlot",{attrs:{name:"prefix",context:t.context}},[t.context.slotComponents.prefix?r(t.context.slotComponents.prefix,{tag:"component",attrs:{context:t.context}}):t._e()],1),t._v(" "),r("textarea",t._g(t._b({directives:[{name:"model",rawName:"v-model",value:t.context.model,expression:"context.model"}],domProps:{value:t.context.model},on:{blur:t.context.blurHandler,input:function(e){e.target.composing||t.$set(t.context,"model",e.target.value)}}},"textarea",t.attributes,!1),t.$listeners)),t._v(" "),r("FormulateSlot",{attrs:{name:"suffix",context:t.context}},[t.context.slotComponents.suffix?r(t.context.slotComponents.suffix,{tag:"component",attrs:{context:t.context}}):t._e()],1)],1)};re._withStripped=!0;var oe=T({render:re,staticRenderFns:[]},void 0,ee,void 0,!1,void 0,!1,void 0,void 0,void 0),ie={provide:function(){var t=this;return Object.assign({},U(this,["getFormValues"]),{formulateSetter:function(e,r){return t.setGroupValue(e,r)}})},inject:{registerProvider:"registerProvider",deregisterProvider:"deregisterProvider"},props:{index:{type:Number,required:!0},context:{type:Object,required:!0},uuid:{type:String,required:!0},errors:{type:Object,required:!0}},data:function(){return Object.assign({},N(this),{isGrouping:!0})},computed:Object.assign({},M(),{mergedFieldErrors:function(){return this.errors}}),watch:Object.assign({},{mergedFieldErrors:{handler:function(t){this.errorObservers.filter((function(t){return"input"===t.type})).forEach((function(e){return e.callback(t[e.field]||[])}))},immediate:!0},mergedGroupErrors:{handler:function(t){this.errorObservers.filter((function(t){return"group"===t.type})).forEach((function(e){return e.callback(t[e.field]||{})}))},immediate:!0}},{"context.model":{handler:function(t){n(t[this.index],this.proxy,!0)||this.setValues(t[this.index])},deep:!0}}),created:function(){this.applyInitialValues(),this.registerProvider(this)},beforeDestroy:function(){this.preventCleanup=!0,this.deregisterProvider(this)},methods:Object.assign({},B(),{setGroupValue:function(t,e){n(this.proxy[t],e,!0)||this.setFieldValue(t,e)},removeItem:function(){this.$emit("remove",this.index)}})},ne=function(){var t=this,e=t.$createElement,r=t._self._c||e;return r("FormulateSlot",{attrs:{name:"repeatable",context:t.context,index:t.index,"remove-item":t.removeItem}},[r(t.context.slotComponents.repeatable,t._b({tag:"component",attrs:{context:t.context,index:t.index,"remove-item":t.removeItem}},"component",t.context.slotProps.repeatable,!1),[r("FormulateSlot",{attrs:{context:t.context,index:t.index,name:"default"}})],1)],1)};ne._withStripped=!0;var se=T({render:ne,staticRenderFns:[]},void 0,ie,void 0,!1,void 0,!1,void 0,void 0,void 0),ae={props:{index:{type:Number,default:null},context:{type:Object,required:!0},removeItem:{type:Function,required:!0}}},le=function(){var t=this,e=t.$createElement,r=t._self._c||e;return t.context.repeatable?r("a",{class:t.context.classes.groupRepeatableRemove,attrs:{"data-disabled":t.context.model.length<=t.context.minimum,role:"button"},domProps:{textContent:t._s(t.context.removeLabel)},on:{click:function(e){return e.preventDefault(),t.removeItem(e)},keypress:function(e){return!e.type.indexOf("key")&&t._k(e.keyCode,"enter",13,e.key,"Enter")?null:t.removeItem(e)}}}):t._e()};le._withStripped=!0;var ue=T({render:le,staticRenderFns:[]},void 0,ae,void 0,!1,void 0,!1,void 0,void 0,void 0),ce=function(){this.options={},this.defaults={components:{FormulateSlot:k,FormulateForm:W,FormulateFile:dt,FormulateHelp:lt,FormulateLabel:xt,FormulateInput:rt,FormulateErrors:nt,FormulateSchema:R,FormulateAddMore:bt,FormulateGrouping:ft,FormulateInputBox:wt,FormulateInputText:jt,FormulateInputFile:Rt,FormulateErrorList:Vt,FormulateRepeatable:Nt,FormulateInputGroup:Gt,FormulateInputButton:Ht,FormulateInputSelect:zt,FormulateInputSlider:Jt,FormulateButtonContent:te,FormulateInputTextArea:oe,FormulateRepeatableRemove:ue,FormulateRepeatableProvider:se},slotComponents:{addMore:"FormulateAddMore",buttonContent:"FormulateButtonContent",errorList:"FormulateErrorList",errors:"FormulateErrors",file:"FormulateFile",help:"FormulateHelp",label:"FormulateLabel",prefix:!1,remove:"FormulateRepeatableRemove",repeatable:"FormulateRepeatable",suffix:!1,uploadAreaMask:"div"},slotProps:{},library:o,rules:_,mimes:w,locale:!1,uploader:$,uploadUrl:!1,fileUrlKey:"url",uploadJustCompleteDuration:1e3,errorHandler:function(t){return t},plugins:[e.en],locales:{},failedValidation:function(){return!1},idPrefix:"formulate-",baseClasses:function(t){return t},coreClasses:j,classes:{},useInputDecorators:!0,validationNameStrategy:!1},this.registry=new Map,this.idRegistry={}};return ce.prototype.install=function(t,e){var r=this;t.prototype.$formulate=this,this.options=this.defaults;var o=this.defaults.plugins;for(var i in e&&Array.isArray(e.plugins)&&e.plugins.length&&(o=o.concat(e.plugins)),o.forEach((function(t){return"function"==typeof t?t(r):null})),this.extend(e||{}),this.options.components)t.component(i,this.options.components[i])},ce.prototype.nextId=function(t){var e=!(!t.$route||!t.$route.path)&&t.$route.path?t.$route.path.replace(/[/\\.\s]/g,"-"):"global";return Object.prototype.hasOwnProperty.call(this.idRegistry,e)||(this.idRegistry[e]=0),""+this.options.idPrefix+e+"-"+ ++this.idRegistry[e]},ce.prototype.extend=function(t){if("object"==typeof t)return this.options=this.merge(this.options,t),this;throw new Error("Formulate.extend expects an object, was "+typeof t)},ce.prototype.merge=function(e,r,o){void 0===o&&(o=!0);var i={};for(var n in e)r.hasOwnProperty(n)?t(r[n])&&t(e[n])?i[n]=this.merge(e[n],r[n],o):o&&Array.isArray(e[n])&&Array.isArray(r[n])?i[n]=e[n].concat(r[n]):i[n]=r[n]:i[n]=e[n];for(var s in r)i.hasOwnProperty(s)||(i[s]=r[s]);return i},ce.prototype.classify=function(t){return this.options.library.hasOwnProperty(t)?this.options.library[t].classification:"unknown"},ce.prototype.classes=function(t){var e=this,r=this.options.coreClasses(t),o=this.options.baseClasses(r,t);return Object.keys(o).reduce((function(r,i){var n,s=S(o[i],e.options.classes[i],t);return s=function(t,e,r,o){return Object.keys(P).reduce((function(e,i){if(P[i](o)){var n=""+t+a(i),s=n+"Class";if(r[n])e=S(e,"string"==typeof r[n]?l(r[n]):r[n],o);if(o[s])e=S(e,"string"==typeof o[s]?l(o[s]):o[n+"Class"],o)}return e}),e)}(i,s=S(s,t[i+"Class"],t),e.options.classes,t),Object.assign(r,((n={})[i]=s,n))}),{})},ce.prototype.typeProps=function(t){var e=function(t){return Object.keys(t).reduce((function(e,r){return Array.isArray(t[r])?e.concat(t[r]):e}),[])},r=e(this.options.slotProps);return this.options.library[t]?r.concat(e(this.options.library[t].slotProps||{})):r},ce.prototype.slotProps=function(t,e,r){var o=Array.isArray(this.options.slotProps[e])?this.options.slotProps[e]:[],i=this.options.library[t];return i&&i.slotProps&&Array.isArray(i.slotProps[e])&&(o=o.concat(i.slotProps[e])),o.reduce((function(t,e){var o;return Object.assign(t,((o={})[e]=r[e],o))}),{})},ce.prototype.component=function(t){return!!this.options.library.hasOwnProperty(t)&&this.options.library[t].component},ce.prototype.slotComponent=function(t,e){var r=this.options.library[t];return r&&r.slotComponents&&r.slotComponents[e]?r.slotComponents[e]:this.options.slotComponents[e]},ce.prototype.rules=function(t){return void 0===t&&(t={}),Object.assign({},this.options.rules,t)},ce.prototype.i18n=function(t){if(t.$i18n)switch(typeof t.$i18n.locale){case"string":return t.$i18n.locale;case"function":return t.$i18n.locale()}return!1},ce.prototype.getLocale=function(t){var e=this;return this.selectedLocale||(this.selectedLocale=[this.options.locale,this.i18n(t),"en"].reduce((function(t,r){if(t)return t;if(r){var o=function(t){return t.split("-").reduce((function(t,e){return t.length&&t.unshift(t[0]+"-"+e),t.length?t:[e]}),[])}(r).find((function(t){return p(e.options.locales,t)}));o&&(t=o)}return t}),!1)),this.selectedLocale},ce.prototype.setLocale=function(t){p(this.options.locales,t)&&(this.options.locale=t,this.selectedLocale=t,this.registry.forEach((function(t,e){t.hasValidationErrors()})))},ce.prototype.validationMessage=function(t,e,r){var o=this.options.locales[this.getLocale(r)];return o.hasOwnProperty(t)?o[t](e):o.hasOwnProperty("default")?o.default(e):"Invalid field value"},ce.prototype.register=function(t){"FormulateForm"===t.$options.name&&t.name&&this.registry.set(t.name,t)},ce.prototype.deregister=function(t){"FormulateForm"===t.$options.name&&t.name&&this.registry.has(t.name)&&this.registry.delete(t.name)},ce.prototype.handle=function(t,e,r){void 0===r&&(r=!1);var o=r?t:this.options.errorHandler(t,e);return e&&this.registry.has(e)&&this.registry.get(e).applyErrors({formErrors:l(o.formErrors),inputErrors:o.inputErrors||{}}),o},ce.prototype.reset=function(t,e){void 0===e&&(e={}),this.resetValidation(t),this.setValues(t,e)},ce.prototype.submit=function(t){this.registry.get(t).formSubmitted()},ce.prototype.resetValidation=function(t){var e=this.registry.get(t);e.hideErrors(t),e.namedErrors=[],e.namedFieldErrors={}},ce.prototype.setValues=function(t,e){e&&!Array.isArray(e)&&"object"==typeof e&&this.registry.get(t).setValues(Object.assign({},e))},ce.prototype.getUploader=function(){return this.options.uploader||!1},ce.prototype.getUploadUrl=function(){return this.options.uploadUrl||!1},ce.prototype.getFileUrlKey=function(){return this.options.fileUrlKey||"url"},ce.prototype.createUpload=function(t,e){return new b(t,e,this.options)},ce.prototype.failedValidation=function(t){return this.options.failedValidation(this)},new ce}));
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('is-plain-object'), require('@braid/vue-formulate-i18n'), require('vue')) :
+  typeof define === 'function' && define.amd ? define(['is-plain-object', '@braid/vue-formulate-i18n', 'vue'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Formulate = factory(global.isPlainObject, global.VueFormulateI18n, global.Vue));
+})(this, (function (isPlainObject, vueFormulateI18n, vue) { 'use strict';
+
+  /**
+   * library.js
+   *
+   * Note: We're shipping front end code here, file size is critical. This file is
+   * overly terse for that reason alone, we wouldn't necessarily recommend this.
+   */
+  var fi = 'FormulateInput';
+  var add = function (n, c) { return ({
+    classification: n,
+    component: fi + (c || (n[0].toUpperCase() + n.substr(1)))
+  }); };
+  var library = Object.assign({}, [
+      'text',
+      'email',
+      'number',
+      'color',
+      'date',
+      'hidden',
+      'month',
+      'password',
+      'search',
+      'tel',
+      'time',
+      'url',
+      'week',
+      'datetime-local'
+    ].reduce(function (lib, type) {
+      var obj;
+
+      return (Object.assign({}, lib, ( obj = {}, obj[type] = add('text'), obj )));
+  }, {}),
+
+    // === SLIDER INPUTS
+    {range: add('slider'),
+
+    // === MULTI LINE TEXT INPUTS
+    textarea: add('textarea', 'TextArea'),
+
+    // === BOX STYLE INPUTS
+    checkbox: add('box'),
+    radio: add('box'),
+
+    // === BUTTON STYLE INPUTS
+    submit: add('button'),
+    button: add('button'),
+
+    // === SELECT STYLE INPUTS
+    select: add('select'),
+
+    // === FILE TYPE
+    file: add('file'),
+    image: add('file'),
+
+    // === GROUP TYPE
+    group: add('group')});
+
+  /**
+   * Function to map over an object.
+   * @param {Object} obj An object to map over
+   * @param {Function} callback
+   */
+  function map (original, callback) {
+    var obj = {};
+    for (var key in original) {
+      obj[key] = callback(key, original[key]);
+    }
+    return obj
+  }
+
+  /**
+   * Shallow equal.
+   * @param {} objA
+   * @param {*} objB
+   */
+  function equals (objA, objB, deep) {
+    if ( deep === void 0 ) deep = false;
+
+    if (objA === objB) {
+      return true
+    }
+    if (!objA || !objB) {
+      return false
+    }
+    if (typeof objA !== 'object' && typeof objB !== 'object') {
+      // Compare scalar values
+      return objA === objB
+    }
+    var aKeys = Object.keys(objA);
+    var bKeys = Object.keys(objB);
+    var len = aKeys.length;
+
+    if (bKeys.length !== len) {
+      return false
+    }
+
+    for (var i = 0; i < len; i++) {
+      var key = aKeys[i];
+      if ((!deep && objA[key] !== objB[key]) || (deep && !equals(objA[key], objB[key], deep))) {
+        return false
+      }
+    }
+    return true
+  }
+
+  /**
+   * Given a string, convert snake_case to camelCase
+   * @param {String} string
+   */
+  function camel (string) {
+    if (typeof string === 'string') {
+      return string.replace(/([_-][a-z0-9])/ig, function ($1) {
+        if (string.indexOf($1) !== 0 && !/[_-]/.test(string[string.indexOf($1) - 1])) {
+          return $1.toUpperCase().replace(/[_-]/, '')
+        }
+        return $1
+      })
+    }
+    return string
+  }
+
+  /**
+   * Given a string, capitalize it. happyDay => HappyDay
+   * @param {string} str
+   */
+  function cap (str) {
+    return typeof str === 'string' ? str[0].toUpperCase() + str.substr(1) : str
+  }
+
+  /**
+   * Given a string, object, falsey, or array - return an array.
+   * @param {mixed} item
+   */
+  function arrayify (item) {
+    if (!item) {
+      return []
+    }
+    if (typeof item === 'string') {
+      return [item]
+    }
+    if (Array.isArray(item)) {
+      return item
+    }
+    if (typeof item === 'object') {
+      return Object.values(item)
+    }
+    return []
+  }
+
+  /**
+   * Given an array or string return an array of callables.
+   * @param {array|string} validation
+   * @param {array} rules and array of functions
+   * @return {array} an array of functions
+   */
+  function parseRules (validation, rules) {
+    if (typeof validation === 'string') {
+      return parseRules(validation.split('|'), rules)
+    }
+    if (!Array.isArray(validation)) {
+      return []
+    }
+    return validation.map(function (rule) { return parseRule(rule, rules); }).filter(function (f) { return !!f; })
+  }
+
+  /**
+   * Given a string or function, parse it and return an array in the format
+   * [fn, [...arguments]]
+   * @param {string|function} rule
+   */
+  function parseRule (rule, rules) {
+    if (typeof rule === 'function') {
+      return [rule, []]
+    }
+    if (Array.isArray(rule) && rule.length) {
+      rule = rule.map(function (r) { return r; }); // light clone
+      var ref = parseModifier(rule.shift());
+      var ruleName = ref[0];
+      var modifier = ref[1];
+      if (typeof ruleName === 'string' && rules.hasOwnProperty(ruleName)) {
+        return [rules[ruleName], rule, ruleName, modifier]
+      }
+      if (typeof ruleName === 'function') {
+        return [ruleName, rule, ruleName, modifier]
+      }
+    }
+    if (typeof rule === 'string' && rule) {
+      var segments = rule.split(':');
+      var ref$1 = parseModifier(segments.shift());
+      var ruleName$1 = ref$1[0];
+      var modifier$1 = ref$1[1];
+      if (rules.hasOwnProperty(ruleName$1)) {
+        return [rules[ruleName$1], segments.length ? segments.join(':').split(',') : [], ruleName$1, modifier$1]
+      } else {
+        throw new Error(("Unknown validation rule " + rule))
+      }
+    }
+    return false
+  }
+
+  /**
+   * Return the rule name with the applicable modifier as an array.
+   * @param {string} ruleName
+   * @return {array} [ruleName, modifier]
+   */
+  function parseModifier (ruleName) {
+    if (/^[\^]/.test(ruleName.charAt(0))) {
+      return [camel(ruleName.substr(1)), ruleName.charAt(0)]
+    }
+    return [camel(ruleName), null]
+  }
+
+  /**
+   * Given an array of rules, group them by bail signals. For example for this:
+   * bail|required|min:10|max:20
+   * we would expect:
+   * [[required], [min], [max]]
+   * because any sub-array failure would cause a shutdown. While
+   * ^required|min:10|max:10
+   * would return:
+   * [[required], [min, max]]
+   * and no bailing would produce:
+   * [[required, min, max]]
+   * @param {array} rules
+   */
+  function groupBails (rules) {
+    var groups = [];
+    var bailIndex = rules.findIndex(function (ref) {
+      var rule = ref[2];
+
+      return rule.toLowerCase() === 'bail';
+    });
+    var optionalIndex = rules.findIndex(function (ref) {
+      var rule = ref[2];
+
+      return rule.toLowerCase() === 'optional';
+    });
+    if (optionalIndex >= 0) {
+      var rule = rules.splice(optionalIndex, 1);
+      groups.push(Object.defineProperty(rule, 'bail', { value: true }));
+    }
+    if (bailIndex >= 0) {
+      // Get all the rules until the first bail rule (dont include the bail)
+      var preBail = rules.splice(0, bailIndex + 1).slice(0, -1);
+      // Rules before the `bail` rule are non-bailing
+      preBail.length && groups.push(preBail);
+      // All remaining rules are bailing rule groups
+      rules.map(function (rule) { return groups.push(Object.defineProperty([rule], 'bail', { value: true })); });
+    } else {
+      groups.push(rules);
+    }
+
+    return groups.reduce(function (groups, group) {
+      // Recursively split rules into groups based on the modifiers.
+      var splitByMod = function (group, bailGroup) {
+        if ( bailGroup === void 0 ) bailGroup = false;
+
+        if (group.length < 2) {
+          return Object.defineProperty([group], 'bail', { value: bailGroup })
+        }
+        var splits = [];
+        var modIndex = group.findIndex(function (ref) {
+          var modifier = ref[3];
+
+          return modifier === '^';
+        });
+        if (modIndex >= 0) {
+          var preMod = group.splice(0, modIndex);
+          // rules before the modifier are non-bailing rules.
+          preMod.length && splits.push.apply(splits, splitByMod(preMod, bailGroup));
+          splits.push(Object.defineProperty([group.shift()], 'bail', { value: true }));
+          // rules after the modifier are non-bailing rules.
+          group.length && splits.push.apply(splits, splitByMod(group, bailGroup));
+        } else {
+          splits.push(group);
+        }
+        return splits
+      };
+      return groups.concat(splitByMod(group))
+    }, [])
+  }
+
+  /**
+   * Escape a string for use in regular expressions.
+   * @param {string} string
+   */
+  function escapeRegExp (string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  }
+
+  /**
+   * Given a string format (date) return a regex to match against.
+   * @param {string} format
+   */
+  function regexForFormat (format) {
+    var escaped = "^" + (escapeRegExp(format)) + "$";
+    var formats = {
+      MM: '(0[1-9]|1[012])',
+      M: '([1-9]|1[012])',
+      DD: '([012][0-9]|3[01])',
+      D: '([012]?[0-9]|3[01])',
+      YYYY: '\\d{4}',
+      YY: '\\d{2}'
+    };
+    return new RegExp(Object.keys(formats).reduce(function (regex, format) {
+      return regex.replace(format, formats[format])
+    }, escaped))
+  }
+
+  /**
+   * Given a locale string, parse the options.
+   * @param {string} locale
+   */
+  function parseLocale (locale) {
+    var segments = locale.split('-');
+    return segments.reduce(function (options, segment) {
+      if (options.length) {
+        options.unshift(((options[0]) + "-" + segment));
+      }
+      return options.length ? options : [segment]
+    }, [])
+  }
+
+  /**
+   * Shorthand for Object.prototype.hasOwnProperty.call (space saving)
+   */
+  function has (ctx, prop) {
+    return Object.prototype.hasOwnProperty.call(ctx, prop)
+  }
+
+  /**
+   * Set a unique Symbol identifier on an object.
+   * @param {object} o
+   * @param {Symbol} id
+   */
+  function setId (o, id) {
+    if (!has(o, '__id') || id) {
+      return Object.defineProperty(o, '__id', Object.assign(Object.create(null), { value: id || token(9) }))
+    }
+    return o
+  }
+
+  /**
+   * Determines if a given value is considered "empty"
+   * @param {any} value
+   */
+  function isEmpty (value) {
+    if (typeof value === 'number') {
+      return false
+    }
+    return (
+      value === undefined ||
+      value === '' ||
+      value === null ||
+      value === false ||
+      (
+        Array.isArray(value) && !value.some(function (v) { return !isEmpty(v); })
+      ) ||
+      (
+        (value && !Array.isArray(value) && typeof value === 'object' && isEmpty(Object.values(value)))
+      )
+    )
+  }
+
+  /**
+   * Extract a set of attributes.
+   * @param {object} obj object to extract from
+   * @param {array} array of keys to extract
+   */
+  function extractAttributes (obj, keys) {
+    return Object.keys(obj).reduce(function (props, key) {
+      var propKey = camel(key);
+      if (keys.includes(propKey)) {
+        props[propKey] = obj[key];
+      }
+      return props
+    }, {})
+  }
+
+  /**
+   * Create a hash of a given string.
+   * Credit: https://stackoverflow.com/questions/7616461/generate-a-hash-from-string-in-javascript#answer-52171480
+   *
+   * @param {string} str
+   * @param {int} seed
+   */
+  function cyrb43 (str, seed) {
+    if ( seed === void 0 ) seed = 0;
+
+    var h1 = 0xdeadbeef ^ seed;
+    var h2 = 0x41c6ce57 ^ seed;
+    for (var i = 0, ch = (void 0); i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0)
+  }
+  /**
+   * Create a new debouncer — will debounce any function calls.
+   */
+  function createDebouncer () {
+    var timeout;
+    return function debounceFn (fn, args, delay) {
+      var this$1$1 = this;
+
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+      timeout = setTimeout(function () { return fn.call.apply(fn, [ this$1$1 ].concat( args )); }, delay);
+    }
+  }
+
+  /**
+   * Creates a unique id of a given length.
+   * @param {number} length
+   * @returns
+   */
+  function token (length) {
+    if ( length === void 0 ) length = 13;
+
+    return Math.random().toString(36).substring(2, length + 2)
+  }
+
+  var protocolAndDomainRE = /^(?:\w+:)?\/\/(\S+)$/;
+
+  var localhostDomainRE = /^localhost[:?\d]*(?:[^:?\d]\S*)?$/;
+  var nonLocalhostDomainRE = /^[^\s.]+\.\S{2,}$/;
+
+  /**
+   * Loosely validate a URL `string`.
+   *
+   * Credit: https://github.com/segmentio/is-url
+   *
+   * @param {String} string
+   * @return {Boolean}
+   */
+
+  function isUrl (string) {
+    if (typeof string !== 'string') {
+      return false
+    }
+
+    var match = string.match(protocolAndDomainRE);
+    if (!match) {
+      return false
+    }
+
+    var everythingAfterProtocol = match[1];
+    if (!everythingAfterProtocol) {
+      return false
+    }
+
+    if (localhostDomainRE.test(everythingAfterProtocol) ||
+        nonLocalhostDomainRE.test(everythingAfterProtocol)) {
+      return true
+    }
+
+    return false
+  }
+
+  /**
+   * The file upload class holds and represents a file’s upload state durring
+   * the upload flow.
+   */
+  var FileUpload = function FileUpload (input, context, globalOptions) {
+    if ( globalOptions === void 0 ) globalOptions = {};
+
+    this.input = input;
+    this.fileList = input.files;
+    this.files = [];
+    this.options = Object.assign({}, {mimes: {}},
+      globalOptions);
+    this.results = false;
+    this.context = context;
+    this.dataTransferCheck();
+    if (context && context.uploadUrl) {
+      this.options.uploadUrl = context.uploadUrl;
+    }
+    this.uploadPromise = null;
+    if (Array.isArray(this.fileList)) {
+      this.rehydrateFileList(this.fileList);
+    } else {
+      this.addFileList(this.fileList);
+    }
+  };
+
+  /**
+   * Given a pre-existing array of files, create a faux FileList.
+   * @param {array} items expects an array of objects [{ url: '/uploads/file.pdf' }]
+   * @param {string} pathKey the object-key to access the url (defaults to "url")
+   */
+  FileUpload.prototype.rehydrateFileList = function rehydrateFileList (items) {
+      var this$1$1 = this;
+
+    var fauxFileList = items.reduce(function (fileList, item) {
+      var key = this$1$1.options ? this$1$1.options.fileUrlKey : 'url';
+      var url = item[key];
+      var ext = (url && url.lastIndexOf('.') !== -1) ? url.substr(url.lastIndexOf('.') + 1) : false;
+      var mime = this$1$1.options.mimes[ext] || false;
+      fileList.push(Object.assign({}, item, url ? {
+        name: item.name || url.substr((url.lastIndexOf('/') + 1) || 0),
+        type: item.type ? item.type : mime,
+        previewData: url
+      } : {}));
+      return fileList
+    }, []);
+    this.addFileList(fauxFileList);
+    this.results = this.mapUUID(items);
+  };
+
+  /**
+   * Produce an array of files and alert the callback.
+   * @param {FileList}
+   */
+  FileUpload.prototype.addFileList = function addFileList (fileList) {
+      var this$1$1 = this;
+
+    var loop = function ( i ) {
+      var file = fileList[i];
+      var uuid = token();
+      var removeFile = function () {
+        this.removeFile(uuid);
+      };
+      this$1$1.files.push({
+        progress: false,
+        error: false,
+        complete: false,
+        justFinished: false,
+        name: file.name || 'file-upload',
+        file: file,
+        uuid: uuid,
+        path: false,
+        removeFile: removeFile.bind(this$1$1),
+        previewData: file.previewData || false
+      });
+    };
+
+      for (var i = 0; i < fileList.length; i++) loop( i );
+  };
+
+  /**
+   * Check if the file has an.
+   */
+  FileUpload.prototype.hasUploader = function hasUploader () {
+    return !!this.context.uploader
+  };
+
+  /**
+   * Check if the given uploader is axios instance. This isn't a great way of
+   * testing if it is or not, but AFIK there isn't a better way right now:
+   *
+   * https://github.com/axios/axios/issues/737
+   */
+  FileUpload.prototype.uploaderIsAxios = function uploaderIsAxios () {
+    if (
+      this.hasUploader() &&
+      typeof this.context.uploader.request === 'function' &&
+      typeof this.context.uploader.get === 'function' &&
+      typeof this.context.uploader.delete === 'function' &&
+      typeof this.context.uploader.post === 'function'
+    ) {
+      return true
+    }
+    return false
+  };
+
+  /**
+   * Get a new uploader function.
+   */
+  FileUpload.prototype.getUploader = function getUploader () {
+      var ref;
+
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+    if (this.uploaderIsAxios()) {
+      var formData = new FormData();
+      formData.append(this.context.name || 'file', args[0]);
+      if (this.context.uploadUrl === false) {
+        throw new Error('No uploadURL specified: https://vueformulate.com/guide/inputs/file/#props')
+      }
+      return this.context.uploader.post(this.context.uploadUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: function (progressEvent) {
+          // args[1] here is the upload progress handler function
+          args[1](Math.round((progressEvent.loaded * 100) / progressEvent.total));
+        }
+      })
+        .then(function (res) { return res.data; })
+        .catch(function (err) { return args[2](err); })
+    }
+    return (ref = this.context).uploader.apply(ref, args)
+  };
+
+  /**
+   * Perform the file upload.
+   */
+  FileUpload.prototype.upload = function upload () {
+      var this$1$1 = this;
+
+    // If someone calls upload() when an upload is already in process or there
+    // already was an upload completed, chain the upload request to the
+    // existing one. Already uploaded files wont re-upload and it ensures any
+    // files that were added after the initial list are completed too.
+    this.uploadPromise = this.uploadPromise
+      ? this.uploadPromise.then(function () { return this$1$1.__performUpload(); })
+      : this.__performUpload();
+    return this.uploadPromise
+  };
+
+  /**
+   * Perform the actual upload event. Intended to be a private method that is
+   * only called through the upload() function as chaining utility.
+   */
+  FileUpload.prototype.__performUpload = function __performUpload () {
+      var this$1$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      if (!this$1$1.hasUploader()) {
+        return reject(new Error('No uploader has been defined'))
+      }
+      Promise.all(this$1$1.files.map(function (file) {
+        file.error = false;
+        file.complete = !!file.path;
+        return file.path ? Promise.resolve(file.path) : this$1$1.getUploader(
+          file.file,
+          function (progress) {
+            file.progress = progress;
+            this$1$1.context.rootEmit('file-upload-progress', progress);
+            if (progress >= 100) {
+              if (!file.complete) {
+                file.justFinished = true;
+                setTimeout(function () { file.justFinished = false; }, this$1$1.options.uploadJustCompleteDuration);
+              }
+              file.complete = true;
+              this$1$1.context.rootEmit('file-upload-complete', file);
+            }
+          },
+          function (error) {
+            file.progress = 0;
+            file.error = error;
+            file.complete = true;
+            this$1$1.context.rootEmit('file-upload-error', error);
+            reject(error);
+          },
+          this$1$1.options
+        )
+      }))
+        .then(function (results) {
+          this$1$1.results = this$1$1.mapUUID(results);
+          resolve(results);
+        })
+        .catch(function (err) {
+          throw new Error(err)
+        });
+    })
+  };
+
+  /**
+   * Remove a file from the uploader (and the file list)
+   * @param {string} uuid
+   */
+  FileUpload.prototype.removeFile = function removeFile (uuid) {
+    var originalLength = this.files.length;
+    this.files = this.files.filter(function (file) { return file && file.uuid !== uuid; });
+    if (Array.isArray(this.results)) {
+      this.results = this.results.filter(function (file) { return file && file.__id !== uuid; });
+    }
+    this.context.performValidation();
+    if (window && this.fileList instanceof FileList && this.supportsDataTransfers) {
+      var transfer = new DataTransfer();
+      this.files.forEach(function (file) { return transfer.items.add(file.file); });
+      this.fileList = transfer.files;
+      this.input.files = this.fileList;
+    } else {
+      this.fileList = this.fileList.filter(function (file) { return file && file.__id !== uuid; });
+    }
+    if (originalLength > this.files.length) {
+      this.context.rootEmit('file-removed', this.files);
+    }
+  };
+
+  /**
+   * Given another input element, add the files from that FileList to the
+   * input being represented by this FileUpload.
+   *
+   * @param {HTMLElement} input
+   */
+  FileUpload.prototype.mergeFileList = function mergeFileList (input) {
+    this.addFileList(input.files);
+    // Create a new mutable FileList
+    if (this.supportsDataTransfers) {
+      var transfer = new DataTransfer();
+      this.files.forEach(function (file) {
+        if (file.file instanceof File) {
+          transfer.items.add(file.file);
+        }
+      });
+      this.fileList = transfer.files;
+      this.input.files = this.fileList;
+      // Reset the merged FileList to empty
+      input.files = (new DataTransfer()).files;
+    }
+    this.context.performValidation();
+    this.loadPreviews();
+    if (this.context.uploadBehavior !== 'delayed') {
+      this.upload();
+    }
+  };
+
+  /**
+   * load image previews for all uploads.
+   */
+  FileUpload.prototype.loadPreviews = function loadPreviews () {
+    this.files.map(function (file) {
+      if (!file.previewData && window && window.FileReader && /^image\//.test(file.file.type)) {
+        var reader = new FileReader();
+        reader.onload = function (e) { return Object.assign(file, { previewData: e.target.result }); };
+        reader.readAsDataURL(file.file);
+      }
+    });
+  };
+
+  /**
+   * Check if the current browser supports the DataTransfer constructor.
+   */
+  FileUpload.prototype.dataTransferCheck = function dataTransferCheck () {
+    try {
+      new DataTransfer(); // eslint-disable-line
+      this.supportsDataTransfers = true;
+    } catch (err) {
+      this.supportsDataTransfers = false;
+    }
+  };
+
+  /**
+   * Get the files.
+   */
+  FileUpload.prototype.getFiles = function getFiles () {
+    return this.files
+  };
+
+  /**
+   * Run setId on each item of a pre-existing array of items.
+   * @param {array} items expects an array of objects [{ url: '/uploads/file.pdf' }]
+   */
+  FileUpload.prototype.mapUUID = function mapUUID (items) {
+      var this$1$1 = this;
+
+    return items.map(function (result, index) {
+      this$1$1.files[index].path = result !== undefined ? result : false;
+      return result && setId(result, this$1$1.files[index].uuid)
+    })
+  };
+
+  FileUpload.prototype.toString = function toString () {
+    var descriptor = this.files.length ? this.files.length + ' files' : 'empty';
+    return this.results ? JSON.stringify(this.results, null, '  ') : ("FileUpload(" + descriptor + ")")
+  };
+
+  /**
+   * Library of rules
+   */
+  var rules = {
+    /**
+     * Rule: the value must be "yes", "on", "1", or true
+     */
+    accepted: function (ref) {
+      var value = ref.value;
+
+      return Promise.resolve(['yes', 'on', '1', 1, true, 'true'].includes(value))
+    },
+
+    /**
+     * Rule: checks if a value is after a given date. Defaults to current time
+     */
+    after: function (ref, compare) {
+      var value = ref.value;
+      if ( compare === void 0 ) compare = false;
+
+      var timestamp = Date.parse(compare || new Date());
+      var fieldValue = Date.parse(value);
+      return Promise.resolve(isNaN(fieldValue) ? false : (fieldValue > timestamp))
+    },
+
+    /**
+     * Rule: checks if the value is only alpha
+     */
+    alpha: function (ref, set) {
+      var value = ref.value;
+      if ( set === void 0 ) set = 'default';
+
+      var sets = {
+        default: /^[a-zA-ZÀ-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,
+        latin: /^[a-zA-Z]+$/
+      };
+      var selectedSet = sets.hasOwnProperty(set) ? set : 'default';
+      return Promise.resolve(sets[selectedSet].test(value))
+    },
+
+    /**
+     * Rule: checks if the value is alpha numeric
+     */
+    alphanumeric: function (ref, set) {
+      var value = ref.value;
+      if ( set === void 0 ) set = 'default';
+
+      var sets = {
+        default: /^[a-zA-Z0-9À-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,
+        latin: /^[a-zA-Z0-9]+$/
+      };
+      var selectedSet = sets.hasOwnProperty(set) ? set : 'default';
+      return Promise.resolve(sets[selectedSet].test(value))
+    },
+
+    /**
+     * Rule: checks if a value is after a given date. Defaults to current time
+     */
+    before: function (ref, compare) {
+      var value = ref.value;
+      if ( compare === void 0 ) compare = false;
+
+      var timestamp = Date.parse(compare || new Date());
+      var fieldValue = Date.parse(value);
+      return Promise.resolve(isNaN(fieldValue) ? false : (fieldValue < timestamp))
+    },
+
+    /**
+     * Rule: checks if the value is between two other values
+     */
+    between: function (ref, from, to, force) {
+      var value = ref.value;
+      if ( from === void 0 ) from = 0;
+      if ( to === void 0 ) to = 10;
+
+      return Promise.resolve((function () {
+        if (from === null || to === null || isNaN(from) || isNaN(to)) {
+          return false
+        }
+        if ((!isNaN(value) && force !== 'length') || force === 'value') {
+          value = Number(value);
+          from = Number(from);
+          to = Number(to);
+          return (value > from && value < to)
+        }
+        if (typeof value === 'string' || force === 'length') {
+          value = !isNaN(value) ? value.toString() : value;
+          return value.length > from && value.length < to
+        }
+        return false
+      })())
+    },
+
+    /**
+     * Confirm that the value of one field is the same as another, mostly used
+     * for password confirmations.
+     */
+    confirm: function (ref, field) {
+      var value = ref.value;
+      var getGroupValues = ref.getGroupValues;
+      var name = ref.name;
+
+      return Promise.resolve((function () {
+        var values = getGroupValues();
+        var confirmationFieldName = field;
+        if (!confirmationFieldName) {
+          confirmationFieldName = /_confirm$/.test(name) ? name.substr(0, name.length - 8) : (name + "_confirm");
+        }
+        return values[confirmationFieldName] === value
+      })())
+    },
+
+    /**
+     * Rule: ensures the value is a date according to Date.parse(), or a format
+     * regex.
+     */
+    date: function (ref, format) {
+      var value = ref.value;
+      if ( format === void 0 ) format = false;
+
+      return Promise.resolve((function () {
+        if (format && typeof format === 'string') {
+          return regexForFormat(format).test(value)
+        }
+        return !isNaN(Date.parse(value))
+      })())
+    },
+
+    /**
+     * Rule: tests
+     */
+    email: function (ref) {
+      var value = ref.value;
+
+      // eslint-disable-next-line
+      var isEmail = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+      return Promise.resolve(isEmail.test(value))
+    },
+
+    /**
+     * Rule: Value ends with one of the given Strings
+     */
+    endsWith: function (ref) {
+      var value = ref.value;
+      var stack = [], len = arguments.length - 1;
+      while ( len-- > 0 ) stack[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve((function () {
+        if (typeof value === 'string' && stack.length) {
+          return stack.find(function (item) {
+            return value.endsWith(item)
+          }) !== undefined
+        } else if (typeof value === 'string' && stack.length === 0) {
+          return true
+        }
+        return false
+      })())
+    },
+
+    /**
+     * Rule: Value is in an array (stack).
+     */
+    in: function (ref) {
+      var value = ref.value;
+      var stack = [], len = arguments.length - 1;
+      while ( len-- > 0 ) stack[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve(stack.find(function (item) {
+        if (typeof item === 'object') {
+          return equals(item, value)
+        }
+        return item === value
+      }) !== undefined)
+    },
+
+    /**
+     * Rule: Match the value against a (stack) of patterns or strings
+     */
+    matches: function (ref) {
+      var value = ref.value;
+      var stack = [], len = arguments.length - 1;
+      while ( len-- > 0 ) stack[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve(!!stack.find(function (pattern) {
+        if (typeof pattern === 'string' && pattern.substr(0, 1) === '/' && pattern.substr(-1) === '/') {
+          pattern = new RegExp(pattern.substr(1, pattern.length - 2));
+        }
+        if (pattern instanceof RegExp) {
+          return pattern.test(value)
+        }
+        return pattern === value
+      }))
+    },
+
+    /**
+     * Check the file type is correct.
+     */
+    mime: function (ref) {
+      var value = ref.value;
+      var types = [], len = arguments.length - 1;
+      while ( len-- > 0 ) types[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve((function () {
+        if (value instanceof FileUpload) {
+          var fileList = value.getFiles();
+          for (var i = 0; i < fileList.length; i++) {
+            var file = fileList[i].file;
+            if (!types.includes(file.type)) {
+              return false
+            }
+          }
+        }
+        return true
+      })())
+    },
+
+    /**
+     * Check the minimum value of a particular.
+     */
+    min: function (ref, minimum, force) {
+      var value = ref.value;
+      if ( minimum === void 0 ) minimum = 1;
+
+      return Promise.resolve((function () {
+        if (Array.isArray(value)) {
+          minimum = !isNaN(minimum) ? Number(minimum) : minimum;
+          return value.length >= minimum
+        }
+        if ((!isNaN(value) && force !== 'length') || force === 'value') {
+          value = !isNaN(value) ? Number(value) : value;
+          return value >= minimum
+        }
+        if (typeof value === 'string' || (force === 'length')) {
+          value = !isNaN(value) ? value.toString() : value;
+          return value.length >= minimum
+        }
+        return false
+      })())
+    },
+
+    /**
+     * Check the maximum value of a particular.
+     */
+    max: function (ref, maximum, force) {
+      var value = ref.value;
+      if ( maximum === void 0 ) maximum = 10;
+
+      return Promise.resolve((function () {
+        if (Array.isArray(value)) {
+          maximum = !isNaN(maximum) ? Number(maximum) : maximum;
+          return value.length <= maximum
+        }
+        if ((!isNaN(value) && force !== 'length') || force === 'value') {
+          value = !isNaN(value) ? Number(value) : value;
+          return value <= maximum
+        }
+        if (typeof value === 'string' || (force === 'length')) {
+          value = !isNaN(value) ? value.toString() : value;
+          return value.length <= maximum
+        }
+        return false
+      })())
+    },
+
+    /**
+     * Rule: Value is not in stack.
+     */
+    not: function (ref) {
+      var value = ref.value;
+      var stack = [], len = arguments.length - 1;
+      while ( len-- > 0 ) stack[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve(stack.find(function (item) {
+        if (typeof item === 'object') {
+          return equals(item, value)
+        }
+        return item === value
+      }) === undefined)
+    },
+
+    /**
+     * Rule: checks if the value is only alpha numeric
+     */
+    number: function (ref) {
+      var value = ref.value;
+
+      return Promise.resolve(!isNaN(value))
+    },
+
+    /**
+     * Rule: must be a value - allows for an optional argument "whitespace" with a possible value 'trim' and default 'pre'.
+     */
+    required: function (ref, whitespace) {
+      var value = ref.value;
+      if ( whitespace === void 0 ) whitespace = 'pre';
+
+      return Promise.resolve((function () {
+        if (Array.isArray(value)) {
+          return !!value.length
+        }
+        if (value instanceof FileUpload) {
+          return value.getFiles().length > 0
+        }
+        if (typeof value === 'string') {
+          return whitespace === 'trim' ? !!value.trim() : !!value
+        }
+        if (typeof value === 'object') {
+          return (!value) ? false : !!Object.keys(value).length
+        }
+        return true
+      })())
+    },
+
+    /**
+     * Rule: Value starts with one of the given Strings
+     */
+    startsWith: function (ref) {
+      var value = ref.value;
+      var stack = [], len = arguments.length - 1;
+      while ( len-- > 0 ) stack[ len ] = arguments[ len + 1 ];
+
+      return Promise.resolve((function () {
+        if (typeof value === 'string' && stack.length) {
+          return stack.find(function (item) {
+            return value.startsWith(item)
+          }) !== undefined
+        } else if (typeof value === 'string' && stack.length === 0) {
+          return true
+        }
+        return false
+      })())
+    },
+
+    /**
+     * Rule: checks if a string is a valid url
+     */
+    url: function (ref) {
+      var value = ref.value;
+
+      return Promise.resolve(isUrl(value))
+    },
+
+    /**
+     * Rule: not a true rule — more like a compiler flag.
+     */
+    bail: function () {
+      return Promise.resolve(true)
+    },
+
+    /**
+     * Rule: not a true rule - more like a compiler flag.
+     */
+    optional: function (ref) {
+      var value = ref.value;
+
+      // So technically we "fail" this rule anytime the field is empty. This rule
+      // is automatically hoisted to the top of the validation stack, and marked
+      // as a "bail" rule, meaning if it fails, no further validation will be run.
+      // Finally, the error message associated with this rule is filtered out.
+      return Promise.resolve(!isEmpty(value))
+    }
+  };
+
+  var i = 'image/';
+  var mimes = {
+    'csv': 'text/csv',
+    'gif': i + 'gif',
+    'jpg': i + 'jpeg',
+    'jpeg': i + 'jpeg',
+    'png': i + 'png',
+    'pdf': 'application/pdf',
+    'svg': i + 'svg+xml'
+  };
+
+  /**
+   * A list of available class keys in core. These can be added to by extending
+   * the `classKeys` global option when registering formulate.
+   */
+  var classKeys = [
+    // Globals
+    'outer',
+    'wrapper',
+    'label',
+    'element',
+    'input',
+    'help',
+    'errors',
+    'error',
+    // Box
+    'decorator',
+    // Slider
+    'rangeValue',
+    // File
+    'uploadArea',
+    'uploadAreaMask',
+    'files',
+    'file',
+    'fileName',
+    'fileAdd',
+    'fileAddInput',
+    'fileRemove',
+    'fileProgress',
+    'fileUploadError',
+    'fileImagePreview',
+    'fileImagePreviewImage',
+    'fileProgressInner',
+    // Groups
+    'grouping',
+    'groupRepeatable',
+    'groupRepeatableRemove',
+    'groupAddMore',
+    // Forms
+    'form',
+    'formErrors',
+    'formError'
+  ];
+
+  /**
+   * State keys by default
+   */
+  var states = {
+    hasErrors: function (c) { return c.hasErrors; },
+    hasValue: function (c) { return c.hasValue; },
+    isValid: function (c) { return c.isValid; }
+  };
+
+  /**
+   * This function is responsible for providing VueFormulate’s default classes.
+   * This function is called with the specific classKey ('wrapper' for example)
+   * that it needs to generate classes for, and the context object. It always
+   * returns an array.
+   *
+   * @param {string} classKey
+   * @param {Object} context
+   */
+  var classGenerator = function (classKey, context) {
+    // camelCase to dash-case
+    var key = classKey.replace(/[A-Z]/g, function (c) { return '-' + c.toLowerCase(); });
+    var prefix = ['form', 'file'].includes(key.substr(0, 4)) ? '' : '-input';
+    var element = ['decorator', 'range-value'].includes(key) ? '-element' : '';
+    var base = "formulate" + prefix + element + (key !== 'outer' ? ("-" + key) : '');
+    return key === 'input' ? [] : [base].concat(classModifiers(base, classKey, context))
+  };
+
+  /**
+   * Given a class key and a modifier, produce any additional classes.
+   * @param {string} classKey
+   * @param {Object} context
+   */
+  var classModifiers = function (base, classKey, context) {
+    var modifiers = [];
+    switch (classKey) {
+      case 'label':
+        modifiers.push((base + "--" + (context.labelPosition)));
+        break
+      case 'element':
+        var type = context.classification === 'group' ? 'group' : context.type;
+        modifiers.push((base + "--" + type));
+        // @todo DEPRECATED! This should be removed in a future version:
+        if (type === 'group') {
+          modifiers.push('formulate-input-group');
+        }
+        break
+      case 'help':
+        modifiers.push((base + "--" + (context.helpPosition)));
+        break
+      case 'form':
+        if (context.name) {
+          modifiers.push((base + "--" + (context.name)));
+        }
+    }
+    return modifiers
+  };
+
+  /**
+   * Generate a list of all the class props to accept.
+   */
+  var classProps = (function () {
+    var stateKeys = [''].concat(Object.keys(states).map(function (s) { return cap(s); }));
+    // This reducer produces a key for every element key + state key variation
+    return classKeys.reduce(function (props, classKey) {
+      return props.concat(stateKeys.reduce(function (keys, stateKey) {
+        keys.push(("" + classKey + stateKey + "Class"));
+        return keys
+      }, []))
+    }, [])
+  })();
+
+  /**
+   * Given a string or array of classes and a modifier (function, string etc) apply
+   * the modifications.
+   *
+   * @param {mixed} baseClass The initial class for a given key
+   * @param {mixed} modifier A function, string, array etc that can be a class prop.
+   * @param {Object} context The class context
+   */
+  function applyClasses (baseClass, modifier, context) {
+    switch (typeof modifier) {
+      case 'string':
+        return modifier
+      case 'function':
+        return modifier(context, arrayify(baseClass))
+      case 'object':
+        if (Array.isArray(modifier)) {
+          return arrayify(baseClass).concat(modifier)
+        }
+      /** allow fallthrough if object that isn’t an array */
+      default:
+        return baseClass
+    }
+  }
+
+  /**
+   * Given element class key
+   * @param {string} elementKey the element class key we're generating for
+   * @param {mixed} baseClass The initial classes for this key
+   * @param {object} global Class definitions globally registered with options.classes
+   * @param {Object} context Class context for this particular field, props included.
+   */
+  function applyStates (elementKey, baseClass, globals, context) {
+    return Object.keys(states).reduce(function (classes, stateKey) {
+      // Step 1. Call the state function to determine if it has this state
+      if (states[stateKey](context)) {
+        var key = "" + elementKey + (cap(stateKey));
+        var propKey = key + "Class";
+        // Step 2. Apply any global state class keys
+        if (globals[key]) {
+          var modifier = (typeof globals[key] === 'string') ? arrayify(globals[key]) : globals[key];
+          classes = applyClasses(classes, modifier, context);
+        }
+        // Step 3. Apply any prop state class keys
+        if (context[propKey]) {
+          var modifier$1 = (typeof context[propKey] === 'string') ? arrayify(context[propKey]) : context[(key + "Class")];
+          classes = applyClasses(classes, modifier$1, context);
+        }
+      }
+      return classes
+    }, baseClass)
+  }
+
+  /**
+   * Function that produces all available classes.
+   * @param {Object} context
+   */
+  function coreClasses (context) {
+    return classKeys.reduce(function (classes, classKey) {
+      var obj;
+
+      return Object.assign(classes, ( obj = {}, obj[classKey] = classGenerator(classKey, context), obj ));
+    }, {})
+  }
+
+  /**
+   * A fake uploader used by default.
+   *
+   * @param {File} file
+   * @param {function} progress
+   * @param {function} error
+   * @param {object} options
+   */
+  function fauxUploader (file, progress, error, options) {
+    return new Promise(function (resolve, reject) {
+      var totalTime = (options.fauxUploaderDuration || 1500) * (0.5 + Math.random());
+      var start = performance.now();
+
+      /**
+       * Create a recursive timeout that advances the progress.
+       */
+      var advance = function () { return setTimeout(function () {
+        var elapsed = performance.now() - start;
+        var currentProgress = Math.min(100, Math.round(elapsed / totalTime * 100));
+        progress(currentProgress);
+
+        if (currentProgress >= 100) {
+          return resolve({
+            url: 'http://via.placeholder.com/350x150.png',
+            name: file.name
+          })
+        } else {
+          advance();
+        }
+      }, 20); };
+      advance();
+    })
+  }
+
+  function objectWithoutProperties$5 (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+  var FormulateSlot = {
+    inheritAttrs: false,
+    functional: true,
+    render: function render (h, ref) {
+      var props = ref.props;
+      var data = ref.data;
+      var parent = ref.parent;
+      var children = ref.children;
+
+      var p = parent;
+      props.name;
+      var forceWrap = props.forceWrap;
+      var context = props.context;
+      var rest = objectWithoutProperties$5( props, ["name", "forceWrap", "context"] );
+      var mergeWithContext = rest;
+
+      // Look up the ancestor tree for the first FormulateInput
+      while (p && p.$options.name !== 'FormulateInput') {
+        p = p.$parent;
+      }
+
+      // if we never found the proper parent, just end it.
+      if (!p) {
+        return null
+      }
+
+      // If we found a formulate input, check for a matching scoped slot
+      if (p.$scopedSlots && p.$scopedSlots[props.name]) {
+        return p.$scopedSlots[props.name](Object.assign({}, context, mergeWithContext))
+      }
+
+      // If we found no scoped slot, take the children and render those inside a wrapper if there are multiple
+      if (Array.isArray(children) && (children.length > 1 || (forceWrap && children.length > 0))) {
+        var ref$1 = data.attrs;
+        ref$1.name;
+        ref$1.context;
+        var rest = objectWithoutProperties$5( ref$1, ["name", "context"] );
+        var attrs = rest;
+        return h('div', Object.assign({}, data, {attrs: attrs}), children)
+
+      // If there is only one child, render it alone
+      } else if (Array.isArray(children) && children.length === 1) {
+        return children[0]
+      }
+
+      // If there are no children, render nothing
+      return null
+    }
+  };
+
+  function objectWithoutProperties$4 (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+
+  /**
+   * Given an object and an index, complete an object for schema-generation.
+   * @param {object} item
+   * @param {int} index
+   */
+  function leaf (item, index, rootListeners) {
+    if ( index === void 0 ) index = 0;
+    if ( rootListeners === void 0 ) rootListeners = {};
+
+    if (item && typeof item === 'object' && !Array.isArray(item)) {
+      var children = item.children; if ( children === void 0 ) children = null;
+      var component = item.component; if ( component === void 0 ) component = 'FormulateInput';
+      var depth = item.depth; if ( depth === void 0 ) depth = 1;
+      var key = item.key; if ( key === void 0 ) key = null;
+      var rest = objectWithoutProperties$4( item, ["children", "component", "depth", "key"] );
+      var attrs = rest;
+      // these next two lines are required since `class` is a keyword and should
+      // not be used in rest/spread operators.
+      var cls = attrs.class || {};
+      delete attrs.class;
+      // Event bindings
+      var on = {};
+
+      // Extract events from this instance
+      var events = Object.keys(attrs)
+        .reduce(function (events, key) {
+          var obj;
+
+          return /^@/.test(key) ? Object.assign(events, ( obj = {}, obj[key.substr(1)] = attrs[key], obj )) : events;
+      }, {});
+
+      // delete all events from the item
+      Object.keys(events).forEach(function (event) {
+        delete attrs[("@" + event)];
+        on[event] = createListener(event, events[event], rootListeners);
+      });
+
+      var type = component === 'FormulateInput' ? (attrs.type || 'text') : component;
+      var name = attrs.name || type || 'el';
+      if (!key) {
+        // We need to generate a unique key if at all possible
+        if (attrs.id) {
+          // We've been given an id, so we should use it.
+          key = attrs.id;
+        } else if (component !== 'FormulateInput' && typeof children === 'string') {
+          // This is a simple text node container.
+          key = type + "-" + (cyrb43(children));
+        } else {
+          // This is a wrapper element
+          key = type + "-" + name + "-" + depth + (attrs.name ? '' : '-' + index);
+        }
+      }
+      var els = Array.isArray(children)
+        ? children.map(function (child) { return Object.assign(child, { depth: depth + 1 }); })
+        : children;
+      return Object.assign({ key: key, depth: depth, attrs: attrs, component: component, class: cls, on: on }, els ? { children: els } : {})
+    }
+    return null
+  }
+
+  /**
+   * Recursive function to create vNodes from a schema.
+   * @param {Functon} h createElement
+   * @param {Array|string} schema
+   */
+  function tree (h, schema, rootListeners) {
+    if (Array.isArray(schema)) {
+      return schema.map(function (el, index) {
+        var item = leaf(el, index, rootListeners);
+        return h(
+          item.component,
+          { attrs: item.attrs, class: item.class, key: item.key, on: item.on },
+          item.children ? tree(h, item.children, rootListeners) : null
+        )
+      })
+    }
+    return schema
+  }
+
+  /**
+   * Given an event name and handler, return a handler function that re-emits.
+   *
+   * @param {string} event
+   * @param {string|boolean|function} handler
+   */
+  function createListener (eventName, handler, rootListeners) {
+    return function () {
+      var ref, ref$1;
+
+      var args = [], len = arguments.length;
+      while ( len-- ) args[ len ] = arguments[ len ];
+      // For event leafs like { '@blur': function () { ..do things... } }
+      if (typeof handler === 'function') {
+        return handler.call.apply(handler, [ this ].concat( args ))
+      }
+      // For event leafs like { '@blur': 'nameBlur' }
+      if (typeof handler === 'string' && has(rootListeners, handler)) {
+        return (ref = rootListeners[handler]).call.apply(ref, [ this ].concat( args ))
+      }
+      // For event leafs like { '@blur': true }
+      if (has(rootListeners, eventName)) {
+        return (ref$1 = rootListeners[eventName]).call.apply(ref$1, [ this ].concat( args ))
+      }
+    }
+  }
+
+  var FormulateSchema = {
+    functional: true,
+    render: function (h, ref) {
+      var props = ref.props;
+      var listeners = ref.listeners;
+
+      return tree(h, props.schema, listeners);
+  }
+  };
+
+  function objectWithoutProperties$3 (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+
+  /**
+   * Component registry with inherent depth to handle complex nesting. This is
+   * important for features such as grouped fields.
+   */
+  var Registry = function Registry (ctx) {
+    this.registry = new Map();
+    this.errors = {};
+    this.ctx = ctx;
+  };
+
+  /**
+   * Add an item to the registry.
+   * @param {string|array} key
+   * @param {vue} component
+   */
+  Registry.prototype.add = function add (name, component) {
+      var obj;
+
+    this.registry.set(name, component);
+    this.errors = Object.assign({}, this.errors, ( obj = {}, obj[name] = component.getErrorObject().hasErrors, obj ));
+    return this
+  };
+
+  /**
+   * Remove an item from the registry.
+   * @param {string} name
+   */
+  Registry.prototype.remove = function remove (name) {
+    // Clean up dependent validations
+    this.ctx.deps.delete(this.registry.get(name));
+    this.ctx.deps.forEach(function (dependents) { return dependents.delete(name); });
+
+    // Determine if we're keep the model data or destroying it
+    var keepData = this.ctx.keepModelData;
+    if (!keepData && this.registry.has(name) && this.registry.get(name).keepModelData !== 'inherit') {
+      keepData = this.registry.get(name).keepModelData;
+    }
+    if (this.ctx.preventCleanup) {
+      keepData = true;
+    }
+
+    this.registry.delete(name);
+    var ref = this.errors;
+      ref[name];
+      var rest = objectWithoutProperties$3( ref, [String(name)] );
+      var errorValues = rest;
+    this.errors = errorValues;
+
+    // Clean up the model if we don't explicitly state otherwise
+    if (!keepData) {
+      var ref$1 = this.ctx.proxy;
+        ref$1[name];
+        var rest = objectWithoutProperties$3( ref$1, [String(name)] );
+        var newProxy = rest;
+      if (this.ctx.uuid) {
+        // If the registry context has a uuid (row.__id) be sure to include it in
+        // this input event so it can replace values in the proper row.
+        setId(newProxy, this.ctx.uuid);
+      }
+      this.ctx.proxy = newProxy;
+      this.ctx.$emit('input', this.ctx.proxy);
+    }
+    return this
+  };
+
+  /**
+   * Check if the registry has the given key.
+   * @param {string|array} key
+   */
+  Registry.prototype.has = function has (key) {
+    return this.registry.has(key)
+  };
+
+  /**
+   * Get a particular registry value.
+   * @param {string} key
+   */
+  Registry.prototype.get = function get (key) {
+    return this.registry.get(key)
+  };
+
+  /**
+   * Map over the registry (recursively).
+   * @param {function} callback
+   */
+  Registry.prototype.map = function map (callback) {
+    var value = {};
+    this.registry.forEach(function (component, field) {
+        var obj;
+
+        return Object.assign(value, ( obj = {}, obj[field] = callback(component, field), obj ));
+      });
+    return value
+  };
+
+  /**
+   * Return the keys of the registry.
+   */
+  Registry.prototype.keys = function keys () {
+    return Array.from(this.registry.keys())
+  };
+
+  /**
+   * Fully register a component.
+   * @param {string} field name of the field.
+   * @param {vm} component the actual component instance.
+   */
+  Registry.prototype.register = function register (field, component) {
+      var this$1$1 = this;
+
+    if (has(component.$options.propsData, 'ignored')) {
+      // Any presence of the `ignored` prop will ensure this input is skipped.
+      return false
+    }
+    if (this.registry.has(field)) {
+      // Here we check to see if the field we are about to register is going to
+      // immediately be removed. That indicates this field is switching like in
+      // a v-if:
+      //
+      // <FormulateInput name="foo" v-if="condition" />
+      // <FormulateInput name="foo" v-else />
+      //
+      // Because created() fires _before_ destroyed() the new field would not
+      // register because the old one would not have yet unregistered. By
+      // checking if field we're trying to register is gone on the nextTick we
+      // can assume it was supposed to register, and do so "again".
+      this.ctx.$nextTick(function () { return !this$1$1.registry.has(field) ? this$1$1.register(field, component) : false; });
+      return false
+    }
+    this.add(field, component);
+    var hasVModelValue = has(component.$options.propsData, 'formulateValue');
+    var hasValue = has(component.$options.propsData, 'value');
+    // This is not reactive
+    var debounceDelay = this.ctx.debounce || this.ctx.debounceDelay || (this.ctx.context && this.ctx.context.debounceDelay);
+    if (debounceDelay && !has(component.$options.propsData, 'debounce')) {
+      component.debounceDelay = debounceDelay;
+    }
+    if (
+      !hasVModelValue &&
+      this.ctx.hasInitialValue &&
+      !isEmpty(this.ctx.initialValues[field])
+    ) {
+      // In the case that the form is carrying an initial value and the
+      // element is not, set it directly.
+      component.context.model = this.ctx.initialValues[field];
+    } else if (
+      (hasVModelValue || hasValue) &&
+      !equals(component.proxy, this.ctx.initialValues[field], true)
+    ) {
+      // In this case, the field is v-modeled or has an initial value and the
+      // registry has no value or a different value, so use the field value
+      this.ctx.setFieldValue(field, component.proxy);
+    }
+    if (this.childrenShouldShowErrors) {
+      component.formShouldShowErrors = true;
+    }
+  };
+
+  /**
+   * Reduce the registry.
+   * @param {function} callback
+   */
+  Registry.prototype.reduce = function reduce (callback, accumulator) {
+    this.registry.forEach(function (component, field) {
+      accumulator = callback(accumulator, component, field);
+    });
+    return accumulator
+  };
+
+  /**
+   * Data props to expose.
+   */
+  Registry.prototype.dataProps = function dataProps () {
+      var this$1$1 = this;
+
+    return {
+      proxy: {},
+      registry: this,
+      register: this.register.bind(this),
+      deregister: function (field) { return this$1$1.remove(field); },
+      childrenShouldShowErrors: false,
+      errorObservers: [],
+      deps: new Map(),
+      preventCleanup: false
+    }
+  };
+
+  /**
+   * The context component.
+   * @param {component} contextComponent
+   */
+  function useRegistry (contextComponent) {
+    var registry = new Registry(contextComponent);
+    return registry.dataProps()
+  }
+
+  /**
+   * Computed properties related to the registry.
+   */
+  function useRegistryComputed (options) {
+
+    return {
+      hasInitialValue: function hasInitialValue () {
+        return (
+          (this.formulateValue && typeof this.formulateValue === 'object') ||
+          (this.values && typeof this.values === 'object') ||
+          (this.isGrouping && typeof this.context.model[this.index] === 'object')
+        )
+      },
+      isVmodeled: function isVmodeled () {
+        return !!(this.$options.propsData.hasOwnProperty('formulateValue') &&
+          this._events &&
+          Array.isArray(this._events.input) &&
+          this._events.input.length)
+      },
+      initialValues: function initialValues () {
+        if (
+          has(this.$options.propsData, 'formulateValue') &&
+          typeof this.formulateValue === 'object'
+        ) {
+          // If there is a v-model on the form/group, use those values as first priority
+          return Object.assign({}, this.formulateValue) // @todo - use a deep clone to detach reference types?
+        } else if (
+          has(this.$options.propsData, 'values') &&
+          typeof this.values === 'object'
+        ) {
+          // If there are values, use them as secondary priority
+          return Object.assign({}, this.values)
+        } else if (
+          this.isGrouping && typeof this.context.model[this.index] === 'object'
+        ) {
+          return this.context.model[this.index]
+        }
+        return {}
+      },
+      mergedGroupErrors: function mergedGroupErrors () {
+        var this$1$1 = this;
+
+        var hasSubFields = /^([^.\d+].*?)\.(\d+\..+)$/;
+        return Object.keys(this.mergedFieldErrors)
+          .filter(function (k) { return hasSubFields.test(k); })
+          .reduce(function (groupErrorsByRoot, k) {
+            var obj;
+
+            var ref = k.match(hasSubFields);
+            var rootField = ref[1];
+            var groupKey = ref[2];
+            if (!groupErrorsByRoot[rootField]) {
+              groupErrorsByRoot[rootField] = {};
+            }
+            Object.assign(groupErrorsByRoot[rootField], ( obj = {}, obj[groupKey] = this$1$1.mergedFieldErrors[k], obj ));
+            return groupErrorsByRoot
+          }, {})
+      }
+    }
+  }
+
+  /**
+   * Methods used in the registry.
+   */
+  function useRegistryMethods (without) {
+    if ( without === void 0 ) without = [];
+
+    var methods = {
+      applyInitialValues: function applyInitialValues () {
+        if (this.hasInitialValue) {
+          this.proxy = Object.assign({}, this.initialValues);
+        }
+      },
+      setFieldValue: function setFieldValue (field, value) {
+        var obj;
+
+        if (value === undefined) {
+          // undefined values should be removed from the form model
+          var ref = this.proxy;
+          ref[field];
+          var rest = objectWithoutProperties$3( ref, [String(field)] );
+          var proxy = rest;
+          this.proxy = proxy;
+        } else {
+          Object.assign(this.proxy, ( obj = {}, obj[field] = value, obj ));
+        }
+        this.$emit('input', Object.assign({}, this.proxy));
+      },
+      valueDeps: function valueDeps (callerCmp) {
+        var this$1$1 = this;
+
+        return Object.keys(this.proxy)
+          .reduce(function (o, k) { return Object.defineProperty(o, k, {
+            enumerable: true,
+            get: function () {
+              var callee = this$1$1.registry.get(k);
+              this$1$1.deps.set(callerCmp, this$1$1.deps.get(callerCmp) || new Set());
+              if (callee) {
+                this$1$1.deps.set(callee, this$1$1.deps.get(callee) || new Set());
+                this$1$1.deps.get(callee).add(callerCmp.name);
+              }
+              this$1$1.deps.get(callerCmp).add(k);
+              return this$1$1.proxy[k]
+            }
+          }); }, Object.create(null))
+      },
+      validateDeps: function validateDeps (callerCmp) {
+        var this$1$1 = this;
+
+        if (this.deps.has(callerCmp)) {
+          this.deps.get(callerCmp).forEach(function (field) { return this$1$1.registry.has(field) && this$1$1.registry.get(field).performValidation(); });
+        }
+      },
+      hasValidationErrors: function hasValidationErrors () {
+        return Promise.all(this.registry.reduce(function (resolvers, cmp, name) {
+          resolvers.push(cmp.performValidation() && cmp.getValidationErrors());
+          return resolvers
+        }, [])).then(function (errorObjects) { return errorObjects.some(function (item) { return item.hasErrors; }); })
+      },
+      showErrors: function showErrors () {
+        this.childrenShouldShowErrors = true;
+        this.registry.map(function (input) {
+          input.formShouldShowErrors = true;
+        });
+      },
+      hideErrors: function hideErrors () {
+        this.childrenShouldShowErrors = false;
+        this.registry.map(function (input) {
+          input.formShouldShowErrors = false;
+          input.behavioralErrorVisibility = false;
+        });
+      },
+      setValues: function setValues (values) {
+        var this$1$1 = this;
+
+        // Collect all keys, existing and incoming
+        var keys = Array.from(new Set(Object.keys(values || {}).concat(Object.keys(this.proxy))));
+        keys.forEach(function (field) {
+          var input = this$1$1.registry.has(field) && this$1$1.registry.get(field);
+          var value = values ? values[field] : undefined;
+          if (input && !equals(input.proxy, value, true)) {
+            input.context.model = value;
+          }
+          if (!equals(value, this$1$1.proxy[field], true)) {
+            this$1$1.setFieldValue(field, value);
+          }
+        });
+      },
+      updateValidation: function updateValidation (errorObject) {
+        if (has(this.registry.errors, errorObject.name)) {
+          this.registry.errors[errorObject.name] = errorObject.hasErrors;
+        }
+        this.$emit('validation', errorObject);
+      },
+      addErrorObserver: function addErrorObserver (observer) {
+        if (!this.errorObservers.find(function (obs) { return observer.callback === obs.callback; })) {
+          this.errorObservers.push(observer);
+          if (observer.type === 'form') {
+            observer.callback(this.mergedFormErrors);
+          } else if (observer.type === 'group' && has(this.mergedGroupErrors, observer.field)) {
+            observer.callback(this.mergedGroupErrors[observer.field]);
+          } else if (has(this.mergedFieldErrors, observer.field)) {
+            observer.callback(this.mergedFieldErrors[observer.field]);
+          }
+        }
+      },
+      removeErrorObserver: function removeErrorObserver (observer) {
+        this.errorObservers = this.errorObservers.filter(function (obs) { return obs.callback !== observer; });
+      }
+    };
+    return Object.keys(methods).reduce(function (withMethods, key) {
+      var obj;
+
+      return without.includes(key) ? withMethods : Object.assign({}, withMethods, ( obj = {}, obj[key] = methods[key], obj ))
+    }, {})
+  }
+
+  /**
+   * Unified registry watchers.
+   */
+  function useRegistryWatchers () {
+    return {
+      mergedFieldErrors: {
+        handler: function handler (errors) {
+          this.errorObservers
+            .filter(function (o) { return o.type === 'input'; })
+            .forEach(function (o) { return o.callback(errors[o.field] || []); });
+        },
+        immediate: true
+      },
+      mergedGroupErrors: {
+        handler: function handler (errors) {
+          this.errorObservers
+            .filter(function (o) { return o.type === 'group'; })
+            .forEach(function (o) { return o.callback(errors[o.field] || {}); });
+        },
+        immediate: true
+      }
+    }
+  }
+
+  /**
+   * Providers related to the registry.
+   */
+  function useRegistryProviders (ctx, without) {
+    if ( without === void 0 ) without = [];
+
+    var providers = {
+      formulateSetter: ctx.setFieldValue,
+      formulateRegister: ctx.register,
+      formulateDeregister: ctx.deregister,
+      formulateFieldValidation: ctx.updateValidation,
+      // Provided on forms only to let getFormValues to fall back to form
+      getFormValues: ctx.valueDeps,
+      // Provided on groups only to expose group-level items
+      getGroupValues: ctx.valueDeps,
+      validateDependents: ctx.validateDeps,
+      observeErrors: ctx.addErrorObserver,
+      removeErrorObserver: ctx.removeErrorObserver
+    };
+    var p = Object.keys(providers)
+      .filter(function (provider) { return !without.includes(provider); })
+      .reduce(function (useProviders, provider) {
+        var obj;
+
+        return Object.assign(useProviders, ( obj = {}, obj[provider] = providers[provider], obj ));
+    }, {});
+    return p
+  }
+
+  /**
+   * A simple (somewhat non-comprehensive) cloneDeep function, valid for our use
+   * case of needing to unbind reactive watchers.
+   */
+  function cloneDeep (obj) {
+      if (typeof obj !== 'object') {
+        return obj
+      }
+      var isArr = Array.isArray(obj);
+      var newObj = isArr ? [] : {};
+      for (var key in obj) {
+        if (obj[key] instanceof FileUpload || isValueType(obj[key])) {
+          newObj[key] = obj[key];
+        } else {
+          newObj[key] = cloneDeep(obj[key]);
+        }
+      }
+      return newObj
+    }
+
+  var FormSubmission = function FormSubmission (form) {
+    this.form = form;
+  };
+
+  /**
+   * Determine if the form has any validation errors.
+   *
+   * @return {Promise} resolves a boolean
+   */
+  FormSubmission.prototype.hasValidationErrors = function hasValidationErrors () {
+    return this.form.hasValidationErrors()
+  };
+
+  /**
+   * Asynchronously generate the values payload of this form.
+   * @return {Promise} resolves to json
+   */
+  FormSubmission.prototype.values = function values () {
+      var this$1$1 = this;
+
+    return new Promise(function (resolve, reject) {
+      var pending = [];
+      var values = cloneDeep(this$1$1.form.proxy);
+      var loop = function ( key ) {
+        if (typeof this$1$1.form.proxy[key] === 'object' && this$1$1.form.proxy[key] instanceof FileUpload) {
+          pending.push(
+            this$1$1.form.proxy[key].upload().then(function (data) {
+                var obj;
+
+                return Object.assign(values, ( obj = {}, obj[key] = data, obj ));
+            })
+          );
+        }
+      };
+
+        for (var key in values) loop( key );
+      Promise.all(pending)
+        .then(function () { return resolve(values); })
+        .catch(function (err) { return reject(err); });
+    })
+  };
+
+  function objectWithoutProperties$2 (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+
+  var script$l = {
+    name: 'FormulateForm',
+    inheritAttrs: false,
+    provide: function provide () {
+      return Object.assign({}, useRegistryProviders(this, ['getGroupValues']),
+        {observeContext: this.addContextObserver,
+        removeContextObserver: this.removeContextObserver})
+    },
+    model: {
+      prop: 'formulateValue',
+      event: 'input'
+    },
+    props: {
+      name: {
+        type: [String, Boolean],
+        default: false
+      },
+      formulateValue: {
+        type: Object,
+        default: function () { return ({}); }
+      },
+      values: {
+        type: [Object, Boolean],
+        default: false
+      },
+      errors: {
+        type: [Object, Boolean],
+        default: false
+      },
+      formErrors: {
+        type: Array,
+        default: function () { return ([]); }
+      },
+      schema: {
+        type: [Array, Boolean],
+        default: false
+      },
+      keepModelData: {
+        type: [Boolean, String],
+        default: false
+      },
+      invalidMessage: {
+        type: [Boolean, Function, String],
+        default: false
+      },
+      debounce: {
+        type: [Boolean, Number],
+        default: false
+      }
+    },
+    data: function data () {
+      return Object.assign({}, useRegistry(this),
+        {formShouldShowErrors: false,
+        contextObservers: [],
+        namedErrors: [],
+        namedFieldErrors: {},
+        isLoading: false,
+        hasFailedSubmit: false})
+    },
+    computed: Object.assign({}, useRegistryComputed(),
+      {schemaListeners: function schemaListeners () {
+        var ref = this.$listeners;
+        ref.submit;
+        var rest = objectWithoutProperties$2( ref, ["submit"] );
+        var listeners = rest;
+        return listeners
+      },
+      pseudoProps: function pseudoProps () {
+        return extractAttributes(this.$attrs, classProps.filter(function (p) { return /^form/.test(p); }))
+      },
+      attributes: function attributes () {
+        var this$1$1 = this;
+
+        var attrs = Object.keys(this.$attrs)
+          .filter(function (attr) { return !has(this$1$1.pseudoProps, camel(attr)); })
+          .reduce(function (fields, field) {
+            var obj;
+
+            return (Object.assign({}, fields, ( obj = {}, obj[field] = this$1$1.$attrs[field], obj )));
+        }, {}); // Create an object of attributes to re-bind
+        if (typeof this.name === 'string') {
+          Object.assign(attrs, { name: this.name });
+        }
+        return attrs
+      },
+      hasErrors: function hasErrors () {
+        return Object.values(this.registry.errors).some(function (hasErrors) { return hasErrors; })
+      },
+      isValid: function isValid () {
+        return !this.hasErrors
+      },
+      formContext: function formContext () {
+        return {
+          errors: this.mergedFormErrors,
+          pseudoProps: this.pseudoProps,
+          hasErrors: this.hasErrors,
+          value: this.proxy,
+          hasValue: !isEmpty(this.proxy), // These have to be explicit for really silly nextTick reasons
+          isValid: this.isValid,
+          isLoading: this.isLoading,
+          classes: this.classes
+        }
+      },
+      classes: function classes () {
+        return this.$formulate.classes(Object.assign({}, this.$props,
+          this.pseudoProps,
+          {value: this.proxy,
+          errors: this.mergedFormErrors,
+          hasErrors: this.hasErrors,
+          hasValue: !isEmpty(this.proxy),
+          isValid: this.isValid,
+          isLoading: this.isLoading,
+          type: 'form',
+          classification: 'form',
+          attrs: this.$attrs}))
+      },
+      invalidErrors: function invalidErrors () {
+        if (this.hasFailedSubmit && this.hasErrors) {
+          switch (typeof this.invalidMessage) {
+            case 'string':
+              return [this.invalidMessage]
+            case 'object':
+              return Array.isArray(this.invalidMessage) ? this.invalidMessage : []
+            case 'function':
+              var ret = this.invalidMessage(this.failingFields);
+              return Array.isArray(ret) ? ret : [ret]
+          }
+        }
+        return []
+      },
+      mergedFormErrors: function mergedFormErrors () {
+        return this.formErrors.concat(this.namedErrors).concat(this.invalidErrors)
+      },
+      mergedFieldErrors: function mergedFieldErrors () {
+        var errors = {};
+        if (this.errors) {
+          for (var fieldName in this.errors) {
+            errors[fieldName] = arrayify(this.errors[fieldName]);
+          }
+        }
+        for (var fieldName$1 in this.namedFieldErrors) {
+          errors[fieldName$1] = arrayify(this.namedFieldErrors[fieldName$1]);
+        }
+        return errors
+      },
+      hasFormErrorObservers: function hasFormErrorObservers () {
+        return !!this.errorObservers.filter(function (o) { return o.type === 'form'; }).length
+      },
+      failingFields: function failingFields () {
+        var this$1$1 = this;
+
+        return Object.keys(this.registry.errors)
+          .reduce(function (fields, field) {
+            var obj;
+
+            return (Object.assign({}, fields,
+            (this$1$1.registry.errors[field] ? ( obj = {}, obj[field] = this$1$1.registry.get(field), obj ) : {})));
+        }, {})
+      }}),
+    watch: Object.assign({}, useRegistryWatchers(),
+      {formulateValue: {
+        handler: function handler (values) {
+          if (this.isVmodeled &&
+            values &&
+            typeof values === 'object'
+          ) {
+            this.setValues(values);
+          }
+        },
+        deep: true
+      },
+      mergedFormErrors: function mergedFormErrors (errors) {
+        this.errorObservers
+          .filter(function (o) { return o.type === 'form'; })
+          .forEach(function (o) { return o.callback(errors); });
+      }}),
+    created: function created () {
+      this.$formulate.register(this);
+      this.applyInitialValues();
+      this.$emit('created', this);
+    },
+    destroyed: function destroyed () {
+      this.$formulate.deregister(this);
+    },
+    methods: Object.assign({}, useRegistryMethods(),
+      {applyErrors: function applyErrors (ref) {
+        var formErrors = ref.formErrors;
+        var inputErrors = ref.inputErrors;
+
+        // given an object of errors, apply them to this form
+        this.namedErrors = formErrors;
+        this.namedFieldErrors = inputErrors;
+      },
+      addContextObserver: function addContextObserver (callback) {
+        if (!this.contextObservers.find(function (observer) { return observer === callback; })) {
+          this.contextObservers.push(callback);
+          callback(this.formContext);
+        }
+      },
+      removeContextObserver: function removeContextObserver (callback) {
+        this.contextObservers.filter(function (observer) { return observer !== callback; });
+      },
+      registerErrorComponent: function registerErrorComponent (component) {
+        if (!this.errorComponents.includes(component)) {
+          this.errorComponents.push(component);
+        }
+      },
+      formSubmitted: function formSubmitted () {
+        var this$1$1 = this;
+
+        if (this.isLoading) {
+          return undefined
+        }
+        this.isLoading = true;
+
+        // perform validation here
+        this.showErrors();
+        var submission = new FormSubmission(this);
+
+        // Wait for the submission handler
+        var submitRawHandler = this.$listeners['submit-raw'] || this.$listeners.submitRaw;
+        var rawHandlerReturn = typeof submitRawHandler === 'function'
+          ? submitRawHandler(submission)
+          : Promise.resolve(submission);
+        var willResolveRaw = rawHandlerReturn instanceof Promise
+          ? rawHandlerReturn
+          : Promise.resolve(rawHandlerReturn);
+        return willResolveRaw
+          .then(function (res) {
+            var sub = (res instanceof FormSubmission ? res : submission);
+            return sub.hasValidationErrors().then(function (hasErrors) { return [sub, hasErrors]; })
+          })
+          .then(function (ref) {
+            var sub = ref[0];
+            var hasErrors = ref[1];
+
+            if (!hasErrors && typeof this$1$1.$listeners.submit === 'function') {
+              return sub.values()
+                .then(function (values) {
+                  // If the listener returns a promise, we want to wait for that
+                  // that promise to resolve, but when we do resolve, we only
+                  // want to resolve the submission values
+                  this$1$1.hasFailedSubmit = false;
+                  var handlerReturn = this$1$1.$listeners.submit(values);
+                  return (handlerReturn instanceof Promise ? handlerReturn : Promise.resolve())
+                    .then(function () { return values; })
+                })
+            }
+            return this$1$1.onFailedValidation()
+          })
+          .finally(function () {
+            this$1$1.isLoading = false;
+          })
+      },
+      onFailedValidation: function onFailedValidation () {
+        this.hasFailedSubmit = true;
+        this.$emit('failed-validation', Object.assign({}, this.failingFields));
+        return this.$formulate.failedValidation(this)
+      }})
+  };
+
+  function render$l(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSchema = vue.resolveComponent("FormulateSchema");
+    var _component_FormulateErrors = vue.resolveComponent("FormulateErrors");
+
+    return (vue.openBlock(), vue.createElementBlock("form", vue.mergeProps({
+      class: $options.classes.form
+    }, $options.attributes, {
+      onSubmit: _cache[0] || (_cache[0] = vue.withModifiers(function () {
+        var args = [], len = arguments.length;
+        while ( len-- ) args[ len ] = arguments[ len ];
+
+        return ($options.formSubmitted && $options.formSubmitted.apply($options, args));
+    }, ["prevent"]))
+    }), [
+      ($props.schema)
+        ? (vue.openBlock(), vue.createBlock(_component_FormulateSchema, vue.mergeProps({
+            key: 0,
+            schema: $props.schema
+          }, vue.toHandlers($options.schemaListeners)), null, 16 /* FULL_PROPS */, ["schema"]))
+        : vue.createCommentVNode("v-if", true),
+      (!$options.hasFormErrorObservers)
+        ? (vue.openBlock(), vue.createBlock(_component_FormulateErrors, {
+            key: 1,
+            context: $options.formContext
+          }, null, 8 /* PROPS */, ["context"]))
+        : vue.createCommentVNode("v-if", true),
+      vue.renderSlot(_ctx.$slots, "default", vue.normalizeProps(vue.guardReactiveProps($options.formContext)))
+    ], 16 /* FULL_PROPS */))
+  }
+
+  script$l.render = render$l;
+  script$l.__file = "src/FormulateForm.vue";
+
+  function objectWithoutProperties$1 (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+
+  /**
+   * For a single instance of an input, export all of the context needed to fully
+   * render that element.
+   * @return {object}
+   */
+  var context = {
+    context: function context () {
+      return defineModel.call(this, Object.assign({}, {addLabel: this.logicalAddLabel,
+        removeLabel: this.logicalRemoveLabel,
+        attributes: this.elementAttributes,
+        blurHandler: blurHandler.bind(this),
+        classification: this.classification,
+        component: this.component,
+        debounceDelay: this.debounceDelay,
+        disableErrors: this.disableErrors,
+        errors: this.explicitErrors,
+        formShouldShowErrors: this.formShouldShowErrors,
+        getValidationErrors: this.getValidationErrors.bind(this),
+        groupErrors: this.mergedGroupErrors,
+        hasGivenName: this.hasGivenName,
+        hasValue: this.hasValue,
+        hasLabel: (this.label && this.classification !== 'button'),
+        hasValidationErrors: this.hasValidationErrors.bind(this),
+        help: this.help,
+        helpPosition: this.logicalHelpPosition,
+        id: this.id || this.defaultId,
+        ignored: has(this.$options.propsData, 'ignored'),
+        isValid: this.isValid,
+        imageBehavior: this.imageBehavior,
+        label: this.label,
+        labelPosition: this.logicalLabelPosition,
+        limit: this.limit === Infinity ? this.limit : parseInt(this.limit, 10),
+        name: this.nameOrFallback,
+        minimum: parseInt(this.minimum, 10),
+        performValidation: this.performValidation.bind(this),
+        pseudoProps: this.pseudoProps,
+        preventWindowDrops: this.preventWindowDrops,
+        removePosition: this.mergedRemovePosition,
+        repeatable: this.repeatable,
+        rootEmit: this.$emit.bind(this),
+        rules: this.ruleDetails,
+        setErrors: this.setErrors.bind(this),
+        showValidationErrors: this.showValidationErrors,
+        slotComponents: this.slotComponents,
+        slotProps: this.slotProps,
+        type: this.type,
+        uploadBehavior: this.uploadBehavior,
+        uploadUrl: this.mergedUploadUrl,
+        uploader: this.uploader || this.$formulate.getUploader(),
+        validationErrors: this.validationErrors,
+        value: this.value,
+        visibleValidationErrors: this.visibleValidationErrors,
+        isSubField: this.isSubField,
+        classes: this.classes},
+        this.typeContext))
+    },
+    // Used in context
+    nameOrFallback: nameOrFallback,
+    hasGivenName: hasGivenName,
+    typeContext: typeContext,
+    elementAttributes: elementAttributes,
+    logicalLabelPosition: logicalLabelPosition,
+    logicalHelpPosition: logicalHelpPosition,
+    mergedRemovePosition: mergedRemovePosition,
+    mergedUploadUrl: mergedUploadUrl,
+    mergedGroupErrors: mergedGroupErrors,
+    hasValue: hasValue,
+    visibleValidationErrors: visibleValidationErrors,
+    slotComponents: slotComponents,
+    logicalAddLabel: logicalAddLabel,
+    logicalRemoveLabel: logicalRemoveLabel,
+    classes: classes,
+    showValidationErrors: showValidationErrors,
+    slotProps: slotProps,
+    pseudoProps: pseudoProps,
+    isValid: isValid,
+    ruleDetails: ruleDetails,
+
+    // Not used in context
+    isVmodeled: isVmodeled,
+    mergedValidationName: mergedValidationName,
+    explicitErrors: explicitErrors,
+    allErrors: allErrors,
+    hasVisibleErrors: hasVisibleErrors,
+    hasErrors: hasErrors,
+    filteredAttributes: filteredAttributes,
+    typeProps: typeProps,
+    listeners: listeners
+  };
+
+  /**
+   * The label to display when adding a new group.
+   */
+  function logicalAddLabel () {
+    if (this.classification === 'file') {
+      return this.addLabel === true ? ("+ Add " + (cap(this.type))) : this.addLabel
+    }
+    if (typeof this.addLabel === 'boolean') {
+      var label = this.label || this.name;
+      return ("+ " + (typeof label === 'string' ? label + ' ' : '') + " Add")
+    }
+    return this.addLabel
+  }
+  /**
+   * The label to display when removing a group.
+   */
+  function logicalRemoveLabel () {
+    if (typeof this.removeLabel === 'boolean') {
+      return 'Remove'
+    }
+    return this.removeLabel
+  }
+
+  /**
+   * Given (this.type), return an object to merge with the context
+   * @return {object}
+   * @return {object}
+   */
+  function typeContext () {
+    var this$1$1 = this;
+
+    switch (this.classification) {
+      case 'select':
+        return {
+          options: createOptionList.call(this, this.options),
+          optionGroups: this.optionGroups ? map(this.optionGroups, function (k, v) { return createOptionList.call(this$1$1, v); }) : false,
+          placeholder: this.$attrs.placeholder || false
+        }
+      case 'slider':
+        return { showValue: !!this.showValue }
+      default:
+        if (this.options) {
+          return {
+            options: createOptionList.call(this, this.options)
+          }
+        }
+        return {}
+    }
+  }
+
+  /**
+   * Items in $attrs that are better described as props.
+   */
+  function pseudoProps () {
+    // Remove any "class key props" from the attributes.
+    return extractAttributes(this.localAttributes, classProps)
+  }
+
+  /**
+   * Remove props that are defined as slot props.
+   */
+  function typeProps () {
+    return extractAttributes(this.localAttributes, this.$formulate.typeProps(this.type))
+  }
+
+  /**
+   * Attributes with pseudoProps filtered out.
+   */
+  function filteredAttributes () {
+    var this$1$1 = this;
+
+    var filterKeys = Object.keys(this.pseudoProps)
+      .concat(Object.keys(this.typeProps));
+    return Object.keys(this.localAttributes).reduce(function (props, key) {
+      if (!filterKeys.includes(camel(key))) {
+        props[key] = this$1$1.localAttributes[key];
+      }
+      return props
+    }, {})
+  }
+
+  /**
+   * Reducer for attributes that will be applied to each core input element.
+   * @return {object}
+   */
+  function elementAttributes () {
+    var attrs = Object.assign({}, this.filteredAttributes);
+    // pass the ID prop through to the root element
+    if (this.id) {
+      attrs.id = this.id;
+    } else {
+      attrs.id = this.defaultId;
+    }
+    // pass an explicitly given name prop through to the root element
+    if (this.hasGivenName) {
+      attrs.name = this.name;
+    }
+
+    // If there is help text, have this element be described by it.
+    if (this.help && !has(attrs, 'aria-describedby')) {
+      attrs['aria-describedby'] = (attrs.id) + "-help";
+    }
+
+    // Ensure we dont have a class attribute unless we are actually applying classes.
+    if (this.classes.input && (!Array.isArray(this.classes.input) || this.classes.input.length)) {
+      attrs.class = this.classes.input;
+    }
+
+    // @todo Filter out "local props" for custom inputs.
+
+    return attrs
+  }
+
+  /**
+   * Apply the result of the classes computed prop to any existing prop classes.
+   */
+  function classes () {
+    return this.$formulate.classes(Object.assign({}, this.$props,
+      this.pseudoProps,
+      {attrs: this.filteredAttributes,
+        classification: this.classification,
+        hasErrors: this.hasVisibleErrors,
+        hasValue: this.hasValue,
+        helpPosition: this.logicalHelpPosition,
+        isValid: this.isValid,
+        labelPosition: this.logicalLabelPosition,
+        type: this.type,
+        value: this.proxy}))
+  }
+
+  /**
+   * Determine the best-guess location for the label (before or after).
+   * @return {string} before|after
+   */
+  function logicalLabelPosition () {
+    if (this.labelPosition) {
+      return this.labelPosition
+    }
+    switch (this.classification) {
+      case 'box':
+        return 'after'
+      default:
+        return 'before'
+    }
+  }
+
+  /**
+   * Determine the best location for the label based on type (before or after).
+   */
+  function logicalHelpPosition () {
+    if (this.helpPosition) {
+      return this.helpPosition
+    }
+    switch (this.classification) {
+      case 'group':
+        return 'before'
+      default:
+        return 'after'
+    }
+  }
+
+  /**
+   * Set remove button position for repeatable inputs
+   */
+  function mergedRemovePosition () {
+    return (this.type === 'group') ? this.removePosition || 'before' : false
+  }
+
+  /**
+   * The validation label to use.
+   */
+  function mergedValidationName () {
+    var this$1$1 = this;
+
+    var strategy = this.$formulate.options.validationNameStrategy || ['validationName', 'name', 'label', 'type'];
+    if (Array.isArray(strategy)) {
+      var key = strategy.find(function (key) { return typeof this$1$1[key] === 'string'; });
+      return this[key]
+    }
+    if (typeof strategy === 'function') {
+      return strategy.call(this, this)
+    }
+    return this.type
+  }
+
+  /**
+   * Use the uploadURL on the input if it exists, otherwise use the uploadURL
+   * that is defined as a plugin option.
+   */
+  function mergedUploadUrl () {
+    return this.uploadUrl || this.$formulate.getUploadUrl()
+  }
+
+  /**
+   * Merge localGroupErrors and groupErrors props.
+   */
+  function mergedGroupErrors () {
+    var this$1$1 = this;
+
+    var keys = Object.keys(this.groupErrors).concat(Object.keys(this.localGroupErrors));
+    var isGroup = /^(\d+)\.(.*)$/;
+    // Using new Set() to remove duplicates.
+    return Array.from(new Set(keys))
+      .filter(function (k) { return isGroup.test(k); })
+      .reduce(function (groupErrors, fieldKey) {
+        var obj;
+
+        var ref = fieldKey.match(isGroup);
+        var index = ref[1];
+        var subField = ref[2];
+        if (!has(groupErrors, index)) {
+          groupErrors[index] = {};
+        }
+        var fieldErrors = Array.from(new Set(
+          arrayify(this$1$1.groupErrors[fieldKey]).concat(arrayify(this$1$1.localGroupErrors[fieldKey]))
+        ));
+        groupErrors[index] = Object.assign(groupErrors[index], ( obj = {}, obj[subField] = fieldErrors, obj ));
+        return groupErrors
+      }, {})
+  }
+
+  /**
+   * Takes the parsed validation rules and makes them a bit more readable.
+   */
+  function ruleDetails () {
+    return this.parsedValidation
+      .map(function (ref) {
+        var args = ref[1];
+        var ruleName = ref[2];
+
+        return ({ ruleName: ruleName, args: args });
+    })
+  }
+
+  /**
+   * Determines if the field should show it's error (if it has one)
+   * @return {boolean}
+   */
+  function showValidationErrors () {
+    if (this.showErrors || this.formShouldShowErrors) {
+      return true
+    }
+    if (this.classification === 'file' && this.uploadBehavior === 'live' && modelGetter.call(this)) {
+      return true
+    }
+    return this.behavioralErrorVisibility
+  }
+
+  /**
+   * All of the currently visible validation errors (does not include error handling)
+   * @return {array}
+   */
+  function visibleValidationErrors () {
+    return (this.showValidationErrors && this.validationErrors.length) ? this.validationErrors : []
+  }
+
+  /**
+   * Return the element’s name, or select a fallback.
+   */
+  function nameOrFallback () {
+    if (this.name === true && this.classification !== 'button') {
+      var id = this.id || this.elementAttributes.id.replace(/[^0-9]/g, '');
+      return ((this.type) + "_" + id)
+    }
+    if (this.name === false || (this.classification === 'button' && this.name === true)) {
+      return false
+    }
+    return this.name
+  }
+
+  /**
+   * determine if an input has a user-defined name
+   */
+  function hasGivenName () {
+    return typeof this.name !== 'boolean'
+  }
+
+  /**
+   * Determines if the current input has a value or not. To do this we need to
+   * check for various falsey values. But we cannot assume that all falsey values
+   * mean an empty or unselected field (for example 0) and we cant assume that
+   * all truthy values are empty like [] or {}.
+   */
+  function hasValue () {
+    var this$1$1 = this;
+
+    var value = this.proxy;
+    if (
+      (this.classification === 'box' && this.isGrouped) ||
+      (this.classification === 'select' && has(this.filteredAttributes, 'multiple'))
+    ) {
+      return Array.isArray(value) ? value.some(function (v) { return v === this$1$1.value; }) : this.value === value
+    }
+    return !isEmpty(value)
+  }
+
+  /**
+   * Determines if this formulate element is v-modeled or not.
+   */
+  function isVmodeled () {
+    return !!(this.$options.propsData.hasOwnProperty('formulateValue') &&
+      this._events &&
+      Array.isArray(this._events.input) &&
+      this._events.input.length)
+  }
+
+  /**
+   * Given an object or array of options, create an array of objects with label,
+   * value, and id.
+   * @param {array|object}
+   * @return {array}
+   */
+  function createOptionList (optionData) {
+    if (!optionData) {
+      return []
+    }
+    var options = Array.isArray(optionData) ? optionData : Object.keys(optionData).map(function (value) { return ({ label: optionData[value], value: value }); });
+    return options.map(createOption.bind(this))
+  }
+
+  /**
+   * Given a wide ranging input (string, object, etc) return an option item
+   * @param {typeof} option
+   */
+  function createOption (option) {
+    // Numbers are not allowed
+    if (typeof option === 'number') {
+      option = String(option);
+    }
+    if (typeof option === 'string') {
+      return { label: option, value: option, id: ((this.elementAttributes.id) + "_" + option) }
+    }
+    if (typeof option.value === 'number') {
+      option.value = String(option.value);
+    }
+    return Object.assign({
+      value: '',
+      label: '',
+      id: ((this.elementAttributes.id) + "_" + (option.value || option.label))
+    }, option)
+  }
+
+  /**
+   * These are errors we that have been explicity passed to us.
+   */
+  function explicitErrors () {
+    return arrayify(this.errors)
+      .concat(this.localErrors)
+      .concat(arrayify(this.error))
+  }
+
+  /**
+   * The merged errors computed property.
+   */
+  function allErrors () {
+    return this.explicitErrors
+      .concat(arrayify(this.validationErrors))
+  }
+
+  /**
+   * Does this computed property have errors
+   */
+  function hasErrors () {
+    return !!this.allErrors.length
+  }
+
+  /**
+   * True when the field has no errors at all.
+   */
+  function isValid () {
+    return !this.hasErrors
+  }
+
+  /**
+   * Returns if form has actively visible errors (of any kind)
+   */
+  function hasVisibleErrors () {
+    return (
+      (Array.isArray(this.validationErrors) && this.validationErrors.length && this.showValidationErrors) ||
+      !!this.explicitErrors.length
+    )
+  }
+
+  /**
+   * The component that should be rendered in the label slot as default.
+   */
+  function slotComponents () {
+    var fn = this.$formulate.slotComponent.bind(this.$formulate);
+    return {
+      addMore: fn(this.type, 'addMore'),
+      buttonContent: fn(this.type, 'buttonContent'),
+      errors: fn(this.type, 'errors'),
+      file: fn(this.type, 'file'),
+      help: fn(this.type, 'help'),
+      label: fn(this.type, 'label'),
+      prefix: fn(this.type, 'prefix'),
+      remove: fn(this.type, 'remove'),
+      repeatable: fn(this.type, 'repeatable'),
+      suffix: fn(this.type, 'suffix'),
+      uploadAreaMask: fn(this.type, 'uploadAreaMask')
+    }
+  }
+
+  /**
+   * Any extra props to pass to slot components.
+   */
+  function slotProps () {
+    var fn = this.$formulate.slotProps.bind(this.$formulate);
+    return {
+      label: fn(this.type, 'label', this.typeProps),
+      help: fn(this.type, 'help', this.typeProps),
+      errors: fn(this.type, 'errors', this.typeProps),
+      repeatable: fn(this.type, 'repeatable', this.typeProps),
+      addMore: fn(this.type, 'addMore', this.typeProps),
+      remove: fn(this.type, 'remove', this.typeProps),
+      component: fn(this.type, 'component', this.typeProps)
+    }
+  }
+
+  /**
+   * Bound into the context object.
+   */
+  function blurHandler () {
+    var this$1$1 = this;
+
+    if (this.errorBehavior === 'blur' || this.errorBehavior === 'value') {
+      this.behavioralErrorVisibility = true;
+    }
+    this.$nextTick(function () { return this$1$1.$emit('blur-context', this$1$1.context); });
+  }
+
+  /**
+   * Bound listeners.
+   */
+  function listeners () {
+    var ref = this.$listeners;
+    ref.input;
+    var rest = objectWithoutProperties$1( ref, ["input"] );
+    var listeners = rest;
+    return listeners
+  }
+
+  /**
+   * Defines the model used throughout the existing context.
+   * @param {object} context
+   */
+  function defineModel (context) {
+    var this$1$1 = this;
+
+    return Object.defineProperty(context, 'model', {
+      get: modelGetter.bind(this),
+      set: function (value) {
+        if (!this$1$1.mntd || !this$1$1.debounceDelay) {
+          return modelSetter.call(this$1$1, value)
+        }
+        this$1$1.dSet(modelSetter, [value], this$1$1.debounceDelay);
+      },
+      enumerable: true
+    })
+  }
+
+  /**
+   * Get the value from a model.
+   **/
+  function modelGetter () {
+    var model = this.isVmodeled ? 'formulateValue' : 'proxy';
+    if (this.type === 'checkbox' && !Array.isArray(this[model]) && this.options) {
+      return []
+    }
+    if (!this[model] && this[model] !== 0) {
+      return ''
+    }
+    return this[model]
+  }
+
+  /**
+   * Set the value from a model.
+   **/
+  function modelSetter (value) {
+    var didUpdate = false;
+    if (!equals(value, this.proxy, this.type === 'group')) {
+      this.proxy = value;
+      didUpdate = true;
+    }
+    if (!this.context.ignored && this.context.name && typeof this.formulateSetter === 'function') {
+      this.formulateSetter(this.context.name, value);
+    }
+    if (didUpdate) {
+      this.$emit('input', value);
+    }
+  }
+
+  var script$k = {
+    name: 'FormulateInput',
+    inheritAttrs: false,
+    provide: function provide () {
+      return {
+        // Allows sub-components of this input to register arbitrary rules.
+        formulateRegisterRule: this.registerRule,
+        formulateRemoveRule: this.removeRule
+      }
+    },
+    inject: {
+      formulateSetter: { default: undefined },
+      formulateFieldValidation: { default: function () { return function () { return ({}); }; } },
+      formulateRegister: { default: undefined },
+      formulateDeregister: { default: undefined },
+      getFormValues: { default: function () { return function () { return ({}); }; } },
+      getGroupValues: { default: undefined },
+      validateDependents: { default: function () { return function () {}; } },
+      observeErrors: { default: undefined },
+      removeErrorObserver: { default: undefined },
+      isSubField: { default: function () { return function () { return false; }; } }
+    },
+    model: {
+      prop: 'formulateValue',
+      event: 'input'
+    },
+    props: {
+      type: {
+        type: String,
+        default: 'text'
+      },
+      name: {
+        type: [String, Boolean],
+        default: true
+      },
+      /* eslint-disable */
+      formulateValue: {
+        default: ''
+      },
+      value: {
+        default: false
+      },
+      /* eslint-enable */
+      options: {
+        type: [Object, Array, Boolean],
+        default: false
+      },
+      optionGroups: {
+        type: [Object, Boolean],
+        default: false
+      },
+      id: {
+        type: [String, Boolean, Number],
+        default: false
+      },
+      label: {
+        type: [String, Boolean],
+        default: false
+      },
+      labelPosition: {
+        type: [String, Boolean],
+        default: false
+      },
+      limit: {
+        type: [String, Number],
+        default: Infinity,
+        validator: function (value) { return Infinity || parseInt(value, 10) == value; } // eslint-disable-line eqeqeq
+      },
+      minimum: {
+        type: [String, Number],
+        default: 0,
+        validator: function (value) { return parseInt(value, 10) == value; } // eslint-disable-line eqeqeq
+      },
+      help: {
+        type: [String, Boolean],
+        default: false
+      },
+      helpPosition: {
+        type: [String, Boolean],
+        default: false
+      },
+      isGrouped: {
+        type: Boolean,
+        default: false
+      },
+      errors: {
+        type: [String, Array, Boolean],
+        default: false
+      },
+      removePosition: {
+        type: [String, Boolean],
+        default: false
+      },
+      repeatable: {
+        type: Boolean,
+        default: false
+      },
+      validation: {
+        type: [String, Boolean, Array],
+        default: false
+      },
+      validationName: {
+        type: [String, Boolean],
+        default: false
+      },
+      error: {
+        type: [String, Boolean],
+        default: false
+      },
+      errorBehavior: {
+        type: String,
+        default: 'blur',
+        validator: function (value) {
+          return ['blur', 'live', 'submit', 'value'].includes(value)
+        }
+      },
+      showErrors: {
+        type: Boolean,
+        default: false
+      },
+      groupErrors: {
+        type: Object,
+        default: function () { return ({}); },
+        validator: function (value) {
+          var isK = /^\d+\./;
+          return !Object.keys(value).some(function (k) { return !isK.test(k); })
+        }
+      },
+      imageBehavior: {
+        type: String,
+        default: 'preview'
+      },
+      uploadUrl: {
+        type: [String, Boolean],
+        default: false
+      },
+      uploader: {
+        type: [Function, Object, Boolean],
+        default: false
+      },
+      uploadBehavior: {
+        type: String,
+        default: 'live'
+      },
+      preventWindowDrops: {
+        type: Boolean,
+        default: true
+      },
+      showValue: {
+        type: [String, Boolean],
+        default: false
+      },
+      validationMessages: {
+        type: Object,
+        default: function () { return ({}); }
+      },
+      validationRules: {
+        type: Object,
+        default: function () { return ({}); }
+      },
+      checked: {
+        type: [String, Boolean],
+        default: false
+      },
+      disableErrors: {
+        type: Boolean,
+        default: false
+      },
+      addLabel: {
+        type: [Boolean, String],
+        default: true
+      },
+      removeLabel: {
+        type: [Boolean, String],
+        default: false
+      },
+      keepModelData: {
+        type: [Boolean, String],
+        default: 'inherit'
+      },
+      ignored: {
+        type: [Boolean, String],
+        default: false
+      },
+      debounce: {
+        type: [Boolean, Number],
+        default: false
+      },
+      preventDeregister: {
+        type: Boolean,
+        default: false
+      }
+    },
+    data: function data () {
+      return {
+        defaultId: this.$formulate.nextId(this),
+        localAttributes: {},
+        localErrors: [],
+        localGroupErrors: {},
+        proxy: this.getInitialValue(),
+        behavioralErrorVisibility: (this.errorBehavior === 'live'),
+        formShouldShowErrors: false,
+        validationErrors: [],
+        pendingValidation: Promise.resolve(),
+        // These registries are used for injected messages registrants only (mostly internal).
+        ruleRegistry: [],
+        messageRegistry: {},
+        touched: false,
+        debounceDelay: this.debounce,
+        dSet: createDebouncer(),
+        mntd: false
+      }
+    },
+    computed: Object.assign({}, context,
+      {classification: function classification () {
+        var classification = this.$formulate.classify(this.type);
+        return (classification === 'box' && this.options) ? 'group' : classification
+      },
+      component: function component () {
+        return (this.classification === 'group') ? 'FormulateInputGroup' : this.$formulate.component(this.type)
+      },
+      parsedValidationRules: function parsedValidationRules () {
+        var this$1$1 = this;
+
+        var parsedValidationRules = {};
+        Object.keys(this.validationRules).forEach(function (key) {
+          parsedValidationRules[camel(key)] = this$1$1.validationRules[key];
+        });
+        return parsedValidationRules
+      },
+      parsedValidation: function parsedValidation () {
+        return parseRules(this.validation, this.$formulate.rules(this.parsedValidationRules))
+      },
+      messages: function messages () {
+        var this$1$1 = this;
+
+        var messages = {};
+        Object.keys(this.validationMessages).forEach(function (key) {
+          messages[camel(key)] = this$1$1.validationMessages[key];
+        });
+        Object.keys(this.messageRegistry).forEach(function (key) {
+          messages[camel(key)] = this$1$1.messageRegistry[key];
+        });
+        return messages
+      }}),
+    watch: {
+      '$attrs': {
+        handler: function handler (value) {
+          this.updateLocalAttributes(value);
+        },
+        deep: true
+      },
+      proxy: {
+        handler: function (newValue, oldValue) {
+          this.performValidation();
+          if (!this.isVmodeled && !equals(newValue, oldValue, this.type === 'group')) {
+            this.context.model = newValue;
+          }
+          this.validateDependents(this);
+          if (!this.touched && newValue) {
+            this.touched = true;
+          }
+        },
+        deep: true
+      },
+      formulateValue: {
+        handler: function (newValue, oldValue) {
+          if (this.isVmodeled && !equals(newValue, oldValue, this.type === 'group')) {
+            this.context.model = newValue;
+          }
+        },
+        deep: true
+      },
+      showValidationErrors: {
+        handler: function handler (val) {
+          this.$emit('error-visibility', val);
+        },
+        immediate: true
+      },
+      validation: {
+        handler: function handler () {
+          this.performValidation();
+        },
+        deep: true
+      },
+      touched: function touched (value) {
+        if (this.errorBehavior === 'value' && value) {
+          this.behavioralErrorVisibility = value;
+        }
+      },
+      debounce: function debounce (value) {
+        this.debounceDelay = value;
+      }
+    },
+    created: function created () {
+      this.applyInitialValue();
+      if (this.formulateRegister && typeof this.formulateRegister === 'function') {
+        this.formulateRegister(this.nameOrFallback, this);
+      }
+      this.applyDefaultValue();
+      if (!this.disableErrors && typeof this.observeErrors === 'function') {
+        this.observeErrors({ callback: this.setErrors, type: 'input', field: this.nameOrFallback });
+        if (this.type === 'group') {
+          this.observeErrors({ callback: this.setGroupErrors, type: 'group', field: this.nameOrFallback });
+        }
+      }
+      this.updateLocalAttributes(this.$attrs);
+      this.performValidation();
+      if (this.hasValue) {
+        this.touched = true;
+      }
+    },
+    mounted: function mounted () {
+      this.mntd = true;
+    },
+    beforeDestroy: function beforeDestroy () {
+      if (!this.disableErrors && typeof this.removeErrorObserver === 'function') {
+        this.removeErrorObserver(this.setErrors);
+        if (this.type === 'group') {
+          this.removeErrorObserver(this.setGroupErrors);
+        }
+      }
+      if (typeof this.formulateDeregister === 'function' && !this.preventDeregister) {
+        this.formulateDeregister(this.nameOrFallback);
+      }
+    },
+    methods: {
+      getInitialValue: function getInitialValue () {
+        // Manually request classification, pre-computed props
+        var classification = this.$formulate.classify(this.type);
+        classification = (classification === 'box' && this.options) ? 'group' : classification;
+        if (classification === 'box' && this.checked) {
+          return this.value || true
+        } else if (has(this.$options.propsData, 'value') && classification !== 'box') {
+          return this.value
+        } else if (has(this.$options.propsData, 'formulateValue')) {
+          return this.formulateValue
+        } else if (classification === 'group') {
+          // Set the value of an empty group
+          return Object.defineProperty(this.type === 'group' ? [{}] : [], '__init', { value: true })
+        }
+        return ''
+      },
+      applyInitialValue: function applyInitialValue () {
+        // This should only be run immediately on created and ensures that the
+        // proxy and the model are both the same before any additional registration.
+        if (
+          !equals(this.context.model, this.proxy) &&
+          // we dont' want to set the model if we are a sub-box of a multi-box field
+          (this.classification !== 'box' || has(this.$options.propsData, 'options'))
+        ) {
+          this.context.model = this.proxy;
+          this.$emit('input', this.proxy);
+        }
+      },
+      applyDefaultValue: function applyDefaultValue () {
+        // Some inputs have may have special logic determining what to do if they
+        // are still strictly undefined after applyInitialValue and registration.
+        if (
+          this.type === 'select' &&
+          !this.context.placeholder &&
+          isEmpty(this.proxy) &&
+          !this.isVmodeled &&
+          this.value === false &&
+          this.context.options.length
+        ) {
+          if (!has(this.$attrs, 'multiple')) {
+            // In this condition we have a blank select input with no value, by
+            // default HTML will select the first element, so we emulate that.
+            // See https://github.com/wearebraid/vue-formulate/issues/165
+            this.context.model = this.context.options[0].value;
+          } else {
+            // In this condition we have a multi select input, which should use
+            // an array as it's v-model base state.
+            this.context.model = [];
+          }
+        }
+      },
+      updateLocalAttributes: function updateLocalAttributes (value) {
+        if (!equals(value, this.localAttributes)) {
+          this.localAttributes = value;
+        }
+      },
+      performValidation: function performValidation () {
+        var this$1$1 = this;
+
+        var rules = parseRules(this.validation, this.$formulate.rules(this.parsedValidationRules));
+        // Add in ruleRegistry rules. These are added directly via injection from
+        // children and not part of the standard validation rule set.
+        rules = this.ruleRegistry.length ? this.ruleRegistry.concat(rules) : rules;
+        this.pendingValidation = this.runRules(rules)
+          .then(function (messages) { return this$1$1.didValidate(messages); });
+        return this.pendingValidation
+      },
+      runRules: function runRules (rules) {
+        var this$1$1 = this;
+
+        var run = function (ref) {
+          var rule = ref[0];
+          var args = ref[1];
+          var ruleName = ref[2];
+          ref[3];
+
+          var res = rule.apply(void 0, [ {
+            value: this$1$1.context.model,
+            getFormValues: function () {
+              var ref;
+
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+              return (ref = this$1$1).getFormValues.apply(ref, [ this$1$1 ].concat( args ));
+          },
+            getGroupValues: function () {
+              var ref;
+
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+              return (ref = this$1$1)[("get" + (this$1$1.getGroupValues ? 'Group' : 'Form') + "Values")].apply(ref, [ this$1$1 ].concat( args ));
+          },
+            name: this$1$1.context.name
+          } ].concat( args ));
+          res = (res instanceof Promise) ? res : Promise.resolve(res);
+          return res.then(function (result) { return result ? false : this$1$1.getMessage(ruleName, args); })
+        };
+
+        return new Promise(function (resolve) {
+          // We break our rules into resolvable groups. These groups are
+          // adjacent rules that can be resolved simultaneously. For example
+          // consider: required|min:6,length here both rules resolve in parallel.
+          // but ^required|min:6,length cannot be resolved in parallel because
+          // the execution of the min rule requires passing resolution of the
+          // required rule due to bailing. `resolveGroups` runs/resolves each of
+          // these resolution groups, while `groupBails` is responsible for
+          // producing them.
+          var resolveGroups = function (groups, allMessages) {
+            if ( allMessages === void 0 ) allMessages = [];
+
+            var ruleGroup = groups.shift();
+            if (Array.isArray(ruleGroup) && ruleGroup.length) {
+              Promise.all(ruleGroup.map(run))
+                // Filter out any simple falsy values to prevent triggering errors
+                .then(function (messages) { return messages.filter(function (m) { return !!m; }); })
+                .then(function (messages) {
+                  messages = Array.isArray(messages) ? messages : [];
+                  // The rule passed or its a non-bailing group, and there are additional groups to check, continue
+                  if ((!messages.length || !ruleGroup.bail) && groups.length) {
+                    return resolveGroups(groups, allMessages.concat(messages))
+                  }
+                  // Filter out any empty error messages, this is important for
+                  // the `optional` rule. It uses a hard-coded empty array [] as
+                  // the message to trigger bailing, but we obviously don’t want
+                  // this message to make it out of this resolver.
+                  return resolve(allMessages.concat(messages).filter(function (m) { return !isEmpty(m); }))
+                });
+            } else {
+              resolve([]);
+            }
+          };
+          // Produce our resolution groups, and then run them
+          resolveGroups(groupBails(rules));
+        })
+      },
+      didValidate: function didValidate (messages) {
+        var validationChanged = !equals(messages, this.validationErrors);
+        this.validationErrors = messages;
+        if (validationChanged) {
+          var errorObject = this.getErrorObject();
+          this.$emit('validation', errorObject);
+          if (this.formulateFieldValidation && typeof this.formulateFieldValidation === 'function') {
+            this.formulateFieldValidation(errorObject);
+          }
+        }
+      },
+      getMessage: function getMessage (ruleName, args) {
+        var this$1$1 = this;
+
+        return this.getMessageFunc(ruleName)({
+          args: args,
+          name: this.mergedValidationName,
+          value: this.context.model,
+          vm: this,
+          formValues: this.getFormValues(this),
+          getFormValues: function () {
+            var ref;
+
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+            return (ref = this$1$1).getFormValues.apply(ref, [ this$1$1 ].concat( args ));
+        },
+          getGroupValues: function () {
+            var ref;
+
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+            return (ref = this$1$1)[("get" + (this$1$1.getGroupValues ? 'Group' : 'Form') + "Values")].apply(ref, [ this$1$1 ].concat( args ));
+        }
+        })
+      },
+      getMessageFunc: function getMessageFunc (ruleName) {
+        var this$1$1 = this;
+
+        ruleName = camel(ruleName);
+        if (ruleName === 'optional') {
+          // Optional rules need to trigger bailing by having a message, but pass
+          // the simple double bang (!!) filer, any non-string value will have
+          // this effect.
+          return function () { return ([]); }
+        }
+        if (this.messages && typeof this.messages[ruleName] !== 'undefined') {
+          switch (typeof this.messages[ruleName]) {
+            case 'function':
+              return this.messages[ruleName]
+            case 'string':
+            case 'boolean':
+              return function () { return this$1$1.messages[ruleName]; }
+          }
+        }
+        return function (context) { return this$1$1.$formulate.validationMessage(ruleName, context, this$1$1); }
+      },
+      hasValidationErrors: function hasValidationErrors () {
+        var this$1$1 = this;
+
+        return new Promise(function (resolve) {
+          this$1$1.$nextTick(function () {
+            this$1$1.pendingValidation.then(function () { return resolve(!!this$1$1.validationErrors.length); });
+          });
+        })
+      },
+      getValidationErrors: function getValidationErrors () {
+        var this$1$1 = this;
+
+        return new Promise(function (resolve) {
+          this$1$1.$nextTick(function () { return this$1$1.pendingValidation.then(function () { return resolve(this$1$1.getErrorObject()); }); });
+        })
+      },
+      getErrorObject: function getErrorObject () {
+        return {
+          name: this.context.nameOrFallback || this.context.name,
+          errors: this.validationErrors.filter(function (s) { return typeof s === 'string'; }),
+          hasErrors: !!this.validationErrors.length
+        }
+      },
+      setErrors: function setErrors (errors) {
+        this.localErrors = arrayify(errors);
+      },
+      setGroupErrors: function setGroupErrors (groupErrors) {
+        this.localGroupErrors = groupErrors;
+      },
+      registerRule: function registerRule (rule, args, ruleName, message) {
+        if ( message === void 0 ) message = null;
+
+        if (!this.ruleRegistry.some(function (r) { return r[2] === ruleName; })) {
+          // These are the raw rule format since they will be used directly.
+          this.ruleRegistry.push([rule, args, ruleName]);
+          if (message !== null) {
+            this.messageRegistry[ruleName] = message;
+          }
+        }
+      },
+      removeRule: function removeRule (key) {
+        var ruleIndex = this.ruleRegistry.findIndex(function (r) { return r[2] === key; });
+        if (ruleIndex >= 0) {
+          this.ruleRegistry.splice(ruleIndex, 1);
+          delete this.messageRegistry[key];
+        }
+      }
+    }
+  };
+
+  var _hoisted_1$e = ["data-classification", "data-has-errors", "data-is-showing-errors", "data-has-value", "data-type"];
+
+  function render$k(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.outer),
+      "data-classification": $options.classification,
+      "data-has-errors": _ctx.hasErrors,
+      "data-is-showing-errors": _ctx.hasVisibleErrors,
+      "data-has-value": _ctx.hasValue,
+      "data-type": $props.type
+    }, [
+      vue.createElementVNode("div", {
+        class: vue.normalizeClass(_ctx.context.classes.wrapper)
+      }, [
+        (_ctx.context.labelPosition === 'before')
+          ? vue.renderSlot(_ctx.$slots, "label", vue.normalizeProps(vue.mergeProps({ key: 0 }, _ctx.context)), function () { return [
+              (_ctx.context.hasLabel)
+                ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.label), vue.mergeProps({ key: 0 }, _ctx.context.slotProps.label, { context: _ctx.context }), null, 16 /* FULL_PROPS */, ["context"]))
+                : vue.createCommentVNode("v-if", true)
+            ]; })
+          : vue.createCommentVNode("v-if", true),
+        (_ctx.context.helpPosition === 'before')
+          ? vue.renderSlot(_ctx.$slots, "help", vue.normalizeProps(vue.mergeProps({ key: 1 }, _ctx.context)), function () { return [
+              (_ctx.context.help)
+                ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.help), vue.mergeProps({ key: 0 }, _ctx.context.slotProps.help, { context: _ctx.context }), null, 16 /* FULL_PROPS */, ["context"]))
+                : vue.createCommentVNode("v-if", true)
+            ]; })
+          : vue.createCommentVNode("v-if", true),
+        vue.renderSlot(_ctx.$slots, "element", vue.normalizeProps(vue.guardReactiveProps(_ctx.context)), function () { return [
+          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.component), vue.mergeProps({ context: _ctx.context }, _ctx.context.slotProps.component, vue.toHandlers(_ctx.listeners)), {
+            default: vue.withCtx(function () { return [
+              vue.renderSlot(_ctx.$slots, "default", vue.normalizeProps(vue.guardReactiveProps(_ctx.context)))
+            ]; }),
+            _: 3 /* FORWARDED */
+          }, 16 /* FULL_PROPS */, ["context"]))
+        ]; }),
+        (_ctx.context.labelPosition === 'after')
+          ? vue.renderSlot(_ctx.$slots, "label", vue.normalizeProps(vue.mergeProps({ key: 2 }, _ctx.context)), function () { return [
+              (_ctx.context.hasLabel)
+                ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.label), vue.mergeProps({
+                    key: 0,
+                    context: _ctx.context
+                  }, _ctx.context.slotProps.label), null, 16 /* FULL_PROPS */, ["context"]))
+                : vue.createCommentVNode("v-if", true)
+            ]; })
+          : vue.createCommentVNode("v-if", true)
+      ], 2 /* CLASS */),
+      (_ctx.context.helpPosition === 'after')
+        ? vue.renderSlot(_ctx.$slots, "help", vue.normalizeProps(vue.mergeProps({ key: 0 }, _ctx.context)), function () { return [
+            (_ctx.context.help)
+              ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.help), vue.mergeProps({
+                  key: 0,
+                  context: _ctx.context
+                }, _ctx.context.slotProps.help), null, 16 /* FULL_PROPS */, ["context"]))
+              : vue.createCommentVNode("v-if", true)
+          ]; })
+        : vue.createCommentVNode("v-if", true),
+      vue.renderSlot(_ctx.$slots, "errors", vue.normalizeProps(vue.guardReactiveProps(_ctx.context)), function () { return [
+        (!_ctx.context.disableErrors)
+          ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.errors), vue.mergeProps({
+              key: 0,
+              type: _ctx.context.slotComponents.errors === 'FormulateErrors' ? 'input' : false,
+              context: _ctx.context
+            }, _ctx.context.slotProps.errors), null, 16 /* FULL_PROPS */, ["type", "context"]))
+          : vue.createCommentVNode("v-if", true)
+      ]; })
+    ], 10 /* CLASS, PROPS */, _hoisted_1$e))
+  }
+
+  script$k.render = render$k;
+  script$k.__file = "src/FormulateInput.vue";
+
+  var script$j = {
+    inject: {
+      observeErrors: {
+        default: false
+      },
+      removeErrorObserver: {
+        default: false
+      },
+      observeContext: {
+        default: false
+      },
+      removeContextObserver: {
+        default: false
+      }
+    },
+    props: {
+      context: {
+        type: Object,
+        default: function () { return ({}); }
+      },
+      type: {
+        type: String,
+        default: 'form'
+      }
+    },
+    data: function data () {
+      return {
+        boundSetErrors: this.setErrors.bind(this),
+        boundSetFormContext: this.setFormContext.bind(this),
+        localErrors: [],
+        formContext: {
+          classes: {
+            formErrors: 'formulate-form-errors',
+            formError: 'formulate-form-error'
+          }
+        }
+      }
+    },
+    computed: {
+      visibleValidationErrors: function visibleValidationErrors () {
+        return Array.isArray(this.context.visibleValidationErrors) ? this.context.visibleValidationErrors : []
+      },
+      errors: function errors () {
+        return Array.isArray(this.context.errors) ? this.context.errors : []
+      },
+      mergedErrors: function mergedErrors () {
+        return this.errors.concat(this.localErrors)
+      },
+      visibleErrors: function visibleErrors () {
+        return Array.from(new Set(this.mergedErrors.concat(this.visibleValidationErrors)))
+          .filter(function (message) { return typeof message === 'string'; })
+      },
+      outerClass: function outerClass () {
+        if (this.type === 'input' && this.context.classes) {
+          return this.context.classes.errors
+        }
+        return this.formContext.classes.formErrors
+      },
+      itemClass: function itemClass () {
+        if (this.type === 'input' && this.context.classes) {
+          return this.context.classes.error
+        }
+        return this.formContext.classes.formError
+      },
+      role: function role () {
+        return this.type === 'form' ? 'alert' : 'status'
+      },
+      ariaLive: function ariaLive () {
+        return this.type === 'form' ? 'assertive' : 'polite'
+      },
+      slotComponent: function slotComponent () {
+        return this.$formulate.slotComponent(null, 'errorList')
+      }
+    },
+    created: function created () {
+      // This registration is for <FormulateErrors /> that are used for displaying
+      // Form errors in an override position.
+      if (this.type === 'form' && typeof this.observeErrors === 'function') {
+        if (!Array.isArray(this.context.errors)) {
+          this.observeErrors({ callback: this.boundSetErrors, type: 'form' });
+        }
+        this.observeContext(this.boundSetFormContext);
+      }
+    },
+    destroyed: function destroyed () {
+      if (this.type === 'form' && typeof this.removeErrorObserver === 'function') {
+        if (!Array.isArray(this.context.errors)) {
+          this.removeErrorObserver(this.boundSetErrors);
+        }
+        this.removeContextObserver(this.boundSetFormContext);
+      }
+    },
+    methods: {
+      setErrors: function setErrors (errors) {
+        this.localErrors = arrayify(errors);
+      },
+      setFormContext: function setFormContext (context) {
+        this.formContext = context;
+      }
+    }
+  };
+
+  function render$j(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($options.slotComponent), {
+      "visible-errors": $options.visibleErrors,
+      "item-class": $options.itemClass,
+      "outer-class": $options.outerClass,
+      role: $options.role,
+      "aria-live": $options.ariaLive,
+      type: $props.type
+    }, null, 8 /* PROPS */, ["visible-errors", "item-class", "outer-class", "role", "aria-live", "type"]))
+  }
+
+  script$j.render = render$j;
+  script$j.__file = "src/FormulateErrors.vue";
+
+  var script$i = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1$d = ["id", "textContent"];
+
+  function render$i(_ctx, _cache, $props, $setup, $data, $options) {
+    return ($props.context.help)
+      ? (vue.openBlock(), vue.createElementBlock("div", {
+          key: 0,
+          id: (($props.context.id) + "-help"),
+          class: vue.normalizeClass($props.context.classes.help),
+          textContent: vue.toDisplayString($props.context.help)
+        }, null, 10 /* CLASS, PROPS */, _hoisted_1$d))
+      : vue.createCommentVNode("v-if", true)
+  }
+
+  script$i.render = render$i;
+  script$i.__file = "src/slots/FormulateHelp.vue";
+
+  var script$h = {
+    props: {
+      file: {
+        type: Object,
+        required: true
+      },
+      imagePreview: {
+        type: Boolean,
+        default: false
+      },
+      context: {
+        type: Object,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1$c = ["src"];
+  var _hoisted_2$7 = ["title", "textContent"];
+  var _hoisted_3$4 = ["data-just-finished", "data-is-finished"];
+
+  function render$h(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass($props.context.classes.file)
+    }, [
+      (!!($props.imagePreview && $props.file.previewData))
+        ? (vue.openBlock(), vue.createElementBlock("div", {
+            key: 0,
+            class: vue.normalizeClass($props.context.classes.fileImagePreview)
+          }, [
+            vue.createElementVNode("img", {
+              src: $props.file.previewData,
+              class: vue.normalizeClass($props.context.classes.fileImagePreviewImage)
+            }, null, 10 /* CLASS, PROPS */, _hoisted_1$c)
+          ], 2 /* CLASS */))
+        : vue.createCommentVNode("v-if", true),
+      vue.createElementVNode("div", {
+        class: vue.normalizeClass($props.context.classes.fileName),
+        title: $props.file.name,
+        textContent: vue.toDisplayString($props.file.name)
+      }, null, 10 /* CLASS, PROPS */, _hoisted_2$7),
+      ($props.file.progress !== false)
+        ? (vue.openBlock(), vue.createElementBlock("div", {
+            key: 1,
+            "data-just-finished": $props.file.justFinished,
+            "data-is-finished": !$props.file.justFinished && $props.file.complete,
+            class: vue.normalizeClass($props.context.classes.fileProgress)
+          }, [
+            vue.createElementVNode("div", {
+              class: vue.normalizeClass($props.context.classes.fileProgressInner),
+              style: vue.normalizeStyle({width: $props.file.progress + '%'})
+            }, null, 6 /* CLASS, STYLE */)
+          ], 10 /* CLASS, PROPS */, _hoisted_3$4))
+        : vue.createCommentVNode("v-if", true),
+      (($props.file.complete && !$props.file.justFinished) || $props.file.progress === false)
+        ? (vue.openBlock(), vue.createElementBlock("div", {
+            key: 2,
+            class: vue.normalizeClass($props.context.classes.fileRemove),
+            onClick: _cache[0] || (_cache[0] = function () {
+              var ref;
+
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+              return ($props.file.removeFile && (ref = $props.file).removeFile.apply(ref, args));
+    })
+          }, null, 2 /* CLASS */))
+        : vue.createCommentVNode("v-if", true)
+    ], 2 /* CLASS */))
+  }
+
+  script$h.render = render$h;
+  script$h.__file = "src/slots/FormulateFile.vue";
+
+  var script$g = {
+    name: 'FormulateGrouping',
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    },
+    provide: function provide () {
+      return {
+        isSubField: function () { return true; },
+        registerProvider: this.registerProvider,
+        deregisterProvider: this.deregisterProvider
+      }
+    },
+    data: function data () {
+      return {
+        providers: [],
+        keys: []
+      }
+    },
+    inject: ['formulateRegisterRule', 'formulateRemoveRule'],
+    computed: {
+      items: function items () {
+        var this$1$1 = this;
+
+        if (Array.isArray(this.context.model)) {
+          if (!this.context.repeatable && this.context.model.length === 0) {
+            // This is the default input.
+            return [this.setId({}, 0)]
+          }
+          if (this.context.model.length < this.context.minimum) {
+            return (new Array(this.context.minimum || 1)).fill('')
+              .map(function (t, index) { return this$1$1.setId(this$1$1.context.model[index] || {}, index); })
+          }
+          return this.context.model.map(function (item, index) { return this$1$1.setId(item, index); })
+        }
+        // This is an unset group
+        return (new Array(this.context.minimum || 1)).fill('').map(function (_i, index) { return this$1$1.setId({}, index); })
+      },
+      formShouldShowErrors: function formShouldShowErrors () {
+        return this.context.formShouldShowErrors
+      },
+      groupErrors: function groupErrors () {
+        var this$1$1 = this;
+
+        return this.items
+          .map(function (item, index) { return has(this$1$1.context.groupErrors, index) ? this$1$1.context.groupErrors[index] : {}; })
+      }
+    },
+    watch: {
+      providers: function providers () {
+        if (this.formShouldShowErrors) {
+          this.showErrors();
+        }
+      },
+      formShouldShowErrors: function formShouldShowErrors (val) {
+        if (val) {
+          this.showErrors();
+        }
+      },
+      items: {
+        handler: function handler (items, oldItems) {
+          if (!equals(items, oldItems, true)) {
+            this.keys = items.map(function (item) { return item.__id; });
+          }
+        },
+        immediate: true
+      }
+    },
+    created: function created () {
+      // We register with an error message of 'true' which causes the validation to fail but no message output.
+      this.formulateRegisterRule(this.validateGroup.bind(this), [], 'formulateGrouping', true);
+    },
+    destroyed: function destroyed () {
+      this.formulateRemoveRule('formulateGrouping');
+    },
+    methods: {
+      validateGroup: function validateGroup () {
+        return Promise.all(this.providers.reduce(function (resolvers, provider) {
+          if (provider && typeof provider.hasValidationErrors === 'function') {
+            resolvers.push(provider.hasValidationErrors());
+          }
+          return resolvers
+        }, [])).then(function (providersHasErrors) { return !providersHasErrors.some(function (hasErrors) { return !!hasErrors; }); })
+      },
+      showErrors: function showErrors () {
+        this.providers.forEach(function (p) { return p && typeof p.showErrors === 'function' && p.showErrors(); });
+      },
+      setItem: function setItem (index, groupProxy) {
+        var this$1$1 = this;
+
+        // Note: value must have an __id to use this function
+        if (Array.isArray(this.context.model) && this.context.model.length >= this.context.minimum && !this.context.model.__init) {
+          this.context.model.splice(index, 1, this.setId(groupProxy, index));
+        } else {
+          this.context.model = this.items.map(function (item, i) { return i === index ? this$1$1.setId(groupProxy, index) : item; });
+        }
+      },
+      removeItem: function removeItem (index) {
+        var this$1$1 = this;
+
+        if (Array.isArray(this.context.model) && this.context.model.length > this.context.minimum) {
+          // In this context we actually have data
+          this.context.model = this.context.model.filter(function (item, i) { return i === index ? false : item; });
+          this.context.rootEmit('repeatableRemoved', this.context.model);
+        } else if (!Array.isArray(this.context.model) && this.items.length > this.context.minimum) {
+          // In this context the fields have never been touched (not "dirty")
+          this.context.model = (new Array(this.items.length - 1)).fill('').map(function (_i, idx) { return this$1$1.setId({}, idx); });
+          this.context.rootEmit('repeatableRemoved', this.context.model);
+        }
+        // Otherwise, do nothing, we're at our minimum
+      },
+      registerProvider: function registerProvider (provider) {
+        if (!this.providers.some(function (p) { return p === provider; })) {
+          this.providers.push(provider);
+        }
+      },
+      deregisterProvider: function deregisterProvider (provider) {
+        this.providers = this.providers.filter(function (p) { return p !== provider; });
+      },
+      setId: function setId$1 (item, index) {
+        return item.__id ? item : setId(item, this.keys[index])
+      }
+    }
+  };
+
+  function render$g(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateRepeatableProvider = vue.resolveComponent("FormulateRepeatableProvider");
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createBlock(_component_FormulateSlot, {
+      name: "grouping",
+      class: vue.normalizeClass($props.context.classes.grouping),
+      context: $props.context,
+      "force-wrap": $props.context.repeatable
+    }, {
+      default: vue.withCtx(function () { return [
+        (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList($options.items, function (item, index) {
+          return (vue.openBlock(), vue.createBlock(_component_FormulateRepeatableProvider, {
+            key: item.__id,
+            index: index,
+            context: $props.context,
+            uuid: item.__id,
+            errors: $options.groupErrors[index],
+            onRemove: $options.removeItem,
+            onInput: function (values) { return $options.setItem(index, values); }
+          }, {
+            default: vue.withCtx(function () { return [
+              vue.renderSlot(_ctx.$slots, "default")
+            ]; }),
+            _: 2 /* DYNAMIC */
+          }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["index", "context", "uuid", "errors", "onRemove", "onInput"]))
+        }), 128 /* KEYED_FRAGMENT */))
+      ]; }),
+      _: 3 /* FORWARDED */
+    }, 8 /* PROPS */, ["class", "context", "force-wrap"]))
+  }
+
+  script$g.render = render$g;
+  script$g.__file = "src/FormulateGrouping.vue";
+
+  var script$f = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1$b = ["id", "for", "textContent"];
+
+  function render$f(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createElementBlock("label", {
+      id: (($props.context.id) + "_label"),
+      class: vue.normalizeClass($props.context.classes.label),
+      for: $props.context.id,
+      textContent: vue.toDisplayString($props.context.label)
+    }, null, 10 /* CLASS, PROPS */, _hoisted_1$b))
+  }
+
+  script$f.render = render$f;
+  script$f.__file = "src/slots/FormulateLabel.vue";
+
+  var script$e = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      },
+      addMore: {
+        type: Function,
+        required: true
+      }
+    }
+  };
+
+  function render$e(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateInput = vue.resolveComponent("FormulateInput");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass($props.context.classes.groupAddMore)
+    }, [
+      vue.createVNode(_component_FormulateInput, {
+        type: "button",
+        label: $props.context.addLabel,
+        "data-minor": "",
+        "data-ghost": "",
+        onClick: $props.addMore
+      }, null, 8 /* PROPS */, ["label", "onClick"])
+    ], 2 /* CLASS */))
+  }
+
+  script$e.render = render$e;
+  script$e.__file = "src/slots/FormulateAddMore.vue";
+
+  /**
+   * Default base for input components.
+   */
+  var FormulateInputMixin = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    },
+    computed: {
+      type: function type () {
+        return this.context.type
+      },
+      attributes: function attributes () {
+        return this.context.attributes || {}
+      },
+      hasValue: function hasValue () {
+        return this.context.hasValue
+      }
+    }
+  };
+
+  var script$d = {
+    name: 'FormulateInputBox',
+    mixins: [FormulateInputMixin],
+    computed: {
+      usesDecorator: function usesDecorator () {
+        return this.$formulate.options.useInputDecorators
+      }
+    }
+  };
+
+  var _hoisted_1$a = ["data-type"];
+  var _hoisted_2$6 = ["value"];
+  var _hoisted_3$3 = ["value"];
+
+  function render$d(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.createCommentVNode("\n      This explicit break out of types is due to a Vue bug that causes IE11 to\n      not when using v-model + dynamic :type + :value (thanks @Christoph-Wagner)\n      https://github.com/vuejs/vue/issues/8379\n    "),
+      (_ctx.type === 'radio')
+        ? vue.withDirectives((vue.openBlock(), vue.createElementBlock("input", vue.mergeProps({
+            key: 0,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return ((_ctx.context.model) = $event); }),
+            type: "radio",
+            value: _ctx.context.value
+          }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true), {
+            onBlur: _cache[1] || (_cache[1] = function () {
+              var ref;
+
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+              return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+          }), null, 16 /* FULL_PROPS */, _hoisted_2$6)), [
+            [vue.vModelRadio, _ctx.context.model]
+          ])
+        : vue.withDirectives((vue.openBlock(), vue.createElementBlock("input", vue.mergeProps({
+            key: 1,
+            "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) { return ((_ctx.context.model) = $event); }),
+            type: "checkbox",
+            value: _ctx.context.value
+          }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true), {
+            onBlur: _cache[3] || (_cache[3] = function () {
+              var ref;
+
+              var args = [], len = arguments.length;
+              while ( len-- ) args[ len ] = arguments[ len ];
+              return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+          }), null, 16 /* FULL_PROPS */, _hoisted_3$3)), [
+            [vue.vModelCheckbox, _ctx.context.model]
+          ]),
+      vue.createCommentVNode("\n      Ok, so for reasons that we cannot explain, the <label> here will not\n      update when the attribute.id changes. Possible bug in core? Either way,\n      making this a <component> forces vue to re-render this label when the\n      id changes.\n\n      https://github.com/wearebraid/vue-formulate/issues/75\n    "),
+      ($options.usesDecorator)
+        ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent("label"), {
+            key: 2,
+            class: vue.normalizeClass(_ctx.context.classes.decorator),
+            for: _ctx.attributes.id
+          }, null, 8 /* PROPS */, ["class", "for"]))
+        : vue.createCommentVNode("v-if", true),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$a))
+  }
+
+  script$d.render = render$d;
+  script$d.__file = "src/inputs/FormulateInputBox.vue";
+
+  var script$c = {
+    props: {
+      visibleErrors: {
+        type: Array,
+        required: true
+      },
+      itemClass: {
+        type: [String, Array, Object, Boolean],
+        default: false
+      },
+      outerClass: {
+        type: [String, Array, Object, Boolean],
+        default: false
+      },
+      role: {
+        type: [String],
+        default: 'status'
+      },
+      ariaLive: {
+        type: [String, Boolean],
+        default: 'polite'
+      },
+      type: {
+        type: String,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1$9 = ["role", "aria-live", "textContent"];
+
+  function render$c(_ctx, _cache, $props, $setup, $data, $options) {
+    return ($props.visibleErrors.length)
+      ? (vue.openBlock(), vue.createElementBlock("ul", {
+          key: 0,
+          class: vue.normalizeClass($props.outerClass)
+        }, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList($props.visibleErrors, function (error) {
+            return (vue.openBlock(), vue.createElementBlock("li", {
+              key: error,
+              class: vue.normalizeClass($props.itemClass),
+              role: $props.role,
+              "aria-live": $props.ariaLive,
+              textContent: vue.toDisplayString(error)
+            }, null, 10 /* CLASS, PROPS */, _hoisted_1$9))
+          }), 128 /* KEYED_FRAGMENT */))
+        ], 2 /* CLASS */))
+      : vue.createCommentVNode("v-if", true)
+  }
+
+  script$c.render = render$c;
+  script$c.__file = "src/slots/FormulateErrorList.vue";
+
+  var script$b = {
+    name: 'FormulateInputText',
+    mixins: [FormulateInputMixin]
+  };
+
+  var _hoisted_1$8 = ["data-type"];
+  var _hoisted_2$5 = ["type"];
+
+  function render$b(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.withDirectives(vue.createElementVNode("input", vue.mergeProps({
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return ((_ctx.context.model) = $event); }),
+        type: _ctx.type
+      }, _ctx.attributes, {
+        onBlur: _cache[1] || (_cache[1] = function () {
+          var ref;
+
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+          return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+      }, vue.toHandlers(_ctx.$listeners, true)), null, 16 /* FULL_PROPS */, _hoisted_2$5), [
+        [vue.vModelDynamic, _ctx.context.model]
+      ]),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$8))
+  }
+
+  script$b.render = render$b;
+  script$b.__file = "src/inputs/FormulateInputText.vue";
+
+  var script$a = {
+    name: 'FormulateFiles',
+    props: {
+      files: {
+        type: FileUpload,
+        required: true
+      },
+      imagePreview: {
+        type: Boolean,
+        default: false
+      },
+      context: {
+        type: Object,
+        required: true
+      }
+    },
+    computed: {
+      fileUploads: function fileUploads () {
+        return this.files.files || []
+      },
+      isMultiple: function isMultiple () {
+        return has(this.context.attributes, 'multiple')
+      }
+    },
+    watch: {
+      files: function files () {
+        if (this.imagePreview) {
+          this.files.loadPreviews();
+        }
+      }
+    },
+    mounted: function mounted () {
+      if (this.imagePreview) {
+        this.files.loadPreviews();
+      }
+    },
+    methods: {
+      appendFiles: function appendFiles () {
+        var input = this.$refs.addFiles;
+        if (input.files.length) {
+          this.files.mergeFileList(input);
+        }
+      }
+    }
+  };
+
+  var _hoisted_1$7 = ["data-has-error", "data-has-preview"];
+  var _hoisted_2$4 = ["textContent"];
+
+  function render$a(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return ($options.fileUploads.length)
+      ? (vue.openBlock(), vue.createElementBlock("ul", {
+          key: 0,
+          class: vue.normalizeClass($props.context.classes.files)
+        }, [
+          (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList($options.fileUploads, function (file) {
+            return (vue.openBlock(), vue.createElementBlock("li", {
+              key: file.uuid,
+              "data-has-error": !!file.error,
+              "data-has-preview": !!($props.imagePreview && file.previewData)
+            }, [
+              vue.createVNode(_component_FormulateSlot, {
+                name: "file",
+                context: $props.context,
+                file: file,
+                "image-preview": $props.imagePreview
+              }, {
+                default: vue.withCtx(function () { return [
+                  (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.file), {
+                    context: $props.context,
+                    file: file,
+                    "image-preview": $props.imagePreview
+                  }, null, 8 /* PROPS */, ["context", "file", "image-preview"]))
+                ]; }),
+                _: 2 /* DYNAMIC */
+              }, 1032 /* PROPS, DYNAMIC_SLOTS */, ["context", "file", "image-preview"]),
+              (file.error)
+                ? (vue.openBlock(), vue.createElementBlock("div", {
+                    key: 0,
+                    class: vue.normalizeClass($props.context.classes.fileUploadError),
+                    textContent: vue.toDisplayString(file.error)
+                  }, null, 10 /* CLASS, PROPS */, _hoisted_2$4))
+                : vue.createCommentVNode("v-if", true)
+            ], 8 /* PROPS */, _hoisted_1$7))
+          }), 128 /* KEYED_FRAGMENT */)),
+          ($options.isMultiple && $props.context.addLabel)
+            ? (vue.openBlock(), vue.createElementBlock("div", {
+                key: 0,
+                class: vue.normalizeClass($props.context.classes.fileAdd),
+                role: "button"
+              }, [
+                vue.createTextVNode(vue.toDisplayString($props.context.addLabel) + " ", 1 /* TEXT */),
+                vue.createElementVNode("input", {
+                  ref: "addFiles",
+                  type: "file",
+                  multiple: "",
+                  class: vue.normalizeClass($props.context.classes.fileAddInput),
+                  onChange: _cache[0] || (_cache[0] = function () {
+                    var args = [], len = arguments.length;
+                    while ( len-- ) args[ len ] = arguments[ len ];
+
+                    return ($options.appendFiles && $options.appendFiles.apply($options, args));
+    })
+                }, null, 34 /* CLASS, NEED_HYDRATION */)
+              ], 2 /* CLASS */))
+            : vue.createCommentVNode("v-if", true)
+        ], 2 /* CLASS */))
+      : vue.createCommentVNode("v-if", true)
+  }
+
+  script$a.render = render$a;
+  script$a.__file = "src/FormulateFiles.vue";
+
+  var script$9 = {
+    name: 'FormulateInputFile',
+    components: {
+      FormulateFiles: script$a
+    },
+    mixins: [FormulateInputMixin],
+    data: function data () {
+      return {
+        isOver: false
+      }
+    },
+    computed: {
+      hasFiles: function hasFiles () {
+        return !!(this.context.model instanceof FileUpload && this.context.model.files.length)
+      }
+    },
+    created: function created () {
+      if (Array.isArray(this.context.model)) {
+        if (typeof this.context.model[0][this.$formulate.getFileUrlKey()] === 'string') {
+          this.context.model = this.$formulate.createUpload({
+            files: this.context.model
+          }, this.context);
+        }
+      }
+    },
+    mounted: function mounted () {
+      // Add a listener to the window to prevent drag/drops that miss the dropzone
+      // from opening the file and navigating the user away from the page.
+      if (window && this.context.preventWindowDrops) {
+        window.addEventListener('dragover', this.preventDefault);
+        window.addEventListener('drop', this.preventDefault);
+      }
+    },
+    destroyed: function destroyed () {
+      if (window && this.context.preventWindowDrops) {
+        window.removeEventListener('dragover', this.preventDefault);
+        window.removeEventListener('drop', this.preventDefault);
+      }
+    },
+    methods: {
+      preventDefault: function preventDefault (e) {
+        if (e.target.tagName !== 'INPUT' && e.target.getAttribute('type') !== 'file') {
+          e = e || event;
+          e.preventDefault();
+        }
+      },
+      handleFile: function handleFile () {
+        var this$1$1 = this;
+
+        this.isOver = false;
+        var input = this.$refs.file;
+        if (input.files.length) {
+          this.context.model = this.$formulate.createUpload(input, this.context);
+          // nextTick required for attemptImmediateUpload to pass instanceof reliably
+          this.$nextTick(function () { return this$1$1.attemptImmediateUpload(); });
+        }
+      },
+      attemptImmediateUpload: function attemptImmediateUpload () {
+        var this$1$1 = this;
+
+        if (this.context.uploadBehavior === 'live' &&
+          this.context.model instanceof FileUpload) {
+          this.context.hasValidationErrors().then(function (errors) {
+            if (!errors) {
+              this$1$1.context.model.upload();
+            }
+          });
+        }
+      },
+      handleDragOver: function handleDragOver (e) {
+        e.preventDefault();
+        this.isOver = true;
+      },
+      handleDragLeave: function handleDragLeave (e) {
+        e.preventDefault();
+        this.isOver = false;
+      }
+    }
+  };
+
+  var _hoisted_1$6 = ["data-type", "data-has-files"];
+  var _hoisted_2$3 = ["data-has-files"];
+  var _hoisted_3$2 = ["data-is-drag-hover"];
+
+  function render$9(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+    var _component_FormulateFiles = vue.resolveComponent("FormulateFiles");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type,
+      "data-has-files": $options.hasFiles
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.createElementVNode("div", {
+        class: vue.normalizeClass(_ctx.context.classes.uploadArea),
+        "data-has-files": $options.hasFiles
+      }, [
+        vue.createElementVNode("input", vue.mergeProps({
+          ref: "file",
+          "data-is-drag-hover": $data.isOver,
+          type: "file"
+        }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true), {
+          onBlur: _cache[0] || (_cache[0] = function () {
+            var ref;
+
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+            return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    }),
+          onChange: _cache[1] || (_cache[1] = function () {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+
+            return ($options.handleFile && $options.handleFile.apply($options, args));
+    }),
+          onDragover: _cache[2] || (_cache[2] = function () {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+
+            return ($options.handleDragOver && $options.handleDragOver.apply($options, args));
+    }),
+          onDragleave: _cache[3] || (_cache[3] = function () {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+
+            return ($options.handleDragLeave && $options.handleDragLeave.apply($options, args));
+    })
+        }), null, 16 /* FULL_PROPS */, _hoisted_3$2),
+        vue.createVNode(_component_FormulateSlot, {
+          name: "uploadAreaMask",
+          context: _ctx.context,
+          "has-files": $options.hasFiles
+        }, {
+          default: vue.withCtx(function () { return [
+            vue.withDirectives((vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.uploadAreaMask), {
+              "has-files": _ctx.context.slotComponents.uploadAreaMask === 'div' ? false : $options.hasFiles,
+              "data-has-files": _ctx.context.slotComponents.uploadAreaMask === 'div' ? $options.hasFiles : false,
+              class: vue.normalizeClass(_ctx.context.classes.uploadAreaMask)
+            }, null, 8 /* PROPS */, ["has-files", "data-has-files", "class"])), [
+              [vue.vShow, !$options.hasFiles]
+            ])
+          ]; }),
+          _: 1 /* STABLE */
+        }, 8 /* PROPS */, ["context", "has-files"]),
+        ($options.hasFiles)
+          ? (vue.openBlock(), vue.createBlock(_component_FormulateFiles, {
+              key: 0,
+              files: _ctx.context.model,
+              "image-preview": _ctx.context.type === 'image' && _ctx.context.imageBehavior === 'preview',
+              context: _ctx.context
+            }, null, 8 /* PROPS */, ["files", "image-preview", "context"]))
+          : vue.createCommentVNode("v-if", true)
+      ], 10 /* CLASS, PROPS */, _hoisted_2$3),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$6))
+  }
+
+  script$9.render = render$9;
+  script$9.__file = "src/inputs/FormulateInputFile.vue";
+
+  var script$8 = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      },
+      removeItem: {
+        type: Function,
+        required: true
+      },
+      index: {
+        type: Number,
+        required: true
+      }
+    }
+  };
+
+  function render$8(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass($props.context.classes.groupRepeatable)
+    }, [
+      ($props.context.removePosition === 'after')
+        ? vue.renderSlot(_ctx.$slots, "default", { key: 0 })
+        : vue.createCommentVNode("v-if", true),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "remove",
+        context: $props.context,
+        index: $props.index,
+        "remove-item": $props.removeItem
+      }, {
+        default: vue.withCtx(function () { return [
+          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.remove), vue.mergeProps({
+            context: $props.context,
+            index: $props.index,
+            "remove-item": $props.removeItem
+          }, $props.context.slotProps.remove), null, 16 /* FULL_PROPS */, ["context", "index", "remove-item"]))
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context", "index", "remove-item"]),
+      ($props.context.removePosition === 'before')
+        ? vue.renderSlot(_ctx.$slots, "default", { key: 1 })
+        : vue.createCommentVNode("v-if", true)
+    ], 2 /* CLASS */))
+  }
+
+  script$8.render = render$8;
+  script$8.__file = "src/slots/FormulateRepeatable.vue";
+
+  function objectWithoutProperties (obj, exclude) { var target = {}; for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k) && exclude.indexOf(k) === -1) target[k] = obj[k]; return target; }
+
+  var script$7 = {
+    name: 'FormulateInputGroup',
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    },
+    computed: {
+      options: function options () {
+        return this.context.options || []
+      },
+      subType: function subType () {
+        return (this.context.type === 'group') ? 'grouping' : 'inputs'
+      },
+      optionsWithContext: function optionsWithContext () {
+        var this$1$1 = this;
+
+        var ref = this.context;
+        var ref_attributes = ref.attributes;
+        ref_attributes.id;
+        var rest = objectWithoutProperties( ref_attributes, ["id"] );
+        var groupApplicableAttributes = rest;
+        ref.blurHandler;
+        ref.classification;
+        ref.component;
+        ref.getValidationErrors;
+        ref.hasLabel;
+        ref.hasValidationErrors;
+        ref.isSubField;
+        ref.isValid;
+        ref.labelPosition;
+        ref.options;
+        ref.performValidation;
+        ref.setErrors;
+        ref.slotComponents;
+        ref.slotProps;
+        ref.validationErrors;
+        ref.visibleValidationErrors;
+        ref.classes;
+        ref.showValidationErrors;
+        ref.rootEmit;
+        ref.help;
+        ref.pseudoProps;
+        ref.rules;
+        ref.model;
+        var rest$1 = objectWithoutProperties( ref, ["attributes", "blurHandler", "classification", "component", "getValidationErrors", "hasLabel", "hasValidationErrors", "isSubField", "isValid", "labelPosition", "options", "performValidation", "setErrors", "slotComponents", "slotProps", "validationErrors", "visibleValidationErrors", "classes", "showValidationErrors", "rootEmit", "help", "pseudoProps", "rules", "model"] );
+        var context = rest$1;
+        return this.options.map(function (option) { return this$1$1.groupItemContext(
+          context,
+          option,
+          groupApplicableAttributes
+        ); })
+      },
+      totalItems: function totalItems () {
+        return Array.isArray(this.context.model) && this.context.model.length > this.context.minimum
+          ? this.context.model.length
+          : this.context.minimum || 1
+      },
+      canAddMore: function canAddMore () {
+        return (this.context.repeatable && this.totalItems < this.context.limit)
+      },
+      labelledBy: function labelledBy () {
+        return this.context.label && ((this.context.id) + "_label")
+      }
+    },
+    methods: {
+      addItem: function addItem () {
+        if (Array.isArray(this.context.model)) {
+          var minDiff = (this.context.minimum - this.context.model.length) + 1;
+          var toAdd = Math.max(minDiff, 1);
+          for (var i = 0; i < toAdd; i++) {
+            this.context.model.push(setId({}));
+          }
+        } else {
+          this.context.model = (new Array(this.totalItems + 1)).fill('').map(function () { return setId({}); });
+        }
+        this.context.rootEmit('repeatableAdded', this.context.model);
+      },
+      groupItemContext: function groupItemContext (context, option, groupAttributes) {
+        var optionAttributes = { isGrouped: true };
+        var ctx = Object.assign({}, context, option, groupAttributes, optionAttributes, !context.hasGivenName ? {
+          name: true
+        } : {});
+        return ctx
+      }
+    }
+  };
+
+  var _hoisted_1$5 = ["data-is-repeatable", "aria-labelledby"];
+
+  function render$7(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+    var _component_FormulateInput = vue.resolveComponent("FormulateInput");
+    var _component_FormulateGrouping = vue.resolveComponent("FormulateGrouping");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass($props.context.classes.element),
+      "data-is-repeatable": $props.context.repeatable,
+      role: "group",
+      "aria-labelledby": $options.labelledBy
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: $props.context
+      }, {
+        default: vue.withCtx(function () { return [
+          ($props.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.prefix), {
+                key: 0,
+                context: $props.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      ($options.subType !== 'grouping')
+        ? (vue.openBlock(true), vue.createElementBlock(vue.Fragment, { key: 0 }, vue.renderList($options.optionsWithContext, function (optionContext) {
+            return (vue.openBlock(), vue.createBlock(_component_FormulateInput, vue.mergeProps({
+              key: optionContext.id,
+              modelValue: $props.context.model,
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return (($props.context.model) = $event); }),
+              ref_for: true
+            }, optionContext, {
+              "disable-errors": true,
+              "prevent-deregister": true,
+              class: "formulate-input-group-item",
+              onBlur: $props.context.blurHandler
+            }), null, 16 /* FULL_PROPS */, ["modelValue", "onBlur"]))
+          }), 128 /* KEYED_FRAGMENT */))
+        : (vue.openBlock(), vue.createElementBlock(vue.Fragment, { key: 1 }, [
+            vue.createVNode(_component_FormulateGrouping, { context: $props.context }, {
+              default: vue.withCtx(function () { return [
+                vue.renderSlot(_ctx.$slots, "default")
+              ]; }),
+              _: 3 /* FORWARDED */
+            }, 8 /* PROPS */, ["context"]),
+            ($options.canAddMore)
+              ? (vue.openBlock(), vue.createBlock(_component_FormulateSlot, {
+                  key: 0,
+                  name: "addmore",
+                  context: $props.context,
+                  "add-more": $options.addItem
+                }, {
+                  default: vue.withCtx(function () { return [
+                    (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.addMore), vue.mergeProps({
+                      context: $props.context,
+                      "add-more": $options.addItem
+                    }, $props.context.slotProps.addMore, { onAdd: $options.addItem }), null, 16 /* FULL_PROPS */, ["context", "add-more", "onAdd"]))
+                  ]; }),
+                  _: 1 /* STABLE */
+                }, 8 /* PROPS */, ["context", "add-more"]))
+              : vue.createCommentVNode("v-if", true)
+          ], 64 /* STABLE_FRAGMENT */)),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: $props.context
+      }, {
+        default: vue.withCtx(function () { return [
+          ($props.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.suffix), {
+                key: 0,
+                context: $props.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$5))
+  }
+
+  script$7.render = render$7;
+  script$7.__file = "src/inputs/FormulateInputGroup.vue";
+
+  var script$6 = {
+    name: 'FormulateInputButton',
+    mixins: [FormulateInputMixin]
+  };
+
+  var _hoisted_1$4 = ["data-type"];
+  var _hoisted_2$2 = ["type"];
+
+  function render$6(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.createElementVNode("button", vue.mergeProps({ type: _ctx.type }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true)), [
+        vue.renderSlot(_ctx.$slots, "default", { context: _ctx.context }, function () { return [
+          (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.buttonContent), { context: _ctx.context }, null, 8 /* PROPS */, ["context"]))
+        ]; })
+      ], 16 /* FULL_PROPS */, _hoisted_2$2),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$4))
+  }
+
+  script$6.render = render$6;
+  script$6.__file = "src/inputs/FormulateInputButton.vue";
+
+  var script$5 = {
+    name: 'FormulateInputSelect',
+    mixins: [FormulateInputMixin],
+    computed: {
+      options: function options () {
+        return this.context.options || {}
+      },
+      optionGroups: function optionGroups () {
+        return this.context.optionGroups || false
+      },
+      placeholderSelected: function placeholderSelected () {
+        return !!(!this.hasValue && this.context.attributes && this.context.attributes.placeholder)
+      }
+    }
+  };
+
+  var _hoisted_1$3 = ["data-type", "data-multiple"];
+  var _hoisted_2$1 = ["data-placeholder-selected"];
+  var _hoisted_3$1 = ["selected"];
+  var _hoisted_4 = ["value", "disabled", "textContent"];
+  var _hoisted_5 = ["label"];
+  var _hoisted_6 = ["value", "disabled", "textContent"];
+
+  function render$5(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type,
+      "data-multiple": _ctx.attributes && _ctx.attributes.multiple !== undefined
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.withDirectives(vue.createElementVNode("select", vue.mergeProps({
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return ((_ctx.context.model) = $event); })
+      }, _ctx.attributes, { "data-placeholder-selected": $options.placeholderSelected }, vue.toHandlers(_ctx.$listeners, true), {
+        onBlur: _cache[1] || (_cache[1] = function () {
+          var ref;
+
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+          return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+      }), [
+        (_ctx.context.placeholder)
+          ? (vue.openBlock(), vue.createElementBlock("option", {
+              key: 0,
+              value: "",
+              hidden: "hidden",
+              disabled: "",
+              selected: !_ctx.hasValue
+            }, vue.toDisplayString(_ctx.context.placeholder), 9 /* TEXT, PROPS */, _hoisted_3$1))
+          : vue.createCommentVNode("v-if", true),
+        (!$options.optionGroups)
+          ? (vue.openBlock(true), vue.createElementBlock(vue.Fragment, { key: 1 }, vue.renderList($options.options, function (option) {
+              return (vue.openBlock(), vue.createElementBlock("option", vue.mergeProps({
+                key: option.id,
+                value: option.value,
+                disabled: !!option.disabled,
+                ref_for: true
+              }, option.attributes || option.attrs || {}, {
+                textContent: vue.toDisplayString(option.label)
+              }), null, 16 /* FULL_PROPS */, _hoisted_4))
+            }), 128 /* KEYED_FRAGMENT */))
+          : (vue.openBlock(true), vue.createElementBlock(vue.Fragment, { key: 2 }, vue.renderList($options.optionGroups, function (subOptions, label) {
+              return (vue.openBlock(), vue.createElementBlock("optgroup", {
+                key: label,
+                label: label
+              }, [
+                (vue.openBlock(true), vue.createElementBlock(vue.Fragment, null, vue.renderList(subOptions, function (option) {
+                  return (vue.openBlock(), vue.createElementBlock("option", vue.mergeProps({
+                    key: option.id,
+                    value: option.value,
+                    disabled: !!option.disabled,
+                    ref_for: true
+                  }, option.attributes || option.attrs || {}, {
+                    textContent: vue.toDisplayString(option.label)
+                  }), null, 16 /* FULL_PROPS */, _hoisted_6))
+                }), 128 /* KEYED_FRAGMENT */))
+              ], 8 /* PROPS */, _hoisted_5))
+            }), 128 /* KEYED_FRAGMENT */))
+      ], 16 /* FULL_PROPS */, _hoisted_2$1), [
+        [vue.vModelSelect, _ctx.context.model]
+      ]),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$3))
+  }
+
+  script$5.render = render$5;
+  script$5.__file = "src/inputs/FormulateInputSelect.vue";
+
+  var script$4 = {
+    name: 'FormulateInputSlider',
+    mixins: [FormulateInputMixin]
+  };
+
+  var _hoisted_1$2 = ["data-type"];
+  var _hoisted_2 = ["type"];
+  var _hoisted_3 = ["textContent"];
+
+  function render$4(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": _ctx.context.type
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.withDirectives(vue.createElementVNode("input", vue.mergeProps({
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return ((_ctx.context.model) = $event); }),
+        type: _ctx.type
+      }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true), {
+        onBlur: _cache[1] || (_cache[1] = function () {
+          var ref;
+
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+          return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+      }), null, 16 /* FULL_PROPS */, _hoisted_2), [
+        [vue.vModelDynamic, _ctx.context.model]
+      ]),
+      (_ctx.context.showValue)
+        ? (vue.openBlock(), vue.createElementBlock("div", {
+            key: 0,
+            class: vue.normalizeClass(_ctx.context.classes.rangeValue),
+            textContent: vue.toDisplayString(_ctx.context.model)
+          }, null, 10 /* CLASS, PROPS */, _hoisted_3))
+        : vue.createCommentVNode("v-if", true),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 10 /* CLASS, PROPS */, _hoisted_1$2))
+  }
+
+  script$4.render = render$4;
+  script$4.__file = "src/inputs/FormulateInputSlider.vue";
+
+  var script$3 = {
+    props: {
+      context: {
+        type: Object,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1$1 = ["textContent"];
+
+  function render$3(_ctx, _cache, $props, $setup, $data, $options) {
+    return (vue.openBlock(), vue.createElementBlock("span", {
+      class: vue.normalizeClass(("formulate-input-element--" + ($props.context.type) + "--label")),
+      textContent: vue.toDisplayString($props.context.value || $props.context.label || $props.context.name || 'Submit')
+    }, null, 10 /* CLASS, PROPS */, _hoisted_1$1))
+  }
+
+  script$3.render = render$3;
+  script$3.__file = "src/slots/FormulateButtonContent.vue";
+
+  var script$2 = {
+    name: 'FormulateInputTextArea',
+    mixins: [FormulateInputMixin]
+  };
+
+  function render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createElementBlock("div", {
+      class: vue.normalizeClass(_ctx.context.classes.element),
+      "data-type": "textarea"
+    }, [
+      vue.createVNode(_component_FormulateSlot, {
+        name: "prefix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.prefix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.prefix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"]),
+      vue.withDirectives(vue.createElementVNode("textarea", vue.mergeProps({
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) { return ((_ctx.context.model) = $event); })
+      }, _ctx.attributes, vue.toHandlers(_ctx.$listeners, true), {
+        onBlur: _cache[1] || (_cache[1] = function () {
+          var ref;
+
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+          return (_ctx.context.blurHandler && (ref = _ctx.context).blurHandler.apply(ref, args));
+    })
+      }), null, 16 /* FULL_PROPS */), [
+        [vue.vModelText, _ctx.context.model]
+      ]),
+      vue.createVNode(_component_FormulateSlot, {
+        name: "suffix",
+        context: _ctx.context
+      }, {
+        default: vue.withCtx(function () { return [
+          (_ctx.context.slotComponents.suffix)
+            ? (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent(_ctx.context.slotComponents.suffix), {
+                key: 0,
+                context: _ctx.context
+              }, null, 8 /* PROPS */, ["context"]))
+            : vue.createCommentVNode("v-if", true)
+        ]; }),
+        _: 1 /* STABLE */
+      }, 8 /* PROPS */, ["context"])
+    ], 2 /* CLASS */))
+  }
+
+  script$2.render = render$2;
+  script$2.__file = "src/inputs/FormulateInputTextArea.vue";
+
+  var script$1 = {
+    provide: function provide () {
+      var this$1$1 = this;
+
+      return Object.assign({}, useRegistryProviders(this, ['getFormValues']),
+        {formulateSetter: function (field, value) { return this$1$1.setGroupValue(field, value); }})
+    },
+    inject: {
+      registerProvider: 'registerProvider',
+      deregisterProvider: 'deregisterProvider'
+    },
+    props: {
+      index: {
+        type: Number,
+        required: true
+      },
+      context: {
+        type: Object,
+        required: true
+      },
+      uuid: {
+        type: String,
+        required: true
+      },
+      errors: {
+        type: Object,
+        required: true
+      }
+    },
+    data: function data () {
+      return Object.assign({}, useRegistry(this),
+        {isGrouping: true})
+    },
+    computed: Object.assign({}, useRegistryComputed(),
+      {mergedFieldErrors: function mergedFieldErrors () {
+        return this.errors
+      }}),
+    watch: Object.assign({}, useRegistryWatchers(),
+      {'context.model': {
+        handler: function handler (values) {
+          if (!equals(values[this.index], this.proxy, true)) {
+            this.setValues(values[this.index]);
+          }
+        },
+        deep: true
+      }}),
+    created: function created () {
+      this.applyInitialValues();
+      this.registerProvider(this);
+    },
+    beforeDestroy: function beforeDestroy () {
+      this.preventCleanup = true;
+      this.deregisterProvider(this);
+    },
+    methods: Object.assign({}, useRegistryMethods(),
+      {setGroupValue: function setGroupValue (field, value) {
+        if (!equals(this.proxy[field], value, true)) {
+          this.setFieldValue(field, value);
+        }
+      },
+      removeItem: function removeItem () {
+        this.$emit('remove', this.index);
+      }})
+  };
+
+  function render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    var _component_FormulateSlot = vue.resolveComponent("FormulateSlot");
+
+    return (vue.openBlock(), vue.createBlock(_component_FormulateSlot, {
+      name: "repeatable",
+      context: $props.context,
+      index: $props.index,
+      "remove-item": $options.removeItem
+    }, {
+      default: vue.withCtx(function () { return [
+        (vue.openBlock(), vue.createBlock(vue.resolveDynamicComponent($props.context.slotComponents.repeatable), vue.mergeProps({
+          context: $props.context,
+          index: $props.index,
+          "remove-item": $options.removeItem
+        }, $props.context.slotProps.repeatable), {
+          default: vue.withCtx(function () { return [
+            vue.createVNode(_component_FormulateSlot, {
+              context: $props.context,
+              index: $props.index,
+              name: "default"
+            }, null, 8 /* PROPS */, ["context", "index"])
+          ]; }),
+          _: 1 /* STABLE */
+        }, 16 /* FULL_PROPS */, ["context", "index", "remove-item"]))
+      ]; }),
+      _: 1 /* STABLE */
+    }, 8 /* PROPS */, ["context", "index", "remove-item"]))
+  }
+
+  script$1.render = render$1;
+  script$1.__file = "src/FormulateRepeatableProvider.vue";
+
+  var script = {
+    props: {
+      index: {
+        type: Number,
+        default: null
+      },
+      context: {
+        type: Object,
+        required: true
+      },
+      removeItem: {
+        type: Function,
+        required: true
+      }
+    }
+  };
+
+  var _hoisted_1 = ["data-disabled", "textContent"];
+
+  function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return ($props.context.repeatable)
+      ? (vue.openBlock(), vue.createElementBlock("a", {
+          key: 0,
+          class: vue.normalizeClass($props.context.classes.groupRepeatableRemove),
+          "data-disabled": $props.context.model.length <= $props.context.minimum,
+          role: "button",
+          onClick: _cache[0] || (_cache[0] = vue.withModifiers(function () {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+
+            return ($props.removeItem && $props.removeItem.apply($props, args));
+    }, ["prevent"])),
+          onKeypress: _cache[1] || (_cache[1] = vue.withKeys(function () {
+            var args = [], len = arguments.length;
+            while ( len-- ) args[ len ] = arguments[ len ];
+
+            return ($props.removeItem && $props.removeItem.apply($props, args));
+    }, ["enter"])),
+          textContent: vue.toDisplayString($props.context.removeLabel)
+        }, null, 42 /* CLASS, PROPS, NEED_HYDRATION */, _hoisted_1))
+      : vue.createCommentVNode("v-if", true)
+  }
+
+  script.render = render;
+  script.__file = "src/slots/FormulateRepeatableRemove.vue";
+
+  /**
+   * The base formulate library.
+   */
+  var Formulate = function Formulate () {
+    this.options = {};
+    this.defaults = {
+      components: {
+        FormulateSlot: FormulateSlot,
+        FormulateForm: script$l,
+        FormulateFile: script$h,
+        FormulateHelp: script$i,
+        FormulateLabel: script$f,
+        FormulateInput: script$k,
+        FormulateErrors: script$j,
+        FormulateSchema: FormulateSchema,
+        FormulateAddMore: script$e,
+        FormulateGrouping: script$g,
+        FormulateInputBox: script$d,
+        FormulateInputText: script$b,
+        FormulateInputFile: script$9,
+        FormulateErrorList: script$c,
+        FormulateRepeatable: script$8,
+        FormulateInputGroup: script$7,
+        FormulateInputButton: script$6,
+        FormulateInputSelect: script$5,
+        FormulateInputSlider: script$4,
+        FormulateButtonContent: script$3,
+        FormulateInputTextArea: script$2,
+        FormulateRepeatableRemove: script,
+        FormulateRepeatableProvider: script$1
+      },
+      slotComponents: {
+        addMore: 'FormulateAddMore',
+        buttonContent: 'FormulateButtonContent',
+        errorList: 'FormulateErrorList',
+        errors: 'FormulateErrors',
+        file: 'FormulateFile',
+        help: 'FormulateHelp',
+        label: 'FormulateLabel',
+        prefix: false,
+        remove: 'FormulateRepeatableRemove',
+        repeatable: 'FormulateRepeatable',
+        suffix: false,
+        uploadAreaMask: 'div'
+      },
+      slotProps: {},
+      library: library,
+      rules: rules,
+      mimes: mimes,
+      locale: false,
+      uploader: fauxUploader,
+      uploadUrl: false,
+      fileUrlKey: 'url',
+      uploadJustCompleteDuration: 1000,
+      errorHandler: function (err) { return err; },
+      plugins: [ vueFormulateI18n.en ],
+      locales: {},
+      failedValidation: function () { return false; },
+      idPrefix: 'formulate-',
+      baseClasses: function (b) { return b; },
+      coreClasses: coreClasses,
+      classes: {},
+      useInputDecorators: true,
+      validationNameStrategy: false
+    };
+    this.registry = new Map();
+    this.idRegistry = {};
+  };
+
+  /**
+   * Install vue formulate, and register it’s components.
+   */
+  Formulate.prototype.install = function install (Vue, options) {
+      var this$1$1 = this;
+
+    Vue.prototype.$formulate = this;
+    this.options = this.defaults;
+    var plugins = this.defaults.plugins;
+    if (options && Array.isArray(options.plugins) && options.plugins.length) {
+      plugins = plugins.concat(options.plugins);
+    }
+    plugins.forEach(function (plugin) { return (typeof plugin === 'function') ? plugin(this$1$1) : null; });
+    this.extend(options || {});
+    for (var componentName in this.options.components) {
+      Vue.component(componentName, this.options.components[componentName]);
+    }
+  };
+
+  /**
+   * Produce a deterministically generated id based on the sequence by which it
+   * was requested. This should be *theoretically* the same SSR as client side.
+   * However, SSR and deterministic ids can be very challenging, so this
+   * implementation is open to community review.
+   */
+  Formulate.prototype.nextId = function nextId (vm) {
+    var path = vm.$route && vm.$route.path ? vm.$route.path : false;
+    var pathPrefix = path ? vm.$route.path.replace(/[/\\.\s]/g, '-') : 'global';
+    if (!Object.prototype.hasOwnProperty.call(this.idRegistry, pathPrefix)) {
+      this.idRegistry[pathPrefix] = 0;
+    }
+    return ("" + (this.options.idPrefix) + pathPrefix + "-" + (++this.idRegistry[pathPrefix]))
+  };
+
+  /**
+   * Given a set of options, apply them to the pre-existing options.
+   * @param {Object} extendWith
+   */
+  Formulate.prototype.extend = function extend (extendWith) {
+    if (typeof extendWith === 'object') {
+      this.options = this.merge(this.options, extendWith);
+      return this
+    }
+    throw new Error(("Formulate.extend expects an object, was " + (typeof extendWith)))
+  };
+
+  /**
+   * Create a new object by copying properties of base and mergeWith.
+   * Note: arrays don't overwrite - they push
+   *
+   * @param {Object} base
+   * @param {Object} mergeWith
+   * @param {boolean} concatArrays
+   */
+  Formulate.prototype.merge = function merge (base, mergeWith, concatArrays) {
+      if ( concatArrays === void 0 ) concatArrays = true;
+
+    var merged = {};
+    for (var key in base) {
+      if (mergeWith.hasOwnProperty(key)) {
+        if (isPlainObject(mergeWith[key]) && isPlainObject(base[key])) {
+          merged[key] = this.merge(base[key], mergeWith[key], concatArrays);
+        } else if (concatArrays && Array.isArray(base[key]) && Array.isArray(mergeWith[key])) {
+          merged[key] = base[key].concat(mergeWith[key]);
+        } else {
+          merged[key] = mergeWith[key];
+        }
+      } else {
+        merged[key] = base[key];
+      }
+    }
+    for (var prop in mergeWith) {
+      if (!merged.hasOwnProperty(prop)) {
+        merged[prop] = mergeWith[prop];
+      }
+    }
+    return merged
+  };
+
+  /**
+   * Determine what "class" of input this element is given the "type".
+   * @param {string} type
+   */
+  Formulate.prototype.classify = function classify (type) {
+    if (this.options.library.hasOwnProperty(type)) {
+      return this.options.library[type].classification
+    }
+    return 'unknown'
+  };
+
+  /**
+   * Generate all classes for a particular context.
+   * @param {Object} context
+   */
+  Formulate.prototype.classes = function classes (classContext) {
+      var this$1$1 = this;
+
+    // Step 1: We get the global classes for all keys.
+    var coreClasses = this.options.coreClasses(classContext);
+    // Step 2: We extend those classes with a user defined baseClasses.
+    var baseClasses = this.options.baseClasses(coreClasses, classContext);
+    return Object.keys(baseClasses).reduce(function (classMap, key) {
+        var obj;
+
+      // Step 3: For each key, apply any global overrides for that key.
+      var classesForKey = applyClasses(baseClasses[key], this$1$1.options.classes[key], classContext);
+      // Step 4: Apply any prop-level overrides for that key.
+      classesForKey = applyClasses(classesForKey, classContext[(key + "Class")], classContext);
+      // Step 5: Add state based classes from props.
+      classesForKey = applyStates(key, classesForKey, this$1$1.options.classes, classContext);
+      // Now we have our final classes, assign to the given key.
+      return Object.assign(classMap, ( obj = {}, obj[key] = classesForKey, obj ))
+    }, {})
+  };
+
+  /**
+   * Given a particular type, report any "additional" props to pass to the
+   * various slots.
+   * @param {string} type
+   * @return {array}
+   */
+  Formulate.prototype.typeProps = function typeProps (type) {
+    var extract = function (obj) { return Object.keys(obj).reduce(function (props, slot) {
+      return Array.isArray(obj[slot]) ? props.concat(obj[slot]) : props
+    }, []); };
+    var props = extract(this.options.slotProps);
+    return this.options.library[type]
+      ? props.concat(extract(this.options.library[type].slotProps || {}))
+      : props
+  };
+
+  /**
+   * Given a type and a slot, get the relevant slot props object.
+   * @param {string} type
+   * @param {string} slot
+   * @return {object}
+   */
+  Formulate.prototype.slotProps = function slotProps (type, slot, typeProps) {
+    var props = Array.isArray(this.options.slotProps[slot]) ? this.options.slotProps[slot] : [];
+    var def = this.options.library[type];
+    if (def && def.slotProps && Array.isArray(def.slotProps[slot])) {
+      props = props.concat(def.slotProps[slot]);
+    }
+    return props.reduce(function (props, prop) {
+        var obj;
+
+        return Object.assign(props, ( obj = {}, obj[prop] = typeProps[prop], obj ));
+      }, {})
+  };
+
+  /**
+   * Determine what type of component to render given the "type".
+   * @param {string} type
+   */
+  Formulate.prototype.component = function component (type) {
+    if (this.options.library.hasOwnProperty(type)) {
+      return this.options.library[type].component
+    }
+    return false
+  };
+
+  /**
+   * What component should be rendered for the given slot location and type.
+   * @param {string} type the type of component
+   * @param {string} slot the name of the slot
+   */
+  Formulate.prototype.slotComponent = function slotComponent (type, slot) {
+    var def = this.options.library[type];
+    if (def && def.slotComponents && def.slotComponents[slot]) {
+      return def.slotComponents[slot]
+    }
+    return this.options.slotComponents[slot]
+  };
+
+  /**
+   * Get validation rules by merging any passed in with global rules.
+   * @return {object} object of validation functions
+   */
+  Formulate.prototype.rules = function rules (rules) {
+      if ( rules === void 0 ) rules = {};
+
+    return Object.assign({}, this.options.rules, rules)
+  };
+
+  /**
+   * Attempt to get the vue-i18n configured locale.
+   */
+  Formulate.prototype.i18n = function i18n (vm) {
+    if (vm.$i18n) {
+      switch (typeof vm.$i18n.locale) {
+        case 'string':
+          return vm.$i18n.locale
+        case 'function':
+          return vm.$i18n.locale()
+      }
+    }
+    return false
+  };
+
+  /**
+   * Select the proper locale to use.
+   */
+  Formulate.prototype.getLocale = function getLocale (vm) {
+      var this$1$1 = this;
+
+    if (!this.selectedLocale) {
+      this.selectedLocale = [
+        this.options.locale,
+        this.i18n(vm),
+        'en'
+      ].reduce(function (selection, locale) {
+        if (selection) {
+          return selection
+        }
+        if (locale) {
+          var option = parseLocale(locale)
+            .find(function (locale) { return has(this$1$1.options.locales, locale); });
+          if (option) {
+            selection = option;
+          }
+        }
+        return selection
+      }, false);
+    }
+    return this.selectedLocale
+  };
+
+  /**
+   * Change the locale to a pre-registered one.
+   * @param {string} localeTag
+   */
+  Formulate.prototype.setLocale = function setLocale (locale) {
+    if (has(this.options.locales, locale)) {
+      this.options.locale = locale;
+      this.selectedLocale = locale;
+      // Trigger validation on all forms to swap languages
+      this.registry.forEach(function (form, name) {
+        form.hasValidationErrors();
+      });
+    }
+  };
+
+  /**
+   * Get the validation message for a particular error.
+   */
+  Formulate.prototype.validationMessage = function validationMessage (rule, validationContext, vm) {
+    var generators = this.options.locales[this.getLocale(vm)];
+    if (generators.hasOwnProperty(rule)) {
+      return generators[rule](validationContext)
+    }
+    if (generators.hasOwnProperty('default')) {
+      return generators.default(validationContext)
+    }
+    return 'Invalid field value'
+  };
+
+  /**
+   * Given an instance of a FormulateForm register it.
+   * @param {vm} form
+   */
+  Formulate.prototype.register = function register (form) {
+    if (form.$options.name === 'FormulateForm' && form.name) {
+      this.registry.set(form.name, form);
+    }
+  };
+
+  /**
+   * Given an instance of a form, remove it from the registry.
+   * @param {vm} form
+   */
+  Formulate.prototype.deregister = function deregister (form) {
+    if (
+      form.$options.name === 'FormulateForm' &&
+      form.name &&
+      this.registry.has(form.name)
+    ) {
+      this.registry.delete(form.name);
+    }
+  };
+
+  /**
+   * Given an array, this function will attempt to make sense of the given error
+   * and hydrate a form with the resulting errors.
+   *
+   * @param {error} err
+   * @param {string} formName
+   * @param {error}
+   */
+  Formulate.prototype.handle = function handle (err, formName, skip) {
+      if ( skip === void 0 ) skip = false;
+
+    var e = skip ? err : this.options.errorHandler(err, formName);
+    if (formName && this.registry.has(formName)) {
+      this.registry.get(formName).applyErrors({
+        formErrors: arrayify(e.formErrors),
+        inputErrors: e.inputErrors || {}
+      });
+    }
+    return e
+  };
+
+  /**
+   * Reset a form.
+   * @param {string} formName
+   * @param {object} initialValue
+   */
+  Formulate.prototype.reset = function reset (formName, initialValue) {
+      if ( initialValue === void 0 ) initialValue = {};
+
+    this.resetValidation(formName);
+    this.setValues(formName, initialValue);
+  };
+
+  /**
+   * Submit a named form.
+   * @param {string} formName
+   */
+  Formulate.prototype.submit = function submit (formName) {
+    var form = this.registry.get(formName);
+    form.formSubmitted();
+  };
+
+  /**
+   * Reset the form's validation messages.
+   * @param {string} formName
+   */
+  Formulate.prototype.resetValidation = function resetValidation (formName) {
+    var form = this.registry.get(formName);
+    form.hideErrors(formName);
+    form.namedErrors = [];
+    form.namedFieldErrors = {};
+  };
+
+  /**
+   * Set the form values.
+   * @param {string} formName
+   * @param {object} values
+   */
+  Formulate.prototype.setValues = function setValues (formName, values) {
+    if (values && !Array.isArray(values) && typeof values === 'object') {
+      var form = this.registry.get(formName);
+      form.setValues(Object.assign({}, values));
+    }
+  };
+
+  /**
+   * Get the file uploader.
+   */
+  Formulate.prototype.getUploader = function getUploader () {
+    return this.options.uploader || false
+  };
+
+  /**
+   * Get the global upload url.
+   */
+  Formulate.prototype.getUploadUrl = function getUploadUrl () {
+    return this.options.uploadUrl || false
+  };
+
+  /**
+   * When re-hydrating a file uploader with an array, get the sub-object key to
+   * access the url of the file. Usually this is just "url".
+   */
+  Formulate.prototype.getFileUrlKey = function getFileUrlKey () {
+    return this.options.fileUrlKey || 'url'
+  };
+
+  /**
+   * Create a new instance of an upload.
+   */
+  Formulate.prototype.createUpload = function createUpload (fileList, context) {
+    return new FileUpload(fileList, context, this.options)
+  };
+
+  /**
+   * A FormulateForm failed to submit due to existing validation errors.
+   */
+  Formulate.prototype.failedValidation = function failedValidation (form) {
+    return this.options.failedValidation(this)
+  };
+
+  var Formulate$1 = new Formulate();
+
+  return Formulate$1;
+
+}));
