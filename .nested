@@ -1,1 +1,2 @@
-#dummy for file nesting
+#dummy for file nesting, it's only purpose is to allow editors like vscode to nest root level config files under this file
+#this is controlled by .vscode/settings -> explorer.fileNesting.patterns

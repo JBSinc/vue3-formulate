@@ -1,4 +1,4 @@
-import rules from '@/libs/rules'
+import rules from '../../src/libs/rules'
 import FileUpload from '../../src/FileUpload'
 
 

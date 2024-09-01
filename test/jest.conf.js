@@ -1,25 +1,14 @@
-const path = require('path')
+import { resolve } from "node:path";
 
-module.exports = {
-  rootDir: path.resolve(__dirname, '../'),
-  moduleFileExtensions: [
-    'js',
-    'json',
-    'vue'
-  ],
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
-  },
-  modulePaths: [
-    "<rootDir>"
-  ],
-  transform: {
-    '.*\\.js$': '<rootDir>/node_modules/babel-jest',
-    '.*\\.(vue)$': '<rootDir>/node_modules/jest-vue-preprocessor'
-  },
-  collectCoverageFrom: [
-    "src/*.{js,vue}",
-  ],
-  testMatch: ["<rootDir>/test/unit/*.test.js"]
-  // verbose: true
-}
+export const rootDir = resolve(__dirname, "../");
+export const moduleFileExtensions = ["js", "json", "vue"];
+export const moduleNameMapper = {
+  "^@/(.*)$": "<rootDir>/src/$1",
+};
+export const modulePaths = ["<rootDir>"];
+export const transform = {
+  ".*\\.js$": "<rootDir>/node_modules/babel-jest",
+  ".*\\.(vue)$": "<rootDir>/node_modules/jest-vue-preprocessor",
+};
+export const collectCoverageFrom = ["src/*.{js,vue}"];
+export const testMatch = ["<rootDir>/test/unit/*.test.js"];

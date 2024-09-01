@@ -5,3 +5,4 @@ coverage
 .idea
 test/cypress/videos
 test/cypress/screenshots
+.nuxt

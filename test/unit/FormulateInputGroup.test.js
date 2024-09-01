@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import Formulate from '@/Formulate.js'
-import FileUpload from '@/FileUpload.js'
-import FormulateInput from '@/FormulateInput.vue'
-import FormulateForm from '@/FormulateForm.vue'
-import FormulateGrouping from '@/FormulateGrouping.vue'
-import FormulateRepeatableRemove from '@/slots/FormulateRepeatableRemove.vue'
-import FormulateRepeatableProvider from '@/FormulateRepeatableProvider.vue'
+import Formulate from '../../src/Formulate.js'
+import FormulateInput from '../../src/FormulateInput.vue'
+import FormulateForm from '../../src/FormulateForm.vue'
+import FormulateGrouping from '../../src/FormulateGrouping.vue'
+import FormulateRepeatableRemove from '../../src/slots/FormulateRepeatableRemove.vue'
+import FormulateRepeatableProvider from '../../src/FormulateRepeatableProvider.vue'
 
 Vue.use(Formulate)
 

@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
-import Formulate from '@/Formulate.js'
-import FileUpload from '@/FileUpload.js'
-import FormulateInput from '@/FormulateInput.vue'
-import FormulateInputFile from '@/inputs/FormulateInputFile.vue'
+import Formulate from '../../src/Formulate.js'
+import FileUpload from '../../src/FileUpload.js'
+import FormulateInput from '../../src/FormulateInput.vue'
+import FormulateInputFile from '../../src/inputs/FormulateInputFile.vue'
 
 Vue.use(Formulate)
-
 describe('FormulateInputFile', () => {
 
   it('type "file" renders a file element', () => {

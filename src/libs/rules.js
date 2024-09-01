@@ -18,7 +18,7 @@ export default {
   after: function ({ value }, compare = false) {
     const timestamp = Date.parse(compare || new Date())
     const fieldValue = Date.parse(value)
-    return Promise.resolve(isNaN(fieldValue) ? false : (fieldValue > timestamp))
+    return Promise.resolve(Number.isNaN(fieldValue) ? false : (fieldValue > timestamp))
   },
 
   /**
@@ -26,10 +26,11 @@ export default {
    */
   alpha: function ({ value }, set = 'default') {
     const sets = {
+      // eslint-disable-next-line regexp/no-obscure-range
       default: /^[a-zA-ZÀ-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,
-      latin: /^[a-zA-Z]+$/
+      latin: /^[a-z]+$/i
     }
-    const selectedSet = sets.hasOwnProperty(set) ? set : 'default'
+    const selectedSet = Object.prototype.hasOwnProperty.call(sets, set) ? set : 'default'
     return Promise.resolve(sets[selectedSet].test(value))
   },
 
@@ -38,10 +39,11 @@ export default {
    */
   alphanumeric: function ({ value }, set = 'default') {
     const sets = {
+      // eslint-disable-next-line regexp/no-obscure-range
       default: /^[a-zA-Z0-9À-ÖØ-öø-ÿĄąĆćĘęŁłŃńŚśŹźŻż]+$/,
-      latin: /^[a-zA-Z0-9]+$/
+      latin: /^[a-z0-9]+$/i
     }
-    const selectedSet = sets.hasOwnProperty(set) ? set : 'default'
+    const selectedSet = Object.prototype.hasOwnProperty.call(sets, set) ? set : 'default'
     return Promise.resolve(sets[selectedSet].test(value))
   },
 
@@ -51,7 +53,7 @@ export default {
   before: function ({ value }, compare = false) {
     const timestamp = Date.parse(compare || new Date())
     const fieldValue = Date.parse(value)
-    return Promise.resolve(isNaN(fieldValue) ? false : (fieldValue < timestamp))
+    return Promise.resolve(Number.isNaN(fieldValue) ? false : (fieldValue < timestamp))
   },
 
   /**
@@ -59,17 +61,17 @@ export default {
    */
   between: function ({ value }, from = 0, to = 10, force) {
     return Promise.resolve((() => {
-      if (from === null || to === null || isNaN(from) || isNaN(to)) {
+      if (from === null || to === null || Number.isNaN(from) || Number.isNaN(to)) {
         return false
       }
-      if ((!isNaN(value) && force !== 'length') || force === 'value') {
+      if ((!Number.isNaN(value) && force !== 'length') || force === 'value') {
         value = Number(value)
         from = Number(from)
         to = Number(to)
         return (value > from && value < to)
       }
       if (typeof value === 'string' || force === 'length') {
-        value = !isNaN(value) ? value.toString() : value
+        value = !Number.isNaN(value) ? value.toString() : value
         return value.length > from && value.length < to
       }
       return false
@@ -85,7 +87,7 @@ export default {
       const values = getGroupValues()
       var confirmationFieldName = field
       if (!confirmationFieldName) {
-        confirmationFieldName = /_confirm$/.test(name) ? name.substr(0, name.length - 8) : `${name}_confirm`
+        confirmationFieldName = name.endsWith('_confirm') ? name.substr(0, name.length - 8) : `${name}_confirm`
       }
       return values[confirmationFieldName] === value
     })())
@@ -100,7 +102,7 @@ export default {
       if (format && typeof format === 'string') {
         return regexForFormat(format).test(value)
       }
-      return !isNaN(Date.parse(value))
+      return !Number.isNaN(Date.parse(value))
     })())
   },
 
@@ -180,15 +182,15 @@ export default {
   min: function ({ value }, minimum = 1, force) {
     return Promise.resolve((() => {
       if (Array.isArray(value)) {
-        minimum = !isNaN(minimum) ? Number(minimum) : minimum
+        minimum = !Number.isNaN(minimum) ? Number(minimum) : minimum
         return value.length >= minimum
       }
-      if ((!isNaN(value) && force !== 'length') || force === 'value') {
-        value = !isNaN(value) ? Number(value) : value
+      if ((!Number.isNaN(value) && force !== 'length') || force === 'value') {
+        value = !Number.isNaN(value) ? Number(value) : value
         return value >= minimum
       }
       if (typeof value === 'string' || (force === 'length')) {
-        value = !isNaN(value) ? value.toString() : value
+        value = !Number.isNaN(value) ? value.toString() : value
         return value.length >= minimum
       }
       return false
@@ -201,15 +203,15 @@ export default {
   max: function ({ value }, maximum = 10, force) {
     return Promise.resolve((() => {
       if (Array.isArray(value)) {
-        maximum = !isNaN(maximum) ? Number(maximum) : maximum
+        maximum = !Number.isNaN(maximum) ? Number(maximum) : maximum
         return value.length <= maximum
       }
-      if ((!isNaN(value) && force !== 'length') || force === 'value') {
-        value = !isNaN(value) ? Number(value) : value
+      if ((!Number.isNaN(value) && force !== 'length') || force === 'value') {
+        value = !Number.isNaN(value) ? Number(value) : value
         return value <= maximum
       }
       if (typeof value === 'string' || (force === 'length')) {
-        value = !isNaN(value) ? value.toString() : value
+        value = !Number.isNaN(value) ? value.toString() : value
         return value.length <= maximum
       }
       return false
@@ -232,7 +234,7 @@ export default {
    * Rule: checks if the value is only alpha numeric
    */
   number: function ({ value }) {
-    return Promise.resolve(!isNaN(value))
+    return Promise.resolve(!Number.isNaN(value))
   },
 
   /**

@@ -120,7 +120,7 @@ function parseRule (rule, rules) {
   if (Array.isArray(rule) && rule.length) {
     rule = rule.map(r => r) // light clone
     const [ruleName, modifier] = parseModifier(rule.shift())
-    if (typeof ruleName === 'string' && rules.hasOwnProperty(ruleName)) {
+    if (typeof ruleName === 'string' && Object.hasOwn(rules, ruleName)) {
       return [rules[ruleName], rule, ruleName, modifier]
     }
     if (typeof ruleName === 'function') {
@@ -130,7 +130,7 @@ function parseRule (rule, rules) {
   if (typeof rule === 'string' && rule) {
     const segments = rule.split(':')
     const [ruleName, modifier] = parseModifier(segments.shift())
-    if (rules.hasOwnProperty(ruleName)) {
+    if (Object.hasOwn(rules, ruleName)) {
       return [rules[ruleName], segments.length ? segments.join(':').split(',') : [], ruleName, modifier]
     } else {
       throw new Error(`Unknown validation rule ${rule}`)

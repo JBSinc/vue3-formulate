@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import flushPromises from 'flush-promises'
 import { mount } from '@vue/test-utils'
-import Formulate from '@/Formulate.js'
-import FormulateSchema from '@/FormulateSchema.js'
-import FormulateInput from '@/FormulateInput.vue'
+import Formulate from '../../src/Formulate.js'
+import FormulateSchema from '../../src/FormulateSchema.js'
+import FormulateInput from '../../src/FormulateInput.vue'
 
 Vue.use(Formulate)
 

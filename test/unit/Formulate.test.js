@@ -1,4 +1,4 @@
-import Formulate from '@/Formulate.js'
+import Formulate from '../../src/Formulate.js'
 
 describe('Formulate', () => {
   it('can merge simple object', () => {

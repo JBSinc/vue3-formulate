@@ -1,7 +1,8 @@
-import { parseRules, parseLocale, regexForFormat, cloneDeep, isValueType, camel, groupBails, isEmpty } from '@/libs/utils'
-import rules from '@/libs/rules'
-import FileUpload from '@/FileUpload';
-import { equals } from '../../src/libs/utils';
+import { parseRules, equals, parseLocale, regexForFormat, isValueType, camel, groupBails, isEmpty } from '../../src/libs/utils'
+import { cloneDeep } from '../../src/libs/utils2'
+import rules from '../../src/libs/rules'
+import FileUpload from '../../src/FileUpload'
+import { expect } from 'jest';
 
 describe('parseRules', () => {
   it('parses single string rules, returning empty arguments array', () => {
@@ -12,7 +13,7 @@ describe('parseRules', () => {
 
   it('throws errors for invalid validation rules', () => {
     expect(() => {
-      parseRules('required|notarule', rules, null)
+      parseRules('required|notarule', rules)
     }).toThrow()
   })
 

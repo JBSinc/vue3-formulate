@@ -1,30 +1,40 @@
 {
-  "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/CVS": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
-    "**/node_modules": true
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/bower_components": true,
-    "**/*.code-search": true,
-    "**/nodemodules": true,
-    "**/dist": true
-  },
+  "eslint.enable": true,
+  "eslint.useFlatConfig": true,
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "*.ts": "${capture}.js",
     "*.css": "${capture}.css.map, ${capture}.min.css",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.jsx": "${capture}.js",
+    "*.ts": "${capture}.js",
     "*.tsx": "${capture}.ts",
-    "tsconfig.json": "tsconfig.*.json",
-    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
+    ".nested": ".editorconfig,.gitignore,.eslintrc.js,eslint.config.js,.eslintignore,.travis.yml,babel.config.js,cypress.json,package.json,package-lock.json,README.md,LICENSE.txt,vite.config.ts,tsconfig.json,eslint.config.mjs,nuxt.config.ts,DEV_README.md",
     "Cargo.toml": "Cargo.lock",
-    ".nested": ".editorconfig,.gitignore,.eslintrc.js,eslint.config.js,.eslintignore,.travis.yml,babel.config.js,cypress.json,package.json,package-lock.json,README.md,LICENSE.txt"
-  }
+    "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
+    "tsconfig.json": "tsconfig.*.json"
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.hg": true,
+    "**/.svn": true,
+    "**/CVS": true,
+    "**/node_modules": true,
+    "**/Thumbs.db": true
+  },
+  "javascript.suggest.autoImports": true,
+  "javascript.suggest.includeCompletionsForImportStatements": true,
+  "search.exclude": {
+    "**/*.code-search": true,
+    "**/bower_components": true,
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/nodemodules": true
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.enabled": true,
+  "typescript.suggest.includeCompletionsForImportStatements": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.workspaceSymbols.scope": "allOpenProjects"
 }

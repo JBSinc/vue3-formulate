@@ -2,9 +2,8 @@ import Vue from 'vue'
 import flushPromises from 'flush-promises'
 import { mount } from '@vue/test-utils'
 import Formulate from '../../src/Formulate.js'
-import FormulateInput from '@/FormulateInput.vue'
-import FormulateInputText from '@/inputs/FormulateInputText.vue'
-import { doesNotReject } from 'assert';
+import FormulateInput from '../../src/FormulateInput.vue'
+import FormulateInputText from '../../src/inputs/FormulateInputText.vue'
 
 Vue.use(Formulate)
 

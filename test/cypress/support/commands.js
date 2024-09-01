@@ -9,7 +9,7 @@
 // ***********************************************
 //
 import 'cypress-file-upload'
-import FileUpload from '../../../src/FileUpload'
+import expect from 'jest'
 
 //
 // -- This is a parent command --
@@ -56,10 +56,10 @@ Cypress.Commands.add('submittedValue', (name = 'inputUnderTest') => {
 // -- This is a child command --
 
 Cypress.Commands.add('shouldHaveTrimmedText', { prevSubject: true }, (subject, equalTo) => {
-  if (isNaN(equalTo)) {
+  if (Number.isNaN(equalTo)) {
       expect(subject.text().trim()).to.eq(equalTo);
   } else {
-      expect(parseInt(subject.text())).to.eq(equalTo);
+      expect(Number.parseInt(subject.text())).to.eq(equalTo);
   }
   return subject;
 })

@@ -1,10 +1,10 @@
 import Vue from 'vue'
-import { mount, shallowMount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import flushPromises from 'flush-promises'
 import Formulate from '../../src/Formulate.js'
 import FormSubmission from '../../src/FormSubmission.js'
-import FormulateForm from '@/FormulateForm.vue'
-import FormulateInput from '@/FormulateInput.vue'
+import FormulateForm from '../../src/FormulateForm.vue'
+import FormulateInput from '../../src//FormulateInput.vue'
 
 Vue.use(Formulate, {
   classes: {
@@ -39,7 +39,6 @@ describe('FormulateForm', () => {
   })
 
   it('intercepts submit event', () => {
-    const formSubmitted = jest.fn()
     const wrapper = mount(FormulateForm, {
       slots: {
         default: "<button type='submit' />"
@@ -473,7 +472,7 @@ describe('FormulateForm', () => {
     expect(wrapper.findAll('.formulate-form-error').length).toBe(2)
   })
 
-  it('it aggregates form-errors prop with form-named errors', async () => {
+  it('aggregates form-errors prop with form-named errors', async () => {
     const wrapper = mount(FormulateForm, {
       propsData: { formErrors: ['first', 'second'], name: 'login' }
     })

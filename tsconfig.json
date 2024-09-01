@@ -1,6 +1,14 @@
 {
-    "compilerOptions": {
-        "checkJs": false,
-        "esModuleInterop": true
-    }
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "sourceMap": true,
+    "allowUmdGlobalAccess": true,
+    "noFallthroughCasesInSwitch": false,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "rootDir": ".",
+    "checkJs": false,
+    "module": "ESNext"
+  }
 }

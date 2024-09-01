@@ -1,25 +1,22 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import path from "path";
-import autoprefixer from "autoprefixer";
+import path from "node:path";
+
 
 export default defineConfig({
-  plugins: [vue()],  
+  plugins: [vue()],
   build: {
     target: "es2017",
-    cssMinify: true,
-    cssCodeSplit: true,
     sourcemap: true,
     emptyOutDir: true,
     lib: {
-      // Define your entry point for the library
       entry: path.resolve(__dirname, "src/Formulate.js"),
-      name: "Vue3Formulate", // Name of your library
+      name: "Vue3Formulate",
       fileName: (format) => `formulate.${format}.js`,
-      formats: ["es", "umd", "iife", "cjs", "system"], // Common formats for libraries
+      formats: ["es", "umd", "iife", "cjs", "system"],
     },
     rollupOptions: {
-      external: ["vue"],      
+      external: ["vue"],
       output: {
         globals: {
           "is-plain-object": "isPlainObject",
@@ -27,26 +24,11 @@ export default defineConfig({
           vue: "Vue",
         },
         assetFileNames: (asset) => {
-          console.log(asset.name);
-          return asset.name;
-
+          console.info(asset.name);
+          return asset.name!;
         },
-        inlineDynamicImports: true
+        inlineDynamicImports: true,
       },
-    },
-  },
-  css: {    
-    postcss: {
-      plugins: [
-        autoprefixer({
-          overrideBrowserslist: "> 2%",
-        })
-      ],
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"), // Alias for your src directory
     },
   },
 });
