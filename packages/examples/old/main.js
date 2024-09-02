@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import VueFormulate from '../src/Formulate'
+import VueFormulate from '../../formulate/Formulate'
 import FormulateSpecimens from './FormulateSpecimens.vue'
 import { en, de } from '@braid/vue-formulate-i18n'
 

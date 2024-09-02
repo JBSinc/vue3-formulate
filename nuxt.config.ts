@@ -1,5 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
-import path from "path";
+import path from "node:path";
 
 const createNuxtConfig = (): NuxtConfig => {
   return {
@@ -9,11 +9,6 @@ const createNuxtConfig = (): NuxtConfig => {
       typeCheck: true,
     },
     modules: ["@nuxt/eslint"],
-    eslint: {
-      config: {
-        standalone: true,
-      },
-    },
   };
 };
 

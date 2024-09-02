@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { has, token } from '../src/libs/utils'
+import { has, token } from '../packages/formulate/libs/utils'
 import SpecimenText from './specimens/SpecimenText'
 import SpecimenTextarea from './specimens/SpecimenTextarea'
 import SpecimenGroup from './specimens/SpecimenGroup'

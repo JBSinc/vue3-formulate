@@ -10,7 +10,7 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
     lib: {
-      entry: path.resolve(__dirname, "src/Formulate.js"),
+      entry: path.resolve(__dirname, "./Formulate.js"),
       name: "Vue3Formulate",
       fileName: (format) => `formulate.${format}.js`,
       formats: ["es", "umd", "iife", "cjs", "system"],

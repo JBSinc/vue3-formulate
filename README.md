@@ -11,6 +11,8 @@
   <a href="https://vueformulate.com">Documentation Website</a>
 </p>
 
+## ⚠️ [Work in Progress, not released, not working!]
+
 ## ⚠️ Vue 3 Support Fork
 
 This is a **fork of Vue Formulate** that has been updated to provide support for **Vue 3**. The original Vue Formulate was designed for Vue 2, but this fork continues its legacy with Vue 3 compatibility.
