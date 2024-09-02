@@ -2,13 +2,13 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "node:path";
 
-
 export default defineConfig({
   plugins: [vue()],
   build: {
     target: "es2017",
     sourcemap: true,
-    emptyOutDir: true,
+    emptyOutDir: false,
+    outDir: path.resolve(__dirname, "dist"),
     lib: {
       entry: path.resolve(__dirname, "./Formulate.js"),
       name: "Vue3Formulate",

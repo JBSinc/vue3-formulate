@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "nuxi prepare",
     "build": "vite build & npm run build:css & wait && echo \"Build complete:\nesm: $(gzip -c dist/formulate.esm.js | wc -c)b gzip\numd: $(gzip -c dist/formulate.umd.js | wc -c)b gzip\nmin: $(gzip -c dist/formulate.min.js | wc -c)b gzip\"",
-    "build:css": "sass src/themes/snow/snow.scss dist/snow.css && postcss --use autoprefixer -b '> 2%' dist/snow.css | postcss --no-map --use cssnano > dist/snow.min.css",
+    "build:css": "sass themes/snow/snow.scss ./dist/snow.css && postcss --use autoprefixer -b '> 2%' ./dist/snow.css | postcss --no-map --use cssnano > ./dist/snow.min.css",
     "test": "cross-env NODE_ENV=test jest --config test/jest.conf.js --coverage",
     "test:watch": "NODE_ENV=test jest --config test/jest.conf.js --watch",
     "test:coverage": "NODE_ENV=test jest --config test/jest.conf.js --coverage",
