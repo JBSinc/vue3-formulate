@@ -18,7 +18,7 @@
       :type="type"
       v-bind="attributes"
       @blur="context.blurHandler"
-      v-on="$listeners"
+      v-on="$attrs"
     >
     <FormulateSlot
       name="suffix"

@@ -16,7 +16,7 @@
     <button
       :type="type"
       v-bind="attributes"
-      v-on="$listeners"
+      v-on="$attrs"
     >
       <slot :context="context">
         <component

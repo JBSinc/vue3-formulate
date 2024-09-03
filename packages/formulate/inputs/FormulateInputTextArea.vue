@@ -16,7 +16,7 @@
     <textarea
       v-model="context.model"
       v-bind="attributes"
-      v-on="$listeners"
+      v-on="$attrs"
       @blur="context.blurHandler"
     />
     <FormulateSlot

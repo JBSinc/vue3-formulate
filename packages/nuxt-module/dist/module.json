@@ -1,0 +1,9 @@
+{
+  "name": "my-module",
+  "configKey": "myModule",
+  "version": "3.1.0",
+  "builder": {
+    "@nuxt/module-builder": "0.8.3",
+    "unbuild": "2.0.0"
+  }
+}

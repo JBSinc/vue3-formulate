@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "nuxi prepare",
+    "dev": "npm run --workspace=examples dev"
   },
   "repository": {
     "type": "git",

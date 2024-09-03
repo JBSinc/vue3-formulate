@@ -4,78 +4,76 @@
     v-bind="attributes"
     @submit.prevent="formSubmitted"
   >
-    <FormulateSchema
-      v-if="schema"
-      :schema="schema"
-      v-on="schemaListeners"
-    />
-    <FormulateErrors
-      v-if="!hasFormErrorObservers"
-      :context="formContext"
-    />
+    <FormulateSchema v-if="schema" :schema="schema" v-on="schemaListeners" />
+    <FormulateErrors v-if="!hasFormErrorObservers" :context="formContext" />
     <slot v-bind="formContext" />
   </form>
 </template>
 
 <script>
-import { arrayify, has, camel, extractAttributes, isEmpty } from './libs/utils'
-import { classProps } from './libs/classes'
-import useRegistry, { useRegistryComputed, useRegistryMethods, useRegistryProviders, useRegistryWatchers } from './libs/registry'
-import FormSubmission from './FormSubmission'
+import { arrayify, has, camel, extractAttributes, isEmpty } from "./libs/utils";
+import { classProps } from "./libs/classes";
+import useRegistry, {
+  useRegistryComputed,
+  useRegistryMethods,
+  useRegistryProviders,
+  useRegistryWatchers,
+} from "./libs/registry";
+import FormSubmission from "./FormSubmission";
 
 export default {
-  name: 'FormulateForm',
-  inheritAttrs: false,
-  provide () {
+  name: "FormulateForm",
+  provide() {
     return {
-      ...useRegistryProviders(this, ['getGroupValues']),
+      ...useRegistryProviders(this, ["getGroupValues"]),
       observeContext: this.addContextObserver,
-      removeContextObserver: this.removeContextObserver
-    }
+      removeContextObserver: this.removeContextObserver,
+    };
   },
+  inheritAttrs: false,
   model: {
-    prop: 'formulateValue',
-    event: 'input'
+    prop: "formulateValue",
+    event: "input",
   },
   props: {
     name: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     formulateValue: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     values: {
       type: [Object, Boolean],
-      default: false
+      default: false,
     },
     errors: {
       type: [Object, Boolean],
-      default: false
+      default: false,
     },
     formErrors: {
       type: Array,
-      default: () => ([])
+      default: () => [],
     },
     schema: {
       type: [Array, Boolean],
-      default: false
+      default: false,
     },
     keepModelData: {
       type: [Boolean, String],
-      default: false
+      default: false,
     },
     invalidMessage: {
       type: [Boolean, Function, String],
-      default: false
+      default: false,
     },
     debounce: {
       type: [Boolean, Number],
-      default: false
-    }
+      default: false,
+    },
   },
-  data () {
+  data() {
     return {
       ...useRegistry(this),
       formShouldShowErrors: false,
@@ -83,34 +81,41 @@ export default {
       namedErrors: [],
       namedFieldErrors: {},
       isLoading: false,
-      hasFailedSubmit: false
-    }
+      hasFailedSubmit: false,
+    };
   },
   computed: {
     ...useRegistryComputed(),
-    schemaListeners () {
-      const { submit, ...listeners } = this.$listeners
-      return listeners
+    schemaAttrs() {
+      const { submit, ...attrs } = this.$attrs;
+      return attrs;
     },
-    pseudoProps () {
-      return extractAttributes(this.$attrs, classProps.filter(p => /^form/.test(p)))
+    pseudoProps() {
+      return extractAttributes(
+        this.$attrs,
+        // eslint-disable-next-line unicorn/prefer-string-starts-ends-with
+        classProps.filter((p) => /^form/.test(p)),
+      );
     },
-    attributes () {
+    attributes() {
       const attrs = Object.keys(this.$attrs)
-        .filter(attr => !has(this.pseudoProps, camel(attr)))
-        .reduce((fields, field) => ({ ...fields, [field]: this.$attrs[field] }), {}) // Create an object of attributes to re-bind
-      if (typeof this.name === 'string') {
-        Object.assign(attrs, { name: this.name })
+        .filter((attr) => !has(this.pseudoProps, camel(attr)))
+        .reduce(
+          (fields, field) => ({ ...fields, [field]: this.$attrs[field] }),
+          {},
+        ); // Create an object of attributes to re-bind
+      if (typeof this.name === "string") {
+        Object.assign(attrs, { name: this.name });
       }
-      return attrs
+      return attrs;
     },
-    hasErrors () {
-      return Object.values(this.registry.errors).some(hasErrors => hasErrors)
+    hasErrors() {
+      return Object.values(this.registry.errors).some((hasErrors) => hasErrors);
     },
-    isValid () {
-      return !this.hasErrors
+    isValid() {
+      return !this.hasErrors;
     },
-    formContext () {
+    formContext() {
       return {
         errors: this.mergedFormErrors,
         pseudoProps: this.pseudoProps,
@@ -119,10 +124,10 @@ export default {
         hasValue: !isEmpty(this.proxy), // These have to be explicit for really silly nextTick reasons
         isValid: this.isValid,
         isLoading: this.isLoading,
-        classes: this.classes
-      }
+        classes: this.classes,
+      };
     },
-    classes () {
+    classes() {
       return this.$formulate.classes({
         ...this.$props,
         ...this.pseudoProps,
@@ -132,146 +137,159 @@ export default {
         hasValue: !isEmpty(this.proxy),
         isValid: this.isValid,
         isLoading: this.isLoading,
-        type: 'form',
-        classification: 'form',
-        attrs: this.$attrs
-      })
+        type: "form",
+        classification: "form",
+        attrs: this.$attrs,
+      });
     },
-    invalidErrors () {
+    invalidErrors() {
       if (this.hasFailedSubmit && this.hasErrors) {
         switch (typeof this.invalidMessage) {
-          case 'string':
-            return [this.invalidMessage]
-          case 'object':
-            return Array.isArray(this.invalidMessage) ? this.invalidMessage : []
-          case 'function':
-            const ret = this.invalidMessage(this.failingFields)
-            return Array.isArray(ret) ? ret : [ret]
+          case "string":
+            return [this.invalidMessage];
+          case "object":
+            return Array.isArray(this.invalidMessage)
+              ? this.invalidMessage
+              : [];
+          case "function":
+            // eslint-disable-next-line no-case-declarations
+            const ret = this.invalidMessage(this.failingFields);
+            return Array.isArray(ret) ? ret : [ret];
         }
       }
-      return []
+      return [];
     },
-    mergedFormErrors () {
-      return this.formErrors.concat(this.namedErrors).concat(this.invalidErrors)
+    mergedFormErrors() {
+      return this.formErrors
+        .concat(this.namedErrors)
+        .concat(this.invalidErrors);
     },
-    mergedFieldErrors () {
-      const errors = {}
+    mergedFieldErrors() {
+      const errors = {};
       if (this.errors) {
         for (const fieldName in this.errors) {
-          errors[fieldName] = arrayify(this.errors[fieldName])
+          errors[fieldName] = arrayify(this.errors[fieldName]);
         }
       }
       for (const fieldName in this.namedFieldErrors) {
-        errors[fieldName] = arrayify(this.namedFieldErrors[fieldName])
+        errors[fieldName] = arrayify(this.namedFieldErrors[fieldName]);
       }
-      return errors
+      return errors;
     },
-    hasFormErrorObservers () {
-      return !!this.errorObservers.filter(o => o.type === 'form').length
+    hasFormErrorObservers() {
+      return !!this.errorObservers.filter((o) => o.type === "form").length;
     },
-    failingFields () {
-      return Object.keys(this.registry.errors)
-        .reduce((fields, field) => ({
+    failingFields() {
+      return Object.keys(this.registry.errors).reduce(
+        (fields, field) => ({
           ...fields,
-          ...(this.registry.errors[field] ? { [field]: this.registry.get(field) } : {})
-        }), {})
-    }
+          ...(this.registry.errors[field]
+            ? { [field]: this.registry.get(field) }
+            : {}),
+        }),
+        {},
+      );
+    },
   },
   watch: {
     ...useRegistryWatchers(),
     formulateValue: {
-      handler (values) {
-        if (this.isVmodeled &&
-          values &&
-          typeof values === 'object'
-        ) {
-          this.setValues(values)
+      handler(values) {
+        if (this.isVmodeled && values && typeof values === "object") {
+          this.setValues(values);
         }
       },
-      deep: true
+      deep: true,
     },
-    mergedFormErrors (errors) {
+    mergedFormErrors(errors) {
       this.errorObservers
-        .filter(o => o.type === 'form')
-        .forEach(o => o.callback(errors))
-    }
+        .filter((o) => o.type === "form")
+        .forEach((o) => o.callback(errors));
+    },
   },
-  created () {
-    this.$formulate.register(this)
-    this.applyInitialValues()
-    this.$emit('created', this)
+  created() {
+    this.$formulate.register(this);
+    this.applyInitialValues();
+    this.$emit("created", this);
   },
-  destroyed () {
-    this.$formulate.deregister(this)
+  unmounted() {
+    this.$formulate.deregister(this);
   },
   methods: {
     ...useRegistryMethods(),
-    applyErrors ({ formErrors, inputErrors }) {
+    applyErrors({ formErrors, inputErrors }) {
       // given an object of errors, apply them to this form
-      this.namedErrors = formErrors
-      this.namedFieldErrors = inputErrors
+      this.namedErrors = formErrors;
+      this.namedFieldErrors = inputErrors;
     },
-    addContextObserver (callback) {
-      if (!this.contextObservers.find(observer => observer === callback)) {
-        this.contextObservers.push(callback)
-        callback(this.formContext)
+    addContextObserver(callback) {
+      if (!this.contextObservers.find((observer) => observer === callback)) {
+        this.contextObservers.push(callback);
+        callback(this.formContext);
       }
     },
-    removeContextObserver (callback) {
-      this.contextObservers.filter(observer => observer !== callback)
+    removeContextObserver(callback) {
+      this.contextObservers.filter((observer) => observer !== callback);
     },
-    registerErrorComponent (component) {
+    registerErrorComponent(component) {
       if (!this.errorComponents.includes(component)) {
-        this.errorComponents.push(component)
+        this.errorComponents.push(component);
       }
     },
-    formSubmitted () {
+    formSubmitted() {
       if (this.isLoading) {
-        return undefined
+        return undefined;
       }
-      this.isLoading = true
+      this.isLoading = true;
 
       // perform validation here
-      this.showErrors()
-      const submission = new FormSubmission(this)
+      this.showErrors();
+      const submission = new FormSubmission(this);
 
       // Wait for the submission handler
-      const submitRawHandler = this.$listeners['submit-raw'] || this.$listeners.submitRaw
-      const rawHandlerReturn = typeof submitRawHandler === 'function'
-        ? submitRawHandler(submission)
-        : Promise.resolve(submission)
-      const willResolveRaw = rawHandlerReturn instanceof Promise
-        ? rawHandlerReturn
-        : Promise.resolve(rawHandlerReturn)
+      const submitRawHandler =
+        this.$attrs["submit-raw"] || this.$attrs.submitRaw;
+      const rawHandlerReturn =
+        typeof submitRawHandler === "function"
+          ? submitRawHandler(submission)
+          : Promise.resolve(submission);
+      const willResolveRaw =
+        rawHandlerReturn instanceof Promise
+          ? rawHandlerReturn
+          : Promise.resolve(rawHandlerReturn);
       return willResolveRaw
-        .then(res => {
-          const sub = (res instanceof FormSubmission ? res : submission)
-          return sub.hasValidationErrors().then(hasErrors => [sub, hasErrors])
+        .then((res) => {
+          const sub = res instanceof FormSubmission ? res : submission;
+          return sub
+            .hasValidationErrors()
+            .then((hasErrors) => [sub, hasErrors]);
         })
         .then(([sub, hasErrors]) => {
-          if (!hasErrors && typeof this.$listeners.submit === 'function') {
-            return sub.values()
-              .then(values => {
-                // If the listener returns a promise, we want to wait for that
-                // that promise to resolve, but when we do resolve, we only
-                // want to resolve the submission values
-                this.hasFailedSubmit = false
-                const handlerReturn = this.$listeners.submit(values)
-                return (handlerReturn instanceof Promise ? handlerReturn : Promise.resolve())
-                  .then(() => values)
-              })
+          if (!hasErrors && typeof this.$attrs.submit === "function") {
+            return sub.values().then((values) => {
+              // If the listener returns a promise, we want to wait for that
+              // that promise to resolve, but when we do resolve, we only
+              // want to resolve the submission values
+              this.hasFailedSubmit = false;
+              const handlerReturn = this.$attrs.submit(values);
+              return (
+                handlerReturn instanceof Promise
+                  ? handlerReturn
+                  : Promise.resolve()
+              ).then(() => values);
+            });
           }
-          return this.onFailedValidation()
+          return this.onFailedValidation();
         })
         .finally(() => {
-          this.isLoading = false
-        })
+          this.isLoading = false;
+        });
     },
-    onFailedValidation () {
-      this.hasFailedSubmit = true
-      this.$emit('failed-validation', { ...this.failingFields })
-      return this.$formulate.failedValidation(this)
-    }
-  }
-}
+    onFailedValidation() {
+      this.hasFailedSubmit = true;
+      this.$emit("failed-validation", { ...this.failingFields });
+      return this.$formulate.failedValidation(this);
+    },
+  },
+};
 </script>

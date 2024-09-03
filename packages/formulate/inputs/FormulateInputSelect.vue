@@ -18,7 +18,7 @@
       v-model="context.model"
       v-bind="attributes"
       :data-placeholder-selected="placeholderSelected"
-      v-on="$listeners"
+      v-on="$attrs"
       @blur="context.blurHandler"
     >
       <option

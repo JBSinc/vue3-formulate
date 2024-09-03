@@ -1,6 +1,6 @@
 {
   "name": "@jbs/vue3-formulate",
-  "version": "2.5.3",
+  "version": "3.0.0",
   "description": "A form of Vue Formulate for Vue 3 support and vite",
   "main": "dist/formulate.cjs.js",
   "module": "dist/formulate.es.js",

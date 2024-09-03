@@ -108,7 +108,7 @@ class Formulate {
    * Install vue formulate, and register it’s components.
    */
   install(Vue, options) {
-    Vue.prototype.$formulate = this;
+    console.log('install running!')
     this.options = this.defaults;
     var plugins = this.defaults.plugins;
     if (options && Array.isArray(options.plugins) && options.plugins.length) {
@@ -121,6 +121,7 @@ class Formulate {
     for (var componentName in this.options.components) {
       Vue.component(componentName, this.options.components[componentName]);
     }
+    console.log('install done!')
   }
 
   /**
@@ -167,7 +168,7 @@ class Formulate {
   merge(base, mergeWith, concatArrays = true) {
     var merged = {};
     for (var key in base) {
-      if (mergeWith.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(mergeWith, key)) {
         if (isPlainObject(mergeWith[key]) && isPlainObject(base[key])) {
           merged[key] = this.merge(base[key], mergeWith[key], concatArrays);
         } else if (
@@ -184,7 +185,7 @@ class Formulate {
       }
     }
     for (var prop in mergeWith) {
-      if (!merged.hasOwnProperty(prop)) {
+      if (!Object.prototype.hasOwnProperty.call(merged, prop)) {
         merged[prop] = mergeWith[prop];
       }
     }
@@ -196,7 +197,7 @@ class Formulate {
    * @param {string} type
    */
   classify(type) {
-    if (this.options.library.hasOwnProperty(type)) {
+    if (Object.prototype.hasOwnProperty.call(this.options.library, type)) {
       return this.options.library[type].classification;
     }
     return "unknown";
@@ -278,7 +279,7 @@ class Formulate {
    * @param {string} type
    */
   component(type) {
-    if (this.options.library.hasOwnProperty(type)) {
+    if (Object.prototype.hasOwnProperty.call(this.options.library, type)) {
       return this.options.library[type].component;
     }
     return false;
@@ -366,10 +367,10 @@ class Formulate {
    */
   validationMessage(rule, validationContext, vm) {
     const generators = this.options.locales[this.getLocale(vm)];
-    if (generators.hasOwnProperty(rule)) {
+    if (Object.prototype.hasOwnProperty.call(generators, rule)) {
       return generators[rule](validationContext);
     }
-    if (generators.hasOwnProperty("default")) {
+    if (Object.prototype.hasOwnProperty.call(generators, "default")) {
       return generators.default(validationContext);
     }
     return "Invalid field value";

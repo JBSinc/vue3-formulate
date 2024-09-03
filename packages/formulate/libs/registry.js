@@ -198,12 +198,19 @@ export function useRegistryComputed (options = {}) {
         (this.isGrouping && typeof this.context.model[this.index] === 'object')
       )
     },
-    isVmodeled () {
-      return !!(this.$options.propsData.hasOwnProperty('formulateValue') &&
-        this._events &&
-        Array.isArray(this._events.input) &&
-        this._events.input.length)
-    },
+    isVmodeled() {
+      //TODO Test new isVmodeled
+      // Check if the component has a `formulateValue` prop, either on `this` or in `$props`
+      const hasFormulateValue = Object.prototype.hasOwnProperty.call(this.$props, 'formulateValue');
+    
+      // Check if the component has an event listener for `input` or `update:modelValue`
+      const handlesInputEvent = this.$attrs && (
+        typeof this.$attrs['onInput'] === 'function' || 
+        typeof this.$attrs['onUpdate:modelValue'] === 'function'
+      );
+    
+      return !!(hasFormulateValue && handlesInputEvent);
+    },    
     initialValues () {
       if (
         has(this.$options.propsData, 'formulateValue') &&

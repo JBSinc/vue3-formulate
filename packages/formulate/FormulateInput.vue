@@ -32,15 +32,12 @@
           :context="context"
         />
       </slot>
-      <slot
-        name="element"
-        v-bind="context"
-      >
+      <slot name="element" v-bind="context">
         <component
           :is="context.component"
           :context="context"
           v-bind="context.slotProps.component"
-          v-on="listeners"
+          v-on="$attrs"
         >
           <slot v-bind="context" />
         </component>
@@ -58,11 +55,7 @@
         />
       </slot>
     </div>
-    <slot
-      v-if="context.helpPosition === 'after'"
-      name="help"
-      v-bind="context"
-    >
+    <slot v-if="context.helpPosition === 'after'" name="help" v-bind="context">
       <component
         :is="context.slotComponents.help"
         v-if="context.help"
@@ -70,14 +63,13 @@
         v-bind="context.slotProps.help"
       />
     </slot>
-    <slot
-      name="errors"
-      v-bind="context"
-    >
+    <slot name="errors" v-bind="context">
       <component
         :is="context.slotComponents.errors"
         v-if="!context.disableErrors"
-        :type="context.slotComponents.errors === 'FormulateErrors' ? 'input' : false"
+        :type="
+          context.slotComponents.errors === 'FormulateErrors' ? 'input' : false
+        "
         :context="context"
         v-bind="context.slotProps.errors"
       />
@@ -86,18 +78,26 @@
 </template>
 
 <script>
-import context from './libs/context'
-import { equals, parseRules, camel, has, arrayify, groupBails, isEmpty, createDebouncer } from './libs/utils'
+import context from "./libs/context";
+import {
+  equals,
+  parseRules,
+  camel,
+  has,
+  arrayify,
+  groupBails,
+  isEmpty,
+  createDebouncer,
+} from "./libs/utils";
 
 export default {
-  name: 'FormulateInput',
-  inheritAttrs: false,
-  provide () {
+  name: "FormulateInput",
+  provide() {
     return {
       // Allows sub-components of this input to register arbitrary rules.
       formulateRegisterRule: this.registerRule,
-      formulateRemoveRule: this.removeRule
-    }
+      formulateRemoveRule: this.removeRule,
+    };
   },
   inject: {
     formulateSetter: { default: undefined },
@@ -109,389 +109,451 @@ export default {
     validateDependents: { default: () => () => {} },
     observeErrors: { default: undefined },
     removeErrorObserver: { default: undefined },
-    isSubField: { default: () => () => false }
+    isSubField: { default: () => () => false },
   },
+  inheritAttrs: false,
   model: {
-    prop: 'formulateValue',
-    event: 'input'
+    prop: "formulateValue",
+    event: "input",
   },
   props: {
     type: {
       type: String,
-      default: 'text'
+      default: "text",
     },
     name: {
       type: [String, Boolean],
-      default: true
+      default: true,
     },
     /* eslint-disable */
     formulateValue: {
-      default: ''
+      default: "",
     },
     value: {
-      default: false
+      default: false,
     },
     /* eslint-enable */
     options: {
       type: [Object, Array, Boolean],
-      default: false
+      default: false,
     },
     optionGroups: {
       type: [Object, Boolean],
-      default: false
+      default: false,
     },
     id: {
       type: [String, Boolean, Number],
-      default: false
+      default: false,
     },
     label: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     labelPosition: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     limit: {
       type: [String, Number],
       default: Infinity,
-      validator: value => Infinity || parseInt(value, 10) == value // eslint-disable-line eqeqeq
+      validator: (value) => Infinity || Number.parseInt(value, 10) == value, // eslint-disable-line eqeqeq
     },
     minimum: {
       type: [String, Number],
       default: 0,
-      validator: value => parseInt(value, 10) == value // eslint-disable-line eqeqeq
+      validator: (value) => Number.parseInt(value, 10) == value, // eslint-disable-line eqeqeq
     },
     help: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     helpPosition: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     isGrouped: {
       type: Boolean,
-      default: false
+      default: false,
     },
     errors: {
       type: [String, Array, Boolean],
-      default: false
+      default: false,
     },
     removePosition: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     repeatable: {
       type: Boolean,
-      default: false
+      default: false,
     },
     validation: {
       type: [String, Boolean, Array],
-      default: false
+      default: false,
     },
     validationName: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     error: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     errorBehavior: {
       type: String,
-      default: 'blur',
+      default: "blur",
       validator: function (value) {
-        return ['blur', 'live', 'submit', 'value'].includes(value)
-      }
+        return ["blur", "live", "submit", "value"].includes(value);
+      },
     },
     showErrors: {
       type: Boolean,
-      default: false
+      default: false,
     },
     groupErrors: {
       type: Object,
       default: () => ({}),
       validator: (value) => {
-        const isK = /^\d+\./
-        return !Object.keys(value).some(k => !isK.test(k))
-      }
+        const isK = /^\d+\./;
+        return !Object.keys(value).some((k) => !isK.test(k));
+      },
     },
     imageBehavior: {
       type: String,
-      default: 'preview'
+      default: "preview",
     },
     uploadUrl: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     uploader: {
       type: [Function, Object, Boolean],
-      default: false
+      default: false,
     },
     uploadBehavior: {
       type: String,
-      default: 'live'
+      default: "live",
     },
     preventWindowDrops: {
       type: Boolean,
-      default: true
+      default: true,
     },
     showValue: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     validationMessages: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     validationRules: {
       type: Object,
-      default: () => ({})
+      default: () => ({}),
     },
     checked: {
       type: [String, Boolean],
-      default: false
+      default: false,
     },
     disableErrors: {
       type: Boolean,
-      default: false
+      default: false,
     },
     addLabel: {
       type: [Boolean, String],
-      default: true
+      default: true,
     },
     removeLabel: {
       type: [Boolean, String],
-      default: false
+      default: false,
     },
     keepModelData: {
       type: [Boolean, String],
-      default: 'inherit'
+      default: "inherit",
     },
     ignored: {
       type: [Boolean, String],
-      default: false
+      default: false,
     },
     debounce: {
       type: [Boolean, Number],
-      default: false
+      default: false,
     },
     preventDeregister: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
-  data () {
-    return {
-      defaultId: this.$formulate.nextId(this),
-      localAttributes: {},
-      localErrors: [],
-      localGroupErrors: {},
-      proxy: this.getInitialValue(),
-      behavioralErrorVisibility: (this.errorBehavior === 'live'),
-      formShouldShowErrors: false,
-      validationErrors: [],
-      pendingValidation: Promise.resolve(),
-      // These registries are used for injected messages registrants only (mostly internal).
-      ruleRegistry: [],
-      messageRegistry: {},
-      touched: false,
-      debounceDelay: this.debounce,
-      dSet: createDebouncer(),
-      mntd: false
-    }
+  data() {
+    try {
+      const ret = {
+        defaultId: this.$formulate.nextId(this),
+        localAttributes: {},
+        localErrors: [],
+        localGroupErrors: {},
+        proxy: this.getInitialValue(),
+        behavioralErrorVisibility: this.errorBehavior === "live",
+        formShouldShowErrors: false,
+        validationErrors: [],
+        pendingValidation: Promise.resolve(),
+        // These registries are used for injected messages registrants only (mostly internal).
+        ruleRegistry: [],
+        messageRegistry: {},
+        touched: false,
+        debounceDelay: this.debounce,
+        dSet: createDebouncer(),
+        mntd: false,
+      };
+      return ret;
+    } catch (e) {
+      console.error(e);
+    }    
   },
   computed: {
     ...context,
-    classification () {
-      const classification = this.$formulate.classify(this.type)
-      return (classification === 'box' && this.options) ? 'group' : classification
+    classification() {
+      const classification = this.$formulate.classify(this.type);
+      return classification === "box" && this.options
+        ? "group"
+        : classification;
     },
-    component () {
-      return (this.classification === 'group') ? 'FormulateInputGroup' : this.$formulate.component(this.type)
+    component() {
+      return this.classification === "group"
+        ? "FormulateInputGroup"
+        : this.$formulate.component(this.type);
     },
-    parsedValidationRules () {
-      const parsedValidationRules = {}
-      Object.keys(this.validationRules).forEach(key => {
-        parsedValidationRules[camel(key)] = this.validationRules[key]
-      })
-      return parsedValidationRules
+    parsedValidationRules() {
+      const parsedValidationRules = {};
+      Object.keys(this.validationRules).forEach((key) => {
+        parsedValidationRules[camel(key)] = this.validationRules[key];
+      });
+      return parsedValidationRules;
     },
-    parsedValidation () {
-      return parseRules(this.validation, this.$formulate.rules(this.parsedValidationRules))
+    parsedValidation() {
+      return parseRules(
+        this.validation,
+        this.$formulate.rules(this.parsedValidationRules),
+      );
     },
-    messages () {
-      const messages = {}
+    messages() {
+      const messages = {};
       Object.keys(this.validationMessages).forEach((key) => {
-        messages[camel(key)] = this.validationMessages[key]
-      })
+        messages[camel(key)] = this.validationMessages[key];
+      });
       Object.keys(this.messageRegistry).forEach((key) => {
-        messages[camel(key)] = this.messageRegistry[key]
-      })
-      return messages
-    }
+        messages[camel(key)] = this.messageRegistry[key];
+      });
+      return messages;
+    },
   },
   watch: {
-    '$attrs': {
-      handler (value) {
-        this.updateLocalAttributes(value)
+    $attrs: {
+      handler(value) {
+        this.updateLocalAttributes(value);
       },
-      deep: true
+      deep: true,
     },
     proxy: {
       handler: function (newValue, oldValue) {
-        this.performValidation()
-        if (!this.isVmodeled && !equals(newValue, oldValue, this.type === 'group')) {
-          this.context.model = newValue
+        this.performValidation();
+        if (
+          !this.isVmodeled &&
+          !equals(newValue, oldValue, this.type === "group")
+        ) {
+          this.context.model = newValue;
         }
-        this.validateDependents(this)
+        this.validateDependents(this);
         if (!this.touched && newValue) {
-          this.touched = true
+          this.touched = true;
         }
       },
-      deep: true
+      deep: true,
     },
     formulateValue: {
       handler: function (newValue, oldValue) {
-        if (this.isVmodeled && !equals(newValue, oldValue, this.type === 'group')) {
-          this.context.model = newValue
+        if (
+          this.isVmodeled &&
+          !equals(newValue, oldValue, this.type === "group")
+        ) {
+          this.context.model = newValue;
         }
       },
-      deep: true
+      deep: true,
     },
     showValidationErrors: {
-      handler (val) {
-        this.$emit('error-visibility', val)
+      handler(val) {
+        this.$emit("error-visibility", val);
       },
-      immediate: true
+      immediate: true,
     },
     validation: {
-      handler () {
-        this.performValidation()
+      handler() {
+        this.performValidation();
       },
-      deep: true
+      deep: true,
     },
-    touched (value) {
-      if (this.errorBehavior === 'value' && value) {
-        this.behavioralErrorVisibility = value
+    touched(value) {
+      if (this.errorBehavior === "value" && value) {
+        this.behavioralErrorVisibility = value;
       }
     },
-    debounce (value) {
-      this.debounceDelay = value
-    }
+    debounce(value) {
+      this.debounceDelay = value;
+    },
   },
-  created () {
-    this.applyInitialValue()
-    if (this.formulateRegister && typeof this.formulateRegister === 'function') {
-      this.formulateRegister(this.nameOrFallback, this)
-    }
-    this.applyDefaultValue()
-    if (!this.disableErrors && typeof this.observeErrors === 'function') {
-      this.observeErrors({ callback: this.setErrors, type: 'input', field: this.nameOrFallback })
-      if (this.type === 'group') {
-        this.observeErrors({ callback: this.setGroupErrors, type: 'group', field: this.nameOrFallback })
+  created() {
+    console.log("created");
+    try {
+      this.applyInitialValue();
+      if (
+        this.formulateRegister &&
+        typeof this.formulateRegister === "function"
+      ) {
+        this.formulateRegister(this.nameOrFallback, this);
       }
-    }
-    this.updateLocalAttributes(this.$attrs)
-    this.performValidation()
-    if (this.hasValue) {
-      this.touched = true
-    }
-  },
-  mounted () {
-    this.mntd = true
-  },
-  beforeDestroy () {
-    if (!this.disableErrors && typeof this.removeErrorObserver === 'function') {
-      this.removeErrorObserver(this.setErrors)
-      if (this.type === 'group') {
-        this.removeErrorObserver(this.setGroupErrors)
+      this.applyDefaultValue();
+      if (!this.disableErrors && typeof this.observeErrors === "function") {
+        this.observeErrors({
+          callback: this.setErrors,
+          type: "input",
+          field: this.nameOrFallback,
+        });
+        if (this.type === "group") {
+          this.observeErrors({
+            callback: this.setGroupErrors,
+            type: "group",
+            field: this.nameOrFallback,
+          });
+        }
       }
+      this.updateLocalAttributes(this.$attrs);
+      this.performValidation();
+      if (this.hasValue) {
+        this.touched = true;
+      }
+      console.log("create finished");
+    } catch (e) {
+      console.error(e);
     }
-    if (typeof this.formulateDeregister === 'function' && !this.preventDeregister) {
-      this.formulateDeregister(this.nameOrFallback)
-    }
+  },
+  mounted() {
+    // console.log("mounted");
+    // this.mntd = true;
+  },
+  beforeUnmount() {
+    // if (!this.disableErrors && typeof this.removeErrorObserver === "function") {
+    //   this.removeErrorObserver(this.setErrors);
+    //   if (this.type === "group") {
+    //     this.removeErrorObserver(this.setGroupErrors);
+    //   }
+    // }
+    // if (
+    //   typeof this.formulateDeregister === "function" &&
+    //   !this.preventDeregister
+    // ) {
+    //   this.formulateDeregister(this.nameOrFallback);
+    // }
   },
   methods: {
-    getInitialValue () {
+    getInitialValue() {
+      console.log("get initial value!!!");
+      const formulate = this.$formulate;
       // Manually request classification, pre-computed props
-      var classification = this.$formulate.classify(this.type)
-      classification = (classification === 'box' && this.options) ? 'group' : classification
-      if (classification === 'box' && this.checked) {
-        return this.value || true
-      } else if (has(this.$options.propsData, 'value') && classification !== 'box') {
-        return this.value
-      } else if (has(this.$options.propsData, 'formulateValue')) {
-        return this.formulateValue
-      } else if (classification === 'group') {
+      let classification = formulate.classify(this.type);
+      classification =
+        classification === "box" && this.options ? "group" : classification;
+      if (classification === "box" && this.checked) {
+        return this.value || true;
+      } else if (has(this, "value") && classification !== "box") {
+        return this.value;
+      } else if (has(this, "formulateValue")) {
+        return this.formulateValue;
+      } else if (classification === "group") {
         // Set the value of an empty group
-        return Object.defineProperty(this.type === 'group' ? [{}] : [], '__init', { value: true })
+        return Object.defineProperty(
+          this.type === "group" ? [{}] : [],
+          "__init",
+          { value: true },
+        );
       }
-      return ''
+      return "";
     },
-    applyInitialValue () {
+    applyInitialValue() {
       // This should only be run immediately on created and ensures that the
       // proxy and the model are both the same before any additional registration.
       if (
         !equals(this.context.model, this.proxy) &&
         // we dont' want to set the model if we are a sub-box of a multi-box field
-        (this.classification !== 'box' || has(this.$options.propsData, 'options'))
+        (this.classification !== "box" || has(this, "options"))
       ) {
-        this.context.model = this.proxy
-        this.$emit('input', this.proxy)
+        this.context.model = this.proxy;
+        this.$emit("input", this.proxy);
       }
     },
-    applyDefaultValue () {
+    applyDefaultValue() {
       // Some inputs have may have special logic determining what to do if they
       // are still strictly undefined after applyInitialValue and registration.
       if (
-        this.type === 'select' &&
+        this.type === "select" &&
         !this.context.placeholder &&
         isEmpty(this.proxy) &&
         !this.isVmodeled &&
         this.value === false &&
         this.context.options.length
       ) {
-        if (!has(this.$attrs, 'multiple')) {
+        if (!has(this.$attrs, "multiple")) {
           // In this condition we have a blank select input with no value, by
           // default HTML will select the first element, so we emulate that.
           // See https://github.com/wearebraid/vue-formulate/issues/165
-          this.context.model = this.context.options[0].value
+          this.context.model = this.context.options[0].value;
         } else {
           // In this condition we have a multi select input, which should use
           // an array as it's v-model base state.
-          this.context.model = []
+          this.context.model = [];
         }
       }
     },
-    updateLocalAttributes (value) {
+    updateLocalAttributes(value) {
       if (!equals(value, this.localAttributes)) {
-        this.localAttributes = value
+        this.localAttributes = value;
       }
     },
-    performValidation () {
-      let rules = parseRules(this.validation, this.$formulate.rules(this.parsedValidationRules))
+    performValidation() {
+      let rules = parseRules(
+        this.validation,
+        this.$formulate.rules(this.parsedValidationRules),
+      );
       // Add in ruleRegistry rules. These are added directly via injection from
       // children and not part of the standard validation rule set.
-      rules = this.ruleRegistry.length ? this.ruleRegistry.concat(rules) : rules
-      this.pendingValidation = this.runRules(rules)
-        .then(messages => this.didValidate(messages))
-      return this.pendingValidation
+      rules = this.ruleRegistry.length
+        ? this.ruleRegistry.concat(rules)
+        : rules;
+      this.pendingValidation = this.runRules(rules).then((messages) =>
+        this.didValidate(messages),
+      );
+      return this.pendingValidation;
     },
-    runRules (rules) {
+    runRules(rules) {
       const run = ([rule, args, ruleName, modifier]) => {
-        var res = rule({
-          value: this.context.model,
-          getFormValues: (...args) => this.getFormValues(this, ...args),
-          getGroupValues: (...args) => this[`get${this.getGroupValues ? 'Group' : 'Form'}Values`](this, ...args),
-          name: this.context.name
-        }, ...args)
-        res = (res instanceof Promise) ? res : Promise.resolve(res)
-        return res.then(result => result ? false : this.getMessage(ruleName, args))
-      }
+        let res = rule(
+          {
+            value: this.context.model,
+            getFormValues: (...args) => this.getFormValues(this, ...args),
+            getGroupValues: (...args) =>
+              this[`get${this.getGroupValues ? "Group" : "Form"}Values`](
+                this,
+                ...args,
+              ),
+            name: this.context.name,
+          },
+          ...args,
+        );
+        res = res instanceof Promise ? res : Promise.resolve(res);
+        return res.then((result) =>
+          result ? false : this.getMessage(ruleName, args),
+        );
+      };
 
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         // We break our rules into resolvable groups. These groups are
         // adjacent rules that can be resolved simultaneously. For example
         // consider: required|min:6,length here both rules resolve in parallel.
@@ -501,43 +563,48 @@ export default {
         // these resolution groups, while `groupBails` is responsible for
         // producing them.
         const resolveGroups = (groups, allMessages = []) => {
-          const ruleGroup = groups.shift()
+          const ruleGroup = groups.shift();
           if (Array.isArray(ruleGroup) && ruleGroup.length) {
             Promise.all(ruleGroup.map(run))
               // Filter out any simple falsy values to prevent triggering errors
-              .then(messages => messages.filter(m => !!m))
-              .then(messages => {
-                messages = Array.isArray(messages) ? messages : []
+              .then((messages) => messages.filter((m) => !!m))
+              .then((messages) => {
+                messages = Array.isArray(messages) ? messages : [];
                 // The rule passed or its a non-bailing group, and there are additional groups to check, continue
                 if ((!messages.length || !ruleGroup.bail) && groups.length) {
-                  return resolveGroups(groups, allMessages.concat(messages))
+                  return resolveGroups(groups, allMessages.concat(messages));
                 }
                 // Filter out any empty error messages, this is important for
                 // the `optional` rule. It uses a hard-coded empty array [] as
                 // the message to trigger bailing, but we obviously don’t want
                 // this message to make it out of this resolver.
-                return resolve(allMessages.concat(messages).filter(m => !isEmpty(m)))
-              })
+                return resolve(
+                  allMessages.concat(messages).filter((m) => !isEmpty(m)),
+                );
+              });
           } else {
-            resolve([])
+            resolve([]);
           }
-        }
+        };
         // Produce our resolution groups, and then run them
-        resolveGroups(groupBails(rules))
-      })
+        resolveGroups(groupBails(rules));
+      });
     },
-    didValidate (messages) {
-      const validationChanged = !equals(messages, this.validationErrors)
-      this.validationErrors = messages
+    didValidate(messages) {
+      const validationChanged = !equals(messages, this.validationErrors);
+      this.validationErrors = messages;
       if (validationChanged) {
-        const errorObject = this.getErrorObject()
-        this.$emit('validation', errorObject)
-        if (this.formulateFieldValidation && typeof this.formulateFieldValidation === 'function') {
-          this.formulateFieldValidation(errorObject)
+        const errorObject = this.getErrorObject();
+        this.$emit("validation", errorObject);
+        if (
+          this.formulateFieldValidation &&
+          typeof this.formulateFieldValidation === "function"
+        ) {
+          this.formulateFieldValidation(errorObject);
         }
       }
     },
-    getMessage (ruleName, args) {
+    getMessage(ruleName, args) {
       return this.getMessageFunc(ruleName)({
         args,
         name: this.mergedValidationName,
@@ -545,69 +612,79 @@ export default {
         vm: this,
         formValues: this.getFormValues(this),
         getFormValues: (...args) => this.getFormValues(this, ...args),
-        getGroupValues: (...args) => this[`get${this.getGroupValues ? 'Group' : 'Form'}Values`](this, ...args)
-      })
+        getGroupValues: (...args) =>
+          this[`get${this.getGroupValues ? "Group" : "Form"}Values`](
+            this,
+            ...args,
+          ),
+      });
     },
-    getMessageFunc (ruleName) {
-      ruleName = camel(ruleName)
-      if (ruleName === 'optional') {
+    getMessageFunc(ruleName) {
+      ruleName = camel(ruleName);
+      if (ruleName === "optional") {
         // Optional rules need to trigger bailing by having a message, but pass
         // the simple double bang (!!) filer, any non-string value will have
         // this effect.
-        return () => ([])
+        return () => [];
       }
-      if (this.messages && typeof this.messages[ruleName] !== 'undefined') {
+      if (this.messages && typeof this.messages[ruleName] !== "undefined") {
         switch (typeof this.messages[ruleName]) {
-          case 'function':
-            return this.messages[ruleName]
-          case 'string':
-          case 'boolean':
-            return () => this.messages[ruleName]
+          case "function":
+            return this.messages[ruleName];
+          case "string":
+          case "boolean":
+            return () => this.messages[ruleName];
         }
       }
-      return (context) => this.$formulate.validationMessage(ruleName, context, this)
+      return (context) =>
+        this.$formulate.validationMessage(ruleName, context, this);
     },
-    hasValidationErrors () {
-      return new Promise(resolve => {
+    hasValidationErrors() {
+      return new Promise((resolve) => {
         this.$nextTick(() => {
-          this.pendingValidation.then(() => resolve(!!this.validationErrors.length))
-        })
-      })
+          this.pendingValidation.then(() =>
+            resolve(!!this.validationErrors.length),
+          );
+        });
+      });
     },
-    getValidationErrors () {
-      return new Promise(resolve => {
-        this.$nextTick(() => this.pendingValidation.then(() => resolve(this.getErrorObject())))
-      })
+    getValidationErrors() {
+      return new Promise((resolve) => {
+        this.$nextTick(() =>
+          this.pendingValidation.then(() => resolve(this.getErrorObject())),
+        );
+      });
     },
-    getErrorObject () {
+    getErrorObject() {
       return {
         name: this.context.nameOrFallback || this.context.name,
-        errors: this.validationErrors.filter(s => typeof s === 'string'),
-        hasErrors: !!this.validationErrors.length
-      }
+        errors: this.validationErrors.filter((s) => typeof s === "string"),
+        hasErrors: !!this.validationErrors.length,
+      };
     },
-    setErrors (errors) {
-      this.localErrors = arrayify(errors)
+    setErrors(errors) {
+      this.localErrors = arrayify(errors);
     },
-    setGroupErrors (groupErrors) {
-      this.localGroupErrors = groupErrors
+    setGroupErrors(groupErrors) {
+      this.localGroupErrors = groupErrors;
     },
-    registerRule (rule, args, ruleName, message = null) {
-      if (!this.ruleRegistry.some(r => r[2] === ruleName)) {
+    registerRule(rule, args, ruleName, message = null) {
+      if (!this.ruleRegistry.some((r) => r[2] === ruleName)) {
         // These are the raw rule format since they will be used directly.
-        this.ruleRegistry.push([rule, args, ruleName])
+        this.ruleRegistry.push([rule, args, ruleName]);
         if (message !== null) {
-          this.messageRegistry[ruleName] = message
+          this.messageRegistry[ruleName] = message;
         }
       }
     },
-    removeRule (key) {
-      const ruleIndex = this.ruleRegistry.findIndex(r => r[2] === key)
+    removeRule(key) {
+      const ruleIndex = this.ruleRegistry.findIndex((r) => r[2] === key);
       if (ruleIndex >= 0) {
-        this.ruleRegistry.splice(ruleIndex, 1)
-        delete this.messageRegistry[key]
+        this.ruleRegistry.splice(ruleIndex, 1);
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete this.messageRegistry[key];
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

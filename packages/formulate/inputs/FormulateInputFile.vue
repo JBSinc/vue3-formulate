@@ -23,7 +23,7 @@
         :data-is-drag-hover="isOver"
         type="file"
         v-bind="attributes"
-        v-on="$listeners"
+        v-on="$attrs"
         @blur="context.blurHandler"
         @change="handleFile"
         @dragover="handleDragOver"

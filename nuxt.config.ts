@@ -1,9 +1,8 @@
 import type { NuxtConfig } from "nuxt/schema";
-import path from "node:path";
 
 const createNuxtConfig = (): NuxtConfig => {
   return {
-    rootDir: path.resolve(__dirname, "examples"),
+    rootDir: __dirname,
     dev: true,
     typescript: {
       typeCheck: true,

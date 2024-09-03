@@ -47,7 +47,7 @@ export default createConfigForNuxt(
     },
   })
   .append({
-    files: ["test/**/*.js"],
+    files: ["**/test/**/*.js"],
     plugins: {
       jest,
       cypress,

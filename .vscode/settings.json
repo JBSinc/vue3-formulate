@@ -20,7 +20,8 @@
     "**/.svn": true,
     "**/CVS": true,
     "**/node_modules": true,
-    "**/Thumbs.db": true
+    "**/Thumbs.db": true,
+    "**/.output": true
   },
   "javascript.suggest.autoImports": true,
   "javascript.suggest.includeCompletionsForImportStatements": true,
