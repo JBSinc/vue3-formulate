@@ -100,7 +100,7 @@ export default {
       window.addEventListener('drop', this.preventDefault)
     }
   },
-  destroyed () {
+  unmounted () {
     if (window && this.context.preventWindowDrops) {
       window.removeEventListener('dragover', this.preventDefault)
       window.removeEventListener('drop', this.preventDefault)

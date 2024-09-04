@@ -143,7 +143,7 @@ export default {
     },
     id: {
       type: [String, Boolean, Number],
-      default: false,
+      default: false
     },
     label: {
       type: [String, Boolean],
@@ -156,12 +156,12 @@ export default {
     limit: {
       type: [String, Number],
       default: Infinity,
-      validator: (value) => Infinity || Number.parseInt(value, 10) == value, // eslint-disable-line eqeqeq
+      validator: (value) => Infinity || Number.parseInt(value, 10) == value,
     },
     minimum: {
       type: [String, Number],
       default: 0,
-      validator: (value) => Number.parseInt(value, 10) == value, // eslint-disable-line eqeqeq
+      validator: (value) => Number.parseInt(value, 10) == value,
     },
     help: {
       type: [String, Boolean],
@@ -283,6 +283,7 @@ export default {
       default: false,
     },
   },
+  emits: ["error-visibility", "validation", "input"],
   data() {
     try {
       const ret = {
@@ -306,7 +307,7 @@ export default {
       return ret;
     } catch (e) {
       console.error(e);
-    }    
+    }
   },
   computed: {
     ...context,
@@ -401,61 +402,53 @@ export default {
     },
   },
   created() {
-    console.log("created");
-    try {
-      this.applyInitialValue();
-      if (
-        this.formulateRegister &&
-        typeof this.formulateRegister === "function"
-      ) {
-        this.formulateRegister(this.nameOrFallback, this);
-      }
-      this.applyDefaultValue();
-      if (!this.disableErrors && typeof this.observeErrors === "function") {
+    this.applyInitialValue();
+    if (
+      this.formulateRegister &&
+      typeof this.formulateRegister === "function"
+    ) {
+      this.formulateRegister(this.nameOrFallback, this);
+    }
+    this.applyDefaultValue();
+    if (!this.disableErrors && typeof this.observeErrors === "function") {
+      this.observeErrors({
+        callback: this.setErrors,
+        type: "input",
+        field: this.nameOrFallback,
+      });
+      if (this.type === "group") {
         this.observeErrors({
-          callback: this.setErrors,
-          type: "input",
+          callback: this.setGroupErrors,
+          type: "group",
           field: this.nameOrFallback,
         });
-        if (this.type === "group") {
-          this.observeErrors({
-            callback: this.setGroupErrors,
-            type: "group",
-            field: this.nameOrFallback,
-          });
-        }
       }
-      this.updateLocalAttributes(this.$attrs);
-      this.performValidation();
-      if (this.hasValue) {
-        this.touched = true;
-      }
-      console.log("create finished");
-    } catch (e) {
-      console.error(e);
+    }
+    this.updateLocalAttributes(this.$attrs);
+    this.performValidation();
+    if (this.hasValue) {
+      this.touched = true;
     }
   },
   mounted() {
-    // console.log("mounted");
-    // this.mntd = true;
+    this.mntd = true;
   },
   beforeUnmount() {
-    // if (!this.disableErrors && typeof this.removeErrorObserver === "function") {
-    //   this.removeErrorObserver(this.setErrors);
-    //   if (this.type === "group") {
-    //     this.removeErrorObserver(this.setGroupErrors);
-    //   }
-    // }
-    // if (
-    //   typeof this.formulateDeregister === "function" &&
-    //   !this.preventDeregister
-    // ) {
-    //   this.formulateDeregister(this.nameOrFallback);
-    // }
+    if (!this.disableErrors && typeof this.removeErrorObserver === "function") {
+      this.removeErrorObserver(this.setErrors);
+      if (this.type === "group") {
+        this.removeErrorObserver(this.setGroupErrors);
+      }
+    }
+    if (
+      typeof this.formulateDeregister === "function" &&
+      !this.preventDeregister
+    ) {
+      this.formulateDeregister(this.nameOrFallback);
+    }
   },
   methods: {
     getInitialValue() {
-      console.log("get initial value!!!");
       const formulate = this.$formulate;
       // Manually request classification, pre-computed props
       let classification = formulate.classify(this.type);

@@ -1,5 +1,27 @@
 import FileUpload from '../FileUpload'
 
+//Split these out to get rid of circular import with utils and FileUpload
+
+/**
+ * Check if
+ * @param {mixed} data
+ */
+export function isValueType (data) {
+  switch (typeof data) {
+    case 'symbol':
+    case 'number':
+    case 'string':
+    case 'boolean':
+    case 'undefined':
+      return true
+    default:
+      if (data === null) {
+        return true
+      }
+      return false
+  }
+}
+
 /**
  * A simple (somewhat non-comprehensive) cloneDeep function, valid for our use
  * case of needing to unbind reactive watchers.

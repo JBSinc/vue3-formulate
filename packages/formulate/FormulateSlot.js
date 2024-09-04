@@ -1,3 +1,4 @@
+import { h } from 'vue';
 export default {
   inheritAttrs: false,
   functional: true,

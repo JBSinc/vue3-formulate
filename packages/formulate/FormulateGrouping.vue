@@ -25,17 +25,18 @@ import { setId, has, equals } from './libs/utils'
 
 export default {
   name: 'FormulateGrouping',
-  props: {
-    context: {
-      type: Object,
-      required: true
-    }
-  },
+  inject: ['formulateRegisterRule', 'formulateRemoveRule'],
   provide () {
     return {
       isSubField: () => true,
       registerProvider: this.registerProvider,
       deregisterProvider: this.deregisterProvider
+    }
+  },
+  props: {
+    context: {
+      type: Object,
+      required: true
     }
   },
   data () {
@@ -44,7 +45,6 @@ export default {
       keys: []
     }
   },
-  inject: ['formulateRegisterRule', 'formulateRemoveRule'],
   computed: {
     items () {
       if (Array.isArray(this.context.model)) {
@@ -53,13 +53,13 @@ export default {
           return [this.setId({}, 0)]
         }
         if (this.context.model.length < this.context.minimum) {
-          return (new Array(this.context.minimum || 1)).fill('')
+          return (Array.from({length: this.context.minimum || 1})).fill('')
             .map((t, index) => this.setId(this.context.model[index] || {}, index))
         }
         return this.context.model.map((item, index) => this.setId(item, index))
       }
       // This is an unset group
-      return (new Array(this.context.minimum || 1)).fill('').map((_i, index) => this.setId({}, index))
+      return (Array.from({length: this.context.minimum || 1})).fill('').map((_i, index) => this.setId({}, index))
     },
     formShouldShowErrors () {
       return this.context.formShouldShowErrors
@@ -93,7 +93,7 @@ export default {
     // We register with an error message of 'true' which causes the validation to fail but no message output.
     this.formulateRegisterRule(this.validateGroup.bind(this), [], 'formulateGrouping', true)
   },
-  destroyed () {
+  unmounted () {
     this.formulateRemoveRule('formulateGrouping')
   },
   methods: {
@@ -111,25 +111,29 @@ export default {
     setItem (index, groupProxy) {
       // Note: value must have an __id to use this function
       if (Array.isArray(this.context.model) && this.context.model.length >= this.context.minimum && !this.context.model.__init) {
+        // eslint-disable-next-line vue/no-mutating-props
         this.context.model.splice(index, 1, this.setId(groupProxy, index))
       } else {
+        // eslint-disable-next-line vue/no-mutating-props
         this.context.model = this.items.map((item, i) => i === index ? this.setId(groupProxy, index) : item)
       }
     },
     removeItem (index) {
       if (Array.isArray(this.context.model) && this.context.model.length > this.context.minimum) {
         // In this context we actually have data
+        // eslint-disable-next-line vue/no-mutating-props
         this.context.model = this.context.model.filter((item, i) => i === index ? false : item)
         this.context.rootEmit('repeatableRemoved', this.context.model)
       } else if (!Array.isArray(this.context.model) && this.items.length > this.context.minimum) {
         // In this context the fields have never been touched (not "dirty")
-        this.context.model = (new Array(this.items.length - 1)).fill('').map((_i, idx) => this.setId({}, idx))
+        // eslint-disable-next-line vue/no-mutating-props
+        this.context.model = (Array.from({length: this.items.length - 1})).fill('').map((_i, idx) => this.setId({}, idx))
         this.context.rootEmit('repeatableRemoved', this.context.model)
       }
       // Otherwise, do nothing, we're at our minimum
     },
     registerProvider (provider) {
-      if (!this.providers.some(p => p === provider)) {
+      if (!this.providers.includes(provider)) {
         this.providers.push(provider)
       }
     },

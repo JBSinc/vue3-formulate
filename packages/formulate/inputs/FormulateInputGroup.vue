@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-mutating-props -->
 <template>
   <div
     :class="context.classes.element"
@@ -136,10 +137,12 @@ export default {
         const minDiff = (this.context.minimum - this.context.model.length) + 1
         const toAdd = Math.max(minDiff, 1)
         for (let i = 0; i < toAdd; i++) {
+          // eslint-disable-next-line vue/no-mutating-props
           this.context.model.push(setId({}))
         }
       } else {
-        this.context.model = (new Array(this.totalItems + 1)).fill('').map(() => setId({}))
+        // eslint-disable-next-line vue/no-mutating-props
+        this.context.model = (Array.from({length: this.totalItems + 1})).fill('').map(() => setId({}))
       }
       this.context.rootEmit('repeatableAdded', this.context.model)
     },

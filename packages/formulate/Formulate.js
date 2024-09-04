@@ -34,7 +34,7 @@ import FormulateRepeatableRemove from "./slots/FormulateRepeatableRemove.vue";
 /**
  * The base formulate library.
  */
-class Formulate {
+export class Formulate {
   /**
    * Instantiate our base options.
    */
@@ -108,20 +108,18 @@ class Formulate {
    * Install vue formulate, and register it’s components.
    */
   install(Vue, options) {
-    console.log('install running!')
     this.options = this.defaults;
     var plugins = this.defaults.plugins;
     if (options && Array.isArray(options.plugins) && options.plugins.length) {
       plugins = plugins.concat(options.plugins);
     }
     plugins.forEach((plugin) =>
-      typeof plugin === "function" ? plugin(this) : null
+      typeof plugin === "function" ? plugin(this) : null,
     );
     this.extend(options || {});
     for (var componentName in this.options.components) {
       Vue.component(componentName, this.options.components[componentName]);
     }
-    console.log('install done!')
   }
 
   /**
@@ -138,14 +136,12 @@ class Formulate {
     if (!Object.prototype.hasOwnProperty.call(this.idRegistry, pathPrefix)) {
       this.idRegistry[pathPrefix] = 0;
     }
-    return `${this.options.idPrefix}${pathPrefix}-${++this.idRegistry[
-      pathPrefix
-    ]}`;
+    return `${this.options.idPrefix}${pathPrefix}-${++this.idRegistry[pathPrefix]}`;
   }
 
   /**
    * Given a set of options, apply them to the pre-existing options.
-   * @param {Object} extendWith
+   * @param {object} extendWith
    */
   extend(extendWith) {
     if (typeof extendWith === "object") {
@@ -153,7 +149,7 @@ class Formulate {
       return this;
     }
     throw new Error(
-      `Formulate.extend expects an object, was ${typeof extendWith}`
+      `Formulate.extend expects an object, was ${typeof extendWith}`,
     );
   }
 
@@ -161,8 +157,8 @@ class Formulate {
    * Create a new object by copying properties of base and mergeWith.
    * Note: arrays don't overwrite - they push
    *
-   * @param {Object} base
-   * @param {Object} mergeWith
+   * @param {object} base
+   * @param {object} mergeWith
    * @param {boolean} concatArrays
    */
   merge(base, mergeWith, concatArrays = true) {
@@ -205,7 +201,7 @@ class Formulate {
 
   /**
    * Generate all classes for a particular context.
-   * @param {Object} context
+   * @param {object} classContext
    */
   classes(classContext) {
     // Step 1: We get the global classes for all keys.
@@ -217,20 +213,20 @@ class Formulate {
       let classesForKey = applyClasses(
         baseClasses[key],
         this.options.classes[key],
-        classContext
+        classContext,
       );
       // Step 4: Apply any prop-level overrides for that key.
       classesForKey = applyClasses(
         classesForKey,
         classContext[`${key}Class`],
-        classContext
+        classContext,
       );
       // Step 5: Add state based classes from props.
       classesForKey = applyStates(
         key,
         classesForKey,
         this.options.classes,
-        classContext
+        classContext,
       );
       // Now we have our final classes, assign to the given key.
       return Object.assign(classMap, { [key]: classesForKey });
@@ -241,7 +237,7 @@ class Formulate {
    * Given a particular type, report any "additional" props to pass to the
    * various slots.
    * @param {string} type
-   * @return {array}
+   * @return {Array}
    */
   typeProps(type) {
     const extract = (obj) =>
@@ -270,7 +266,7 @@ class Formulate {
     }
     return props.reduce(
       (props, prop) => Object.assign(props, { [prop]: typeProps[prop] }),
-      {}
+      {},
     );
   }
 
@@ -333,7 +329,7 @@ class Formulate {
           }
           if (locale) {
             const option = parseLocale(locale).find((locale) =>
-              has(this.options.locales, locale)
+              has(this.options.locales, locale),
             );
             if (option) {
               selection = option;
@@ -341,7 +337,7 @@ class Formulate {
           }
           return selection;
         },
-        false
+        false,
       );
     }
     return this.selectedLocale;
@@ -349,7 +345,7 @@ class Formulate {
 
   /**
    * Change the locale to a pre-registered one.
-   * @param {string} localeTag
+   * @param {string} locale
    */
   setLocale(locale) {
     if (has(this.options.locales, locale)) {
@@ -406,7 +402,7 @@ class Formulate {
    *
    * @param {error} err
    * @param {string} formName
-   * @param {error}
+   * @param {error} skip
    */
   handle(err, formName, skip = false) {
     const e = skip ? err : this.options.errorHandler(err, formName);
@@ -498,4 +494,4 @@ class Formulate {
   }
 }
 
-export default new Formulate();
+export default Formulate;

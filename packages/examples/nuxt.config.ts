@@ -2,14 +2,16 @@ import path from "node:path";
 import Inspect from "vite-plugin-inspect";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
-console.log("Loading Exmaples Nuxt Config: ", __dirname);
 export default defineNuxtConfig({
   ssr: true,
   compatibilityDate: "2024-04-03",
   dev: true,
   debug: true,
   devtools: { enabled: true },
-  sourcemap: true,
+  sourcemap: {
+    server: false,
+    client: true,
+  },
   modules: ["@nuxt/eslint", "@jbs/vue3-formulate-nuxt"],
   vite: {
     plugins: [
@@ -18,7 +20,10 @@ export default defineNuxtConfig({
       }),
     ],
     build: {
-      sourcemap: true,
+      sourcemap: 'inline'
+    },
+    server: {
+      hmr: true,
     },
   },
   alias: {

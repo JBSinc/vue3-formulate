@@ -4,8 +4,6 @@
  * on the documentation site vueformulate.com.
  */
 export default function (err) {
-  if (typeof err === 'object' && err.response) {
-
-  }
+  if (typeof err === 'object' && err.response) { /* empty */ }
   return {}
 }

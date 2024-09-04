@@ -1,17 +1,12 @@
 <template>
-  <div
-    v-if="testKey"
-    id="app"
-  >
+  <div v-if="testKey" id="app">
     <FormulateForm
       :key="testKey"
       ref="testForm"
       name="testForm"
       @submit="submission"
     >
-      <div
-        class="proving-ground"
-      >
+      <div class="proving-ground">
         <div class="proving-ground-stage">
           <component
             :is="test.component"
@@ -24,11 +19,7 @@
       </div>
     </FormulateForm>
   </div>
-  <div
-    v-else
-    id="app"
-    class="specimen-list"
-  >
+  <div v-else id="app" class="specimen-list"> 
     <SpecimensSpecimenButton />
     <SpecimensSpecimenBox />
     <SpecimensSpecimenFile />
@@ -41,57 +32,57 @@
 </template>
 
 <script>
-import { has, token } from '../packages/formulate/libs/utils'
+import { has, token } from "../packages/formulate/libs/utils";
 
 export default {
-  name: 'App',
-  data () {
+  name: "App",
+  data() {
     return {
       testKey: false,
       provingGroundValue: null,
-      provingGroundSubmissionResolver: () => {}
-    }
+      provingGroundSubmissionResolver: () => {},
+    };
   },
-  mounted () {
-    window.showTest = this.showTest.bind(this)
-    window.getInputValue = this.inputValue.bind(this)
-    window.getSubmittedValue = this.submittedValue.bind(this)
-    window.submitForm = this.submitForm.bind(this)
-    window.getVueInstance = () => this
+  mounted() {
+    window.showTest = this.showTest.bind(this);
+    window.getInputValue = this.inputValue.bind(this);
+    window.getSubmittedValue = this.submittedValue.bind(this);
+    window.submitForm = this.submitForm.bind(this);
+    window.getVueInstance = () => this;
   },
   methods: {
-    showTest (data) {
+    showTest(data) {
       if (data.component) {
-        this.testKey = token(5)
-        this.test = data
-        if (has(data, 'value')) {
-          this.provingGroundValue = data.value
+        this.testKey = token(5);
+        this.test = data;
+        if (has(data, "value")) {
+          this.provingGroundValue = data.value;
         }
       } else {
-        this.testKey = false
+        this.testKey = false;
       }
     },
-    inputValue () {
-      return this.provingGroundValue
+    inputValue() {
+      return this.provingGroundValue;
     },
-    submission (data) {
-      this.provingGroundSubmissionResolver(data)
+    submission(data) {
+      this.provingGroundSubmissionResolver(data);
     },
-    submittedValue () {
-      return new Promise(resolve => {
-        this.provingGroundSubmissionResolver = resolve
-        this.submitForm()
-      })
+    submittedValue() {
+      return new Promise((resolve) => {
+        this.provingGroundSubmissionResolver = resolve;
+        this.submitForm();
+      });
     },
-    submitForm () {
-      this.$refs.testForm.formSubmitted()
-    }
-  }
-}
+    submitForm() {
+      this.$refs.testForm.formSubmitted();
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-@import '../../formulate/themes/snow/snow.scss';
+@import "../../formulate/themes/snow/snow.scss";
 body {
   margin: 0;
   padding: 0;
@@ -103,7 +94,7 @@ h2 {
   position: sticky;
   top: 0;
   background-color: white;
-  padding: .5em 0;
+  padding: 0.5em 0;
   color: $formulate-green;
   border-bottom: 1px solid $formulate-gray;
   margin: 2em 0 0 0;
@@ -116,7 +107,6 @@ h2 {
   @media (min-width: 756px) {
     padding: 2em;
   }
-
 }
 .specimens {
   @media (min-width: 500px) {
@@ -168,7 +158,6 @@ h2 {
     width: 50%;
     & > * {
       width: 300px;
-
     }
   }
   &-values {

@@ -17,7 +17,7 @@ export function leaf (item, index = 0, rootListeners = {}) {
 
     // Extract events from this instance
     const events = Object.keys(attrs)
-      .reduce((events, key) => /^@/.test(key) ? Object.assign(events, { [key.substr(1)]: attrs[key] }) : events, {})
+      .reduce((events, key) => key.startsWith('@') ? Object.assign(events, { [key.substr(1)]: attrs[key] }) : events, {})
 
     // delete all events from the item
     Object.keys(events).forEach(event => {
@@ -70,8 +70,8 @@ function tree (h, schema, rootListeners) {
 /**
  * Given an event name and handler, return a handler function that re-emits.
  *
- * @param {string} event
- * @param {string|boolean|function} handler
+ * @param {string} eventName
+ * @param {string | boolean | Function} handler
  */
 function createListener (eventName, handler, rootListeners) {
   return function (...args) {

@@ -73,6 +73,7 @@ export default {
       default: false,
     },
   },
+emits: ['created', 'failed-validation'],
   data() {
     return {
       ...useRegistry(this),

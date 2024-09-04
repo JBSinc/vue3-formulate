@@ -1,4 +1,4 @@
-import { arrayify, cap } from './utils'
+import { arrayify, cap } from "./utils";
 
 /**
  * A list of available class keys in core. These can be added to by extending
@@ -6,51 +6,51 @@ import { arrayify, cap } from './utils'
  */
 export const classKeys = [
   // Globals
-  'outer',
-  'wrapper',
-  'label',
-  'element',
-  'input',
-  'help',
-  'errors',
-  'error',
+  "outer",
+  "wrapper",
+  "label",
+  "element",
+  "input",
+  "help",
+  "errors",
+  "error",
   // Box
-  'decorator',
+  "decorator",
   // Slider
-  'rangeValue',
+  "rangeValue",
   // File
-  'uploadArea',
-  'uploadAreaMask',
-  'files',
-  'file',
-  'fileName',
-  'fileAdd',
-  'fileAddInput',
-  'fileRemove',
-  'fileProgress',
-  'fileUploadError',
-  'fileImagePreview',
-  'fileImagePreviewImage',
-  'fileProgressInner',
+  "uploadArea",
+  "uploadAreaMask",
+  "files",
+  "file",
+  "fileName",
+  "fileAdd",
+  "fileAddInput",
+  "fileRemove",
+  "fileProgress",
+  "fileUploadError",
+  "fileImagePreview",
+  "fileImagePreviewImage",
+  "fileProgressInner",
   // Groups
-  'grouping',
-  'groupRepeatable',
-  'groupRepeatableRemove',
-  'groupAddMore',
+  "grouping",
+  "groupRepeatable",
+  "groupRepeatableRemove",
+  "groupAddMore",
   // Forms
-  'form',
-  'formErrors',
-  'formError'
-]
+  "form",
+  "formErrors",
+  "formError",
+];
 
 /**
  * State keys by default
  */
 export const states = {
-  hasErrors: c => c.hasErrors,
-  hasValue: c => c.hasValue,
-  isValid: c => c.isValid
-}
+  hasErrors: (c) => c.hasErrors,
+  hasValue: (c) => c.hasValue,
+  isValid: (c) => c.isValid,
+};
 
 /**
  * This function is responsible for providing VueFormulate’s default classes.
@@ -59,60 +59,67 @@ export const states = {
  * returns an array.
  *
  * @param {string} classKey
- * @param {Object} context
+ * @param {object} context
  */
 const classGenerator = (classKey, context) => {
   // camelCase to dash-case
-  const key = classKey.replace(/[A-Z]/g, c => '-' + c.toLowerCase())
-  const prefix = ['form', 'file'].includes(key.substr(0, 4)) ? '' : '-input'
-  const element = ['decorator', 'range-value'].includes(key) ? '-element' : ''
-  const base = `formulate${prefix}${element}${key !== 'outer' ? `-${key}` : ''}`
-  return key === 'input' ? [] : [base].concat(classModifiers(base, classKey, context))
-}
+  const key = classKey.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
+  const prefix = ["form", "file"].includes(key.substr(0, 4)) ? "" : "-input";
+  const element = ["decorator", "range-value"].includes(key) ? "-element" : "";
+  const base = `formulate${prefix}${element}${key !== "outer" ? `-${key}` : ""}`;
+  return key === "input"
+    ? []
+    : [base].concat(classModifiers(base, classKey, context));
+};
 
 /**
  * Given a class key and a modifier, produce any additional classes.
+ // eslint-disable-next-line jsdoc/check-param-names
+ * @param {string} base
  * @param {string} classKey
- * @param {Object} context
+ * @param {object} context
  */
 const classModifiers = (base, classKey, context) => {
-  const modifiers = []
+  const modifiers = [];
   switch (classKey) {
-    case 'label':
-      modifiers.push(`${base}--${context.labelPosition}`)
-      break
-    case 'element':
-      const type = context.classification === 'group' ? 'group' : context.type
-      modifiers.push(`${base}--${type}`)
+    case "label":
+      modifiers.push(`${base}--${context.labelPosition}`);
+      break;
+    case "element":
+      // eslint-disable-next-line no-case-declarations
+      const type = context.classification === "group" ? "group" : context.type;
+      modifiers.push(`${base}--${type}`);
       // @todo DEPRECATED! This should be removed in a future version:
-      if (type === 'group') {
-        modifiers.push('formulate-input-group')
+      if (type === "group") {
+        modifiers.push("formulate-input-group");
       }
-      break
-    case 'help':
-      modifiers.push(`${base}--${context.helpPosition}`)
-      break
-    case 'form':
+      break;
+    case "help":
+      modifiers.push(`${base}--${context.helpPosition}`);
+      break;
+    case "form":
       if (context.name) {
-        modifiers.push(`${base}--${context.name}`)
+        modifiers.push(`${base}--${context.name}`);
       }
   }
-  return modifiers
-}
+  return modifiers;
+};
 
 /**
  * Generate a list of all the class props to accept.
  */
 export const classProps = (() => {
-  const stateKeys = [''].concat(Object.keys(states).map(s => cap(s)))
+  const stateKeys = [""].concat(Object.keys(states).map((s) => cap(s)));
   // This reducer produces a key for every element key + state key variation
   return classKeys.reduce((props, classKey) => {
-    return props.concat(stateKeys.reduce((keys, stateKey) => {
-      keys.push(`${classKey}${stateKey}Class`)
-      return keys
-    }, []))
-  }, [])
-})()
+    return props.concat(
+      stateKeys.reduce((keys, stateKey) => {
+        keys.push(`${classKey}${stateKey}Class`);
+        return keys;
+      }, []),
+    );
+  }, []);
+})();
 
 /**
  * Given a string or array of classes and a modifier (function, string etc) apply
@@ -120,21 +127,21 @@ export const classProps = (() => {
  *
  * @param {mixed} baseClass The initial class for a given key
  * @param {mixed} modifier A function, string, array etc that can be a class prop.
- * @param {Object} context The class context
+ * @param {object} context The class context
  */
-export function applyClasses (baseClass, modifier, context) {
+export function applyClasses(baseClass, modifier, context) {
   switch (typeof modifier) {
-    case 'string':
-      return modifier
-    case 'function':
-      return modifier(context, arrayify(baseClass))
-    case 'object':
+    case "string":
+      return modifier;
+    case "function":
+      return modifier(context, arrayify(baseClass));
+    case "object":
       if (Array.isArray(modifier)) {
-        return arrayify(baseClass).concat(modifier)
+        return arrayify(baseClass).concat(modifier);
       }
     /** allow fallthrough if object that isn’t an array */
     default:
-      return baseClass
+      return baseClass;
   }
 }
 
@@ -142,36 +149,46 @@ export function applyClasses (baseClass, modifier, context) {
  * Given element class key
  * @param {string} elementKey the element class key we're generating for
  * @param {mixed} baseClass The initial classes for this key
- * @param {object} global Class definitions globally registered with options.classes
- * @param {Object} context Class context for this particular field, props included.
+ * @param {object} globals Class definitions globally registered with options.classes
+ * @param {object} context Class context for this particular field, props included.
  */
-export function applyStates (elementKey, baseClass, globals, context) {
+export function applyStates(elementKey, baseClass, globals, context) {
   return Object.keys(states).reduce((classes, stateKey) => {
     // Step 1. Call the state function to determine if it has this state
     if (states[stateKey](context)) {
-      const key = `${elementKey}${cap(stateKey)}`
-      const propKey = `${key}Class`
+      const key = `${elementKey}${cap(stateKey)}`;
+      const propKey = `${key}Class`;
       // Step 2. Apply any global state class keys
       if (globals[key]) {
-        const modifier = (typeof globals[key] === 'string') ? arrayify(globals[key]) : globals[key]
-        classes = applyClasses(classes, modifier, context)
+        const modifier =
+          typeof globals[key] === "string"
+            ? arrayify(globals[key])
+            : globals[key];
+        classes = applyClasses(classes, modifier, context);
       }
       // Step 3. Apply any prop state class keys
       if (context[propKey]) {
-        const modifier = (typeof context[propKey] === 'string') ? arrayify(context[propKey]) : context[`${key}Class`]
-        classes = applyClasses(classes, modifier, context)
+        const modifier =
+          typeof context[propKey] === "string"
+            ? arrayify(context[propKey])
+            : context[`${key}Class`];
+        classes = applyClasses(classes, modifier, context);
       }
     }
-    return classes
-  }, baseClass)
+    return classes;
+  }, baseClass);
 }
 
 /**
  * Function that produces all available classes.
- * @param {Object} context
+ * @param {object} context
  */
 export default function (context) {
-  return classKeys.reduce((classes, classKey) => Object.assign(classes, {
-    [classKey]: classGenerator(classKey, context)
-  }), {})
+  return classKeys.reduce(
+    (classes, classKey) =>
+      Object.assign(classes, {
+        [classKey]: classGenerator(classKey, context),
+      }),
+    {},
+  );
 }

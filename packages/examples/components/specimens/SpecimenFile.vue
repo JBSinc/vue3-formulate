@@ -41,7 +41,7 @@
 export default {
   methods: {
     async uploadToS3 (file, progress, error, options) {
-      const matches = file.name.match(/\.([a-zA-Z0-9]+)$/)
+      const matches = file.name.match(/\.([a-z0-9]+)$/i)
       const extension = (matches) ? matches[1] : 'txt'
       progress(5)
       const response = await fetch(options.uploadUrl, {

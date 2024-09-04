@@ -17,7 +17,7 @@ class Registry {
 
   /**
    * Add an item to the registry.
-   * @param {string|array} key
+   * @param {string | Array} name
    * @param {vue} component
    */
   add (name, component) {
@@ -52,7 +52,7 @@ class Registry {
     if (!keepData) {
       const { [name]: value, ...newProxy } = this.ctx.proxy
       if (this.ctx.uuid) {
-        // If the registry context has a uuid (row.__id) be sure to include it in
+        // If the registry context has a uuid (row.F__id) be sure to include it in
         // this input event so it can replace values in the proper row.
         setId(newProxy, this.ctx.uuid)
       }
@@ -64,7 +64,7 @@ class Registry {
 
   /**
    * Check if the registry has the given key.
-   * @param {string|array} key
+   * @param {string | Array} key
    */
   has (key) {
     return this.registry.has(key)
@@ -80,7 +80,7 @@ class Registry {
 
   /**
    * Map over the registry (recursively).
-   * @param {function} callback
+   * @param {Function} callback
    */
   map (callback) {
     const value = {}
@@ -101,7 +101,7 @@ class Registry {
    * @param {vm} component the actual component instance.
    */
   register (field, component) {
-    if (has(component.$options.propsData, 'ignored')) {
+    if (has(component.$props, 'ignored')) {
       // Any presence of the `ignored` prop will ensure this input is skipped.
       return false
     }
@@ -113,7 +113,7 @@ class Registry {
       // <FormulateInput name="foo" v-if="condition" />
       // <FormulateInput name="foo" v-else />
       //
-      // Because created() fires _before_ destroyed() the new field would not
+      // Because created() fires _before_ destroyeFd() the new field would not
       // register because the old one would not have yet unregistered. By
       // checking if field we're trying to register is gone on the nextTick we
       // can assume it was supposed to register, and do so "again".
@@ -121,11 +121,11 @@ class Registry {
       return false
     }
     this.add(field, component)
-    const hasVModelValue = has(component.$options.propsData, 'formulateValue')
-    const hasValue = has(component.$options.propsData, 'value')
+    const hasVModelValue = has(component.$props, 'formulateValue')
+    const hasValue = has(component.$props, 'value')
     // This is not reactive
     const debounceDelay = this.ctx.debounce || this.ctx.debounceDelay || (this.ctx.context && this.ctx.context.debounceDelay)
-    if (debounceDelay && !has(component.$options.propsData, 'debounce')) {
+    if (debounceDelay && !has(component.$props, 'debounce')) {
       component.debounceDelay = debounceDelay
     }
     if (
@@ -151,7 +151,7 @@ class Registry {
 
   /**
    * Reduce the registry.
-   * @param {function} callback
+   * @param {Function} callback
    */
   reduce (callback, accumulator) {
     this.registry.forEach((component, field) => {
@@ -213,13 +213,13 @@ export function useRegistryComputed (options = {}) {
     },    
     initialValues () {
       if (
-        has(this.$options.propsData, 'formulateValue') &&
+        has(this.$props, 'formulateValue') &&
         typeof this.formulateValue === 'object'
       ) {
         // If there is a v-model on the form/group, use those values as first priority
         return { ...this.formulateValue } // @todo - use a deep clone to detach reference types?
       } else if (
-        has(this.$options.propsData, 'values') &&
+        has(this.$props, 'values') &&
         typeof this.values === 'object'
       ) {
         // If there are values, use them as secondary priority

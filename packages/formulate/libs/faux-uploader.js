@@ -2,8 +2,8 @@
  * A fake uploader used by default.
  *
  * @param {File} file
- * @param {function} progress
- * @param {function} error
+ * @param {Function} progress
+ * @param {Function} error
  * @param {object} options
  */
 export default function (file, progress, error, options) {

@@ -54,6 +54,7 @@ export default {
       required: true
     }
   },
+emits: ['remove'],
   data () {
     return {
       ...useRegistry(this),
@@ -81,7 +82,7 @@ export default {
     this.applyInitialValues()
     this.registerProvider(this)
   },
-  beforeDestroy () {
+  beforeUnmount () {
     this.preventCleanup = true
     this.deregisterProvider(this)
   },

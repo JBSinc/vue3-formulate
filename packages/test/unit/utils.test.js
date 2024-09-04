@@ -1,7 +1,7 @@
-import { parseRules, equals, parseLocale, regexForFormat, isValueType, camel, groupBails, isEmpty } from '../../src/libs/utils'
-import { cloneDeep } from '../../src/libs/utils2'
-import rules from '../../src/libs/rules'
-import FileUpload from '../../packages/formulate/FileUpload'
+import { parseRules, equals, parseLocale, regexForFormat, camel, groupBails, isEmpty } from '../../formulate/libs/utils'
+import { cloneDeep, isValueType } from '../../formulate/libs/utils2'
+import rules from '../../formulate/libs/rules'
+import FileUpload from '../..//formulate/FileUpload'
 import { expect } from 'jest';
 
 describe('parseRules', () => {

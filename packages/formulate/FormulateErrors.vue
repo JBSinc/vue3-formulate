@@ -97,7 +97,7 @@ export default {
       this.observeContext(this.boundSetFormContext)
     }
   },
-  destroyed () {
+  unmounted () {
     if (this.type === 'form' && typeof this.removeErrorObserver === 'function') {
       if (!Array.isArray(this.context.errors)) {
         this.removeErrorObserver(this.boundSetErrors)

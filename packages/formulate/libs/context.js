@@ -17,7 +17,7 @@ import { classProps } from "./classes";
  */
 export default {
   context() {
-    return defineModel.call(this, {
+    const model = defineModel.call(this, {
       addLabel: this.logicalAddLabel,
       removeLabel: this.logicalRemoveLabel,
       attributes: this.elementAttributes,
@@ -42,7 +42,8 @@ export default {
       imageBehavior: this.imageBehavior,
       label: this.label,
       labelPosition: this.logicalLabelPosition,
-      limit: this.limit === Infinity ? this.limit : Number.parseInt(this.limit, 10),
+      limit:
+        this.limit === Infinity ? this.limit : Number.parseInt(this.limit, 10),
       name: this.nameOrFallback,
       minimum: Number.parseInt(this.minimum, 10),
       performValidation: this.performValidation.bind(this),
@@ -67,6 +68,7 @@ export default {
       classes: this.classes,
       ...this.typeContext,
     });
+    return model;
   },
   // Used in context
   nameOrFallback,
@@ -371,7 +373,7 @@ function showValidationErrors() {
 
 /**
  * All of the currently visible validation errors (does not include error handling)
- * @return {array}
+ * @return {Array}
  */
 function visibleValidationErrors() {
   return this.showValidationErrors && this.validationErrors.length
@@ -445,8 +447,8 @@ function isVmodeled() {
 /**
  * Given an object or array of options, create an array of objects with label,
  * value, and id.
- * @param {array|object}
- * @return {array}
+ * @param {Array | object} optionData
+ * @return {Array}
  */
 function createOptionList(optionData) {
   if (!optionData) {
@@ -606,7 +608,7 @@ function defineModel(context) {
 
 /**
  * Get the value from a model.
- **/
+ */
 function modelGetter() {
   const model = this.isVmodeled ? "formulateValue" : "proxy";
   if (this.type === "checkbox" && !Array.isArray(this[model]) && this.options) {
@@ -620,7 +622,7 @@ function modelGetter() {
 
 /**
  * Set the value from a model.
- **/
+ */
 function modelSetter(value) {
   let didUpdate = false;
   if (!equals(value, this.proxy, this.type === "group")) {
