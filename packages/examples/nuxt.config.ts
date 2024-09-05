@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     server: false,
     client: true,
   },
-  modules: ["@nuxt/eslint", "@jbs/vue3-formulate-nuxt"],
+  modules: ["@nuxt/eslint", "vue3-formulate-nuxt"],
   vite: {
     plugins: [
       Inspect({
@@ -27,13 +27,13 @@ export default defineNuxtConfig({
     },
   },
   alias: {
-    "@jbs/vue3-formulate-nuxt": path.resolve(
+    "vue3-formulate-nuxt": path.resolve(
       __dirname,
       "../",
       "nuxt-module",
       "src",
       "module.ts",
     ),
-    "@jbs/vue3-formulate": path.resolve(__dirname, "../", "formulate"),
+    "vue3-formulate": path.resolve(__dirname, "../", "formulate"),
   },
 });

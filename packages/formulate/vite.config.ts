@@ -12,8 +12,27 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "./Formulate.js"),
       name: "Vue3Formulate",
-      fileName: (format) => `formulate.${format}.js`,
+      fileName: (format) => {
+        if (format === "es") {
+          return "formulate.mjs";
+        }
+        if (format === "cjs") {
+          return "formulate.cjs";
+        }
+        return `formulate.${format}.js`;
+      },
+      // fileName: (format) => `formulate.${format}.js`,
       formats: ["es", "umd", "iife", "cjs", "system"],
+    },
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+      format: {
+        comments: false,
+      },
     },
     rollupOptions: {
       external: ["vue"],
@@ -27,7 +46,6 @@ export default defineConfig({
           console.info(asset.name);
           return asset.name!;
         },
-        inlineDynamicImports: true,
       },
     },
   },

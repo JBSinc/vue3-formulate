@@ -1,8 +1,7 @@
 {
-  "name": "@jbs/vue3-formulate-nuxt",
-  "version": "3.1.0",
+  "name": "vue3-formulate-nuxt",
+  "version": "3.0.0-alpha.0",
   "description": "Vue 3 Formulate module for nuxt 3",
-  "repository": "https://github.com/RmannJbsRepos/vue3-formulate",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -18,18 +17,32 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "nuxt-module-build build",
-    "dev": "nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "build": "npx nuxi prepare && npx @nuxt/module-builder build",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "pack": "npm run build && npm pack --pack-destination ../../pack",
+    "publish:local": "npm run pack && npm publish --registry http://localhost:4873"
   },
+  "author": "Ryan Mann <ryan@ryanmann.dev>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JBSinc/vue3-formulate"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "form",
+    "forms",
+    "validation",
+    "vuex",
+    "validate",
+    "nuxt3"
+  ],
   "dependencies": {
     "@nuxt/kit": "^3.13.0",
-    "@jbs/vue3-formulate": "^3.0.0"
+    "vue3-formulate": "^3.0.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.3.14",

@@ -34,7 +34,7 @@ import FormulateRepeatableRemove from "./slots/FormulateRepeatableRemove.vue";
 /**
  * The base formulate library.
  */
-export class Formulate {
+class Formulate {
   /**
    * Instantiate our base options.
    */

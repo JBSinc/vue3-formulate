@@ -1,9 +1,9 @@
 {
-  "name": "@jbs/vue3-formulate",
-  "version": "3.0.0",
+  "name": "vue3-formulate",
+  "version": "3.0.0-alpha.0",
   "description": "A form of Vue Formulate for Vue 3 support and vite",
-  "main": "dist/formulate.cjs.js",
-  "module": "dist/formulate.es.js",
+  "main": "dist/formulate.cjs",
+  "module": "dist/formulate.mjs",
   "unpkg": "dist/formulate.iife.js",
   "type": "module",
   "publishConfig": {
@@ -11,7 +11,8 @@
   },
   "scripts": {
     "postinstall": "nuxi prepare",
-    "build": "vite build & npm run build:css & wait && echo \"Build complete:\nesm: $(gzip -c dist/formulate.esm.js | wc -c)b gzip\numd: $(gzip -c dist/formulate.umd.js | wc -c)b gzip\nmin: $(gzip -c dist/formulate.min.js | wc -c)b gzip\"",
+    "build": "nuxi prepare && npm run build:lib && npm run build:css",
+    "build:lib": "vite build",
     "build:css": "sass themes/snow/snow.scss ./dist/snow.css && postcss --use autoprefixer -b '> 2%' ./dist/snow.css | postcss --no-map --use cssnano > ./dist/snow.min.css",
     "test": "cross-env NODE_ENV=test jest --config test/jest.conf.js --coverage",
     "test:watch": "NODE_ENV=test jest --config test/jest.conf.js --watch",
@@ -19,21 +20,25 @@
     "cypress": "cypress open",
     "cypress:ci": "./build/cypress.sh",
     "build:size": "gzip -c dist/formulate.esm.js | wc -c",
-    "dev": "vue-cli-service serve --port=7872 examples/main.js"
+    "dev": "vue-cli-service serve --port=7872 examples/main.js",    
+    "pack": "npm run build && npm pack --pack-destination ../../pack",
+    "publish:local": "npm run pack && npm publish --registry http://localhost:4873"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/wearebraid/vue-formulate.git"
+    "url": "https://github.com/JBSinc/vue3-formulate"
   },
   "keywords": [
     "vue",
+    "vue3",
     "form",
     "forms",
     "validation",
     "vuex",
-    "validate"
+    "validate",
+    "nuxt3"
   ],
-  "author": "Justin Schroeder <justin@wearebraid.com>, Vue 3 Fork: Ryan Mann <rmann@jbssolutions.com>",
+  "author": "Ryan Mann <ryan@ryanmann.dev>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/wearebraid/vue-formulate/issues"

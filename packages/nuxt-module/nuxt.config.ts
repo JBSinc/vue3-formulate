@@ -4,10 +4,10 @@ export default defineNuxtConfig({
   sourcemap: true,
   dev: true,
   devtools: {
-    enabled: true
+    enabled: true,
   },
   debug: true,
   alias: {
-    "@jbs/vue3-formulate": path.resolve(__dirname, "../", "../", "formulate"),
+    "vue3-formulate": path.resolve(__dirname, "../", "../", "formulate"),
   },
 });

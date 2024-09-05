@@ -4,11 +4,13 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.css": "${capture}.css.map, ${capture}.min.css",
+    "*.mjs": "${capture}.mjs.map, ${capture}.min.mjs, ${capture}.d.mts",
+    "*.cjs": "${capture}.cjs.map, ${capture}.min.cjs, ${capture}.d.cts",
     "*.js": "${capture}.js.map, ${capture}.min.js, ${capture}.d.ts",
     "*.jsx": "${capture}.js",
     "*.ts": "${capture}.js",
     "*.tsx": "${capture}.ts",
-    ".nested": ".editorconfig,.gitignore,.eslintrc.js,eslint.config.js,.eslintignore,.travis.yml,babel.config.js,cypress.json,package.json,package-lock.json,README.md,LICENSE.txt,vite.config.ts,tsconfig.json,eslint.config.mjs,nuxt.config.ts,DEV_README.md",
+    ".nested": ".editorconfig,.gitignore,.eslintrc.js,eslint.config.js,.eslintignore,.travis.yml,babel.config.js,cypress.json,package.json,package-lock.json,README.md,LICENSE.txt,vite.config.ts,tsconfig.json,eslint.config.mjs,nuxt.config.ts,DEV_README.md,.npmrc",
     "Cargo.toml": "Cargo.lock",
     "package.json": "package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb",
     "tsconfig.json": "tsconfig.*.json"
@@ -20,8 +22,7 @@
     "**/.svn": true,
     "**/CVS": true,
     "**/node_modules": true,
-    "**/Thumbs.db": true,
-    "**/.output": true
+    "**/Thumbs.db": true
   },
   "javascript.suggest.autoImports": true,
   "javascript.suggest.includeCompletionsForImportStatements": true,
