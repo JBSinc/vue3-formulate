@@ -1,19 +1,16 @@
 # vue3-formulate
 
-Vue Formulate for Vue 3 – a powerful, flexible, and easy-to-extend form input library that works seamlessly with Vue 3.
+[Work In Progress - Alpha Release]
 
-This package is a direct port of the original [Vue Formulate](https://vueformulate.com/), providing the same features like form inputs, validation, and customizability, now fully compatible with Vue 3 and modern build tools like Vite.
+Vue 3 Formulate is a port of [Vue Formulate](https://vueformulate.com/) to Vue 3, designed to work with modern build tools like Vite. It supports multiple module formats including ESM, CommonJS, and IIFE.
 
 ## Features
 
-- Declarative form inputs with support for multiple field types
-- Powerful validation system
-- Extensible and customizable
-- Supports dynamic form generation
+- Fully compatible with Vue 3 using the Options API
+- Refer to original documentation: https://vueformulate.com/
 
 ## Installation
 
-Install the package using npm:
-
 ```bash
-npm install @vue3-formulate/core
+npm install vue3-formulate
+```
