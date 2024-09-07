@@ -33,8 +33,13 @@ const module = defineNuxtModule({
         configPath
       }
     });
+    const pluginJs = resolver.resolve("./runtime/plugin.js");
+    let pluginExtension = "js";
+    if (!fs.existsSync(pluginJs)) {
+      pluginExtension = "ts";
+    }
     addPlugin({
-      src: resolver.resolve("./runtime/plugin.ts"),
+      src: resolver.resolve(`./runtime/plugin.${pluginExtension}`),
       name: "formulatePlugin",
       mode: "all"
     });

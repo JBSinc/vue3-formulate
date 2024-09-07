@@ -39,8 +39,16 @@ export default defineNuxtModule<FormulateModuleOptions>({
       },
     });
 
+    const pluginJs = resolver.resolve("./runtime/plugin.js");
+    let pluginExtension = "js";
+
+    if (!fs.existsSync(pluginJs)) {
+      pluginExtension = "ts";
+    }
+
+    // Add the plugin (using the dynamically generated JS file)
     addPlugin({
-      src: resolver.resolve("./runtime/plugin.ts"),
+      src: resolver.resolve(`./runtime/plugin.${pluginExtension}`),
       name: "formulatePlugin",
       mode: "all",
     });

@@ -1,43 +1,38 @@
-<p align="center"><a href="https://vueformulate.com" target="_blank" rel="noopener noreferrer"><img width="100" src="https://assets.wearebraid.com/vue-formulate/logo.png" alt="VueFormulate"></a></p>
+# vue3-formulate
 
-<p align="center">
-  <a href="https://travis-ci.org/wearebraid/vue-formulate"><img src="https://travis-ci.org/wearebraid/vue-formulate.svg?branch=master"></a>
-  <a href="https://www.npmjs.com/package/@braid/vue-formulate"><img alt="npm" src="https://img.shields.io/npm/v/@braid/vue-formulate"></a>
-  <a href="https://github.com/wearebraid/vue-formulate"><img alt="GitHub" src="https://img.shields.io/github/license/wearebraid/vue-formulate"></a>
-  <a href=""><img src="https://img.badgesize.io/wearebraid/vue-formulate/master/dist/formulate.esm.js.svg?compression=gzip&label=gzip"></a>
-</p>
+[Work In Progress - Alpha Release]
+[Examples runs, no lint errors, nuxt module works]
+[Tests not yet converted/fixed, could be bugs in some of the components]
 
-<p align="center">
-  <a href="https://vueformulate.com">Documentation Website</a>
-</p>
+A monorepo for the Vue 3 port of [Vue Formulate](https://vueformulate.com/), designed to work seamlessly with modern build tools like Vite and supporting multiple module formats (ESM, CommonJS, IIFE).
 
-## ⚠️ [Work in Progress, not released, not working!]
+## Packages
 
-## ⚠️ Vue 3 Support Fork
+This monorepo contains the following packages:
 
-This is a **fork of Vue Formulate** that has been updated to provide support for **Vue 3**. The original Vue Formulate was designed for Vue 2, but this fork continues its legacy with Vue 3 compatibility.
+- **@vue3-formulate (formulate)**
+  The core of Vue Formulate for Vue 3. A port of the original vue 2 formulate code to be compatible with the options api on Vue 3
 
-For Vue 3 users, this fork retains all the powerful features of Vue Formulate while ensuring compatibility with the latest version of Vue.
+- **@vue3-formulate/nuxt (nuxt-module)**  
+  Nuxt 3 module integration, making it easy to use Vue Formulate in your Nuxt projects. This is a rewrite of the previous nuxt module
+  now as it's own package and built on nuxt/kit for nuxt 3 and is 1 to 1 versioning with vue3-formulate and will be released together
+  as separate npm packages.
 
-## ⚠️ New Apps, use FormKit the official Vue 2 Formulate replacement, this fork is intended to ease the upgrade/migration from vue 2 to vue 3 for vue 2 projects using FormKit
+- **examples**  
+  This is a port of the previous examples but is now a nuxt 3 project that consumes the new nuxt 3 module and vue3-formulate.
+  The "Specimens" and examples are the same.
 
-## What is Vue Formulate?
+## Installation
 
-Vue Formulate is the easiest way to build forms with Vue. Please read the [comprehensive documentation](https://vueformulate.com) for live code examples and guidance on using Vue Formulate in your own projects.
+If you just need vue3-formulate for vue 3
 
-<p align="center"><a href="https://vueformulate.com"><img src="https://assets.wearebraid.com/vue-formulate/read-the-docs.png" /></a></p>
+```
+npm install @vue3-formulate
+````
 
+If you want vue3-formulate on nuxt you can just install the module
+and add it to your nuxt.config's module section
 
-<table style="width: 100%;">
-	<tr>
-		<th colspan="2">
-			<h3>Key features</h3>
-		</th>
-	<tr>
-	<tr>
-		<td style="width: 50%; vertical-align: top;">
-			<h4 style="margin-top: 0.25em">😎 Developer happiness</h4>
-			<p>Forms are everywhere, yet surprisingly tedious to author — well, not anymore. Vue Formulate provides a <a href="https://vueformulate.com/guide/inputs/#all-options">powerful and flexible API</a> to developers that makes complex form creation a breeze.</p>
-		</td>
-		<td style="width: 50%; vertical-align: top;">
-			<h4 style="margin-top: 0.25em;">☝️ A single input element
+```
+npm install vue3-formulate-nuxt
+```

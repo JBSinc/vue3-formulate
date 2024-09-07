@@ -1,6 +1,6 @@
 {
   "name": "vue3-formulate-repo",
-  "version": "3.0.0-alpha.0",
+  "version": "3.0.0-alpha.3",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -9,12 +9,13 @@
   "description": "A form of Vue Formulate for Vue 3 support and vite",
   "scripts": {
     "postinstall": "nuxi prepare",
-    "dev": "npm run --workspace=examples dev",    
-    "build": "npm run build:formulate && npm run build:formulate-nuxt",    
-    "build:formulate": "npm run --workspace=vue3-formulate build",    
+    "dev": "npm run --workspace=examples dev",
+    "build": "npm run build:formulate && npm run build:formulate-nuxt",
+    "build:formulate": "npm run --workspace=vue3-formulate build",
     "build:formulate-nuxt": "npm run --workspace=vue3-formulate-nuxt build",
     "pack": "npm run --workspace=vue3-formulate pack && npm run --workspace=vue3-formulate-nuxt pack",
-    "publish:local": "npm run --workspace=vue3-formulate publish:local && npm run --workspace=vue3-formulate-nuxt publish:local"
+    "publish:local": "npm run --workspace=vue3-formulate publish:local && npm run --workspace=vue3-formulate-nuxt publish:local",
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
@@ -66,6 +67,7 @@
     "tslib": "^2.7.0",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",
+    "verdaccio": "^5.32.1",
     "vite": "^5.4.2",
     "vue-tsc": "^2.1.4",
     "wait-on": "^8.0.0",

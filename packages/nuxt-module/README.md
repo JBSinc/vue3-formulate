@@ -7,14 +7,15 @@ Find and replace all on all files (CMD+SHIFT+F):
 - Description: My new Nuxt module
 -->
 
-# My Module
+# vue3-formulate Nuxt Module migration from Nuxt 2
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-My new Nuxt module for doing amazing things.
+This is a port of the original nuxt module from vue-formulate which only supported nuxt 2
+it has been built with nuxt/kit and built as a standalone npm package that depends on vue3-formulate (also ported from vue 2 to vue 3)
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/your-org/my-module?file=playground%2Fapp.vue) -->
@@ -23,19 +24,17 @@ My new Nuxt module for doing amazing things.
 ## Features
 
 <!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
+- Standlone Nuxt Module that includes vue3-formulate instead of vue3-formulate including a "nuxt" folder.
 
 ## Quick Setup
 
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxi module add my-module
+npx nuxi module add vue3-formulate-nuxt
 ```
 
-That's it! You can now use My Module in your Nuxt app ✨
+That's it! You can now use vue3-formulate-nuxt in your Nuxt app ✨
 
 
 ## Contribution
@@ -47,26 +46,22 @@ That's it! You can now use My Module in your Nuxt app ✨
   # Install dependencies
   npm install
   
-  # Generate type stubs
-  npm run dev:prepare
-  
-  # Develop with the playground
-  npm run dev
-  
-  # Build the playground
-  npm run dev:build
-  
-  # Run ESLint
-  npm run lint
-  
-  # Run Vitest
-  npm run test
-  npm run test:watch
-  
-  # Release new version
-  npm run release
-  ```
+  # Build For Production
+  npm run build
 
+  # Pack npm packages for vue3-formulate and vue3-formulate-nuxt
+  npm run pack
+
+  # Publish packages to local npm repo (verdaccio)
+  # .npmrc assumes verdaccio running on http://localhost:4873 and will check this repo before npmjs
+  npm run publish:local
+
+  #tests
+  WIP/TODO
+  
+    # Run ESLint
+  npm run lint
+  ```
 </details>
 
 

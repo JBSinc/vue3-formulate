@@ -9,5 +9,5 @@ export default defineNuxtConfig({
   debug: true,
   alias: {
     "vue3-formulate": path.resolve(__dirname, "../", "../", "formulate"),
-  },
+  }
 });
