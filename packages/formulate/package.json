@@ -1,6 +1,6 @@
 {
   "name": "vue3-formulate",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "description": "A form of Vue Formulate for Vue 3 support and vite",
   "main": "dist/formulate.cjs",
   "module": "dist/formulate.mjs",
@@ -22,7 +22,8 @@
     "build:size": "gzip -c dist/formulate.esm.js | wc -c",
     "dev": "vue-cli-service serve --port=7872 examples/main.js",    
     "pack": "npm run build && npm pack --pack-destination ../../pack",
-    "publish:local": "npm run pack && npm publish --registry http://localhost:4873"
+    "publish:local": "npm run pack && npm publish --registry http://localhost:4873",
+    "publish:release": "npm run pack && npm publish --registry https://registry.npmjs.org"    
   },
   "repository": {
     "type": "git",

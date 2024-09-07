@@ -1,6 +1,6 @@
 {
   "name": "vue3-formulate-repo",
-  "version": "3.0.0-alpha.3",
+  "version": "3.0.0-alpha.4",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -15,6 +15,7 @@
     "build:formulate-nuxt": "npm run --workspace=vue3-formulate-nuxt build",
     "pack": "npm run --workspace=vue3-formulate pack && npm run --workspace=vue3-formulate-nuxt pack",
     "publish:local": "npm run --workspace=vue3-formulate publish:local && npm run --workspace=vue3-formulate-nuxt publish:local",
+    "publish:release": "npm run --workspace=vue3-formulate publish:release && npm run --workspace=vue3-formulate-nuxt publish:release",
     "lint": "npx eslint ."
   },
   "repository": {
