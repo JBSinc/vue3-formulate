@@ -6,6 +6,8 @@
 
 A monorepo for the Vue 3 port of [Vue Formulate](https://vueformulate.com/), designed to work seamlessly with modern build tools like Vite and supporting multiple module formats (ESM, CommonJS, IIFE).
 
+This project is a fork for the original formulate: https://github.com/wearebraid/vue-formulate
+
 ## Packages
 
 This monorepo contains the following packages:
@@ -22,10 +24,10 @@ This monorepo contains the following packages:
   This is a port of the previous examples but is now a nuxt 3 project that consumes the new nuxt 3 module and vue3-formulate.
   The "Specimens" and examples are the same.
 
-- ** cypress **
+- **cypress**
   TODO, ignore
 
-- ** test **
+- **test**
   TODO, tests broken currently, will work on porting them to vitest.
 
 ## Installation
