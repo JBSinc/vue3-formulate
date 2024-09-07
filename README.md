@@ -14,20 +14,26 @@ This monorepo contains the following packages:
   The core of Vue Formulate for Vue 3. A port of the original vue 2 formulate code to be compatible with the options api on Vue 3
 
 - **@vue3-formulate/nuxt (nuxt-module)**  
-  Nuxt 3 module integration, making it easy to use Vue Formulate in your Nuxt projects. This is a rewrite of the previous nuxt module
-  now as it's own package and built on nuxt/kit for nuxt 3 and is 1 to 1 versioning with vue3-formulate and will be released together
-  as separate npm packages.
+  Nuxt 3 module integration. This is a rewrite of the previous nuxt module, it is 
+  now it's own package and built on nuxt/kit for nuxt 3 and will have 1 to 1 versioning with vue3-formulate and will be released together
+  as separate npm packages.  So if a new version of vue3-formulate releases a new version of vue3-formulate-nuxt will also release.
 
 - **examples**  
   This is a port of the previous examples but is now a nuxt 3 project that consumes the new nuxt 3 module and vue3-formulate.
   The "Specimens" and examples are the same.
+
+- ** cypress **
+  TODO, ignore
+
+- ** test **
+  TODO, tests broken currently, will work on porting them to vitest.
 
 ## Installation
 
 If you just need vue3-formulate for vue 3
 
 ```
-npm install @vue3-formulate
+npm install vue3-formulate
 ````
 
 If you want vue3-formulate on nuxt you can just install the module
