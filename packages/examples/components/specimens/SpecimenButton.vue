@@ -6,6 +6,7 @@
       <FormulateInput
         label="Click me"
         type="button"
+        @click="() => console.log('clicked Click me')"
       />
     </div>
     <div class="specimen">
@@ -13,6 +14,7 @@
       <FormulateInput
         label="Submit me"
         type="submit"
+        @click="() => console.log('clicked Submit me')"
       />
     </div>
   </div>
