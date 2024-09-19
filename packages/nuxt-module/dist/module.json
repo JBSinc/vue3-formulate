@@ -1,7 +1,7 @@
 {
-  "name": "my-module",
-  "configKey": "myModule",
-  "version": "3.0.0-alpha.0",
+  "name": "vue3-formulate",
+  "configKey": "vue3-formulate",
+  "version": "3.0.0-alpha.6",
   "builder": {
     "@nuxt/module-builder": "0.8.3",
     "unbuild": "2.0.0"

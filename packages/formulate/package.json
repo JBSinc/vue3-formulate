@@ -1,6 +1,6 @@
 {
   "name": "vue3-formulate",
-  "version": "3.0.0-alpha.5",
+  "version": "3.0.0-alpha.6",
   "description": "A form of Vue Formulate for Vue 3 support and vite",
   "main": "dist/formulate.cjs",
   "module": "dist/formulate.mjs",

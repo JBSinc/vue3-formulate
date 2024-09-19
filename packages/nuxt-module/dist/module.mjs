@@ -13,8 +13,8 @@ const __dirname = __cjs_path__.dirname(__filename);
 const require = __cjs_mod__.createRequire(import.meta.url);
 const module = defineNuxtModule({
   meta: {
-    name: "my-module",
-    configKey: "myModule"
+    name: "vue3-formulate",
+    configKey: "vue3-formulate"
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url);
