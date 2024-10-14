@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "vue3-formulate": "../formulate",
+    "vue3-formulate": "3.0.0-alpha.6",
     "nuxt": "^3.13.0",
     "vue": "latest"
   },
