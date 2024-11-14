@@ -14,7 +14,7 @@ const require = __cjs_mod__.createRequire(import.meta.url);
 const module = defineNuxtModule({
   meta: {
     name: "vue3-formulate",
-    configKey: "vue3-formulate"
+    configKey: "formulate"
   },
   setup(_options, _nuxt) {
     const resolver = createResolver(import.meta.url);

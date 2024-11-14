@@ -54,7 +54,7 @@ export default {
       required: true
     }
   },
-emits: ['remove'],
+emits: ['remove', 'validation'],
   data () {
     return {
       ...useRegistry(this),
