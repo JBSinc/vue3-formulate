@@ -37,7 +37,7 @@
           :is="context.component"
           :context="context"
           v-bind="context.slotProps.component"
-          v-on="$attrs"
+          v-on="listeners"
         >
           <slot v-bind="context" />
         </component>
@@ -345,6 +345,10 @@ export default {
       });
       return messages;
     },
+    listeners() {
+      const listeners = Object.entries(this.$attrs).filter(([key]) => key.startsWith("on"));
+      return Object.fromEntries(listeners);
+    }
   },
   watch: {
     $attrs: {

@@ -1,9 +1,9 @@
 {
   "name": "vue3-formulate",
-  "configKey": "vue3-formulate",
+  "configKey": "formulate",
   "version": "3.0.0-alpha.6",
   "builder": {
-    "@nuxt/module-builder": "0.8.3",
+    "@nuxt/module-builder": "0.8.4",
     "unbuild": "2.0.0"
   }
 }

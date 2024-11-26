@@ -1614,7 +1614,7 @@ const _sfc_main$l = {
       default: false
     }
   },
-  emits: ["created", "failed-validation"],
+  emits: ["created", "failed-validation", "validation"],
   data() {
     return __spreadProps(__spreadValues({}, useRegistry(this)), {
       formShouldShowErrors: false,
@@ -2467,6 +2467,10 @@ const _sfc_main$k = {
         messages[camel(key)] = this.messageRegistry[key];
       });
       return messages;
+    },
+    listeners() {
+      const listeners = Object.entries(this.$attrs).filter(([key]) => key.startsWith("on"));
+      return Object.fromEntries(listeners);
     }
   }),
   watch: {
@@ -2756,7 +2760,7 @@ function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
         _ctx.context.help ? (openBlock(), createBlock(resolveDynamicComponent(_ctx.context.slotComponents.help), mergeProps({ key: 0 }, _ctx.context.slotProps.help, { context: _ctx.context }), null, 16, ["context"])) : createCommentVNode("", true)
       ]) : createCommentVNode("", true),
       renderSlot(_ctx.$slots, "element", normalizeProps(guardReactiveProps(_ctx.context)), () => [
-        (openBlock(), createBlock(resolveDynamicComponent(_ctx.context.component), mergeProps({ context: _ctx.context }, _ctx.context.slotProps.component, toHandlers(_ctx.$attrs)), {
+        (openBlock(), createBlock(resolveDynamicComponent(_ctx.context.component), mergeProps({ context: _ctx.context }, _ctx.context.slotProps.component, toHandlers($options.listeners)), {
           default: withCtx(() => [
             renderSlot(_ctx.$slots, "default", normalizeProps(guardReactiveProps(_ctx.context)))
           ]),
@@ -4080,7 +4084,7 @@ const _sfc_main$1 = {
       required: true
     }
   },
-  emits: ["remove"],
+  emits: ["remove", "validation"],
   data() {
     return __spreadProps(__spreadValues({}, useRegistry(this)), {
       isGrouping: true
